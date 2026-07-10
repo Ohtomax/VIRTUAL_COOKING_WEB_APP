@@ -1,0 +1,526 @@
+/* ==========================================
+   STATION POPUP — Shared overlay/panel
+   ========================================== */
+.station-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.station-popup-panel {
+  position: relative;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  background: #1e293b;
+  border-radius: 16px;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.station-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background 0.2s;
+}
+.station-close-btn:hover { background: rgba(255, 255, 255, 0.3); }
+
+.station-popup-header {
+  padding: 20px 24px 12px;
+  text-align: center;
+}
+.station-popup-header h2 {
+  font-size: 22px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.station-popup-counter {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* ==========================================
+   STATION — Ingredient Grid
+   ========================================== */
+.station-ingredients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 12px;
+  padding: 16px 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.station-ingredient-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  min-height: 110px;
+}
+.station-ingredient-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.station-ingredient-card.selected.correct {
+  border-color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+}
+.station-ingredient-card.selected.wrong {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.ingredient-check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 14px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+}
+.station-ingredient-card.correct .ingredient-check {
+  background: #4ade80;
+  color: #000;
+}
+.station-ingredient-card.wrong .ingredient-check {
+  background: #ef4444;
+}
+
+.ingredient-thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.ingredient-label {
+  font-size: 11px;
+  color: #cbd5e1;
+  text-align: center;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.ingredient-tooltip {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* ==========================================
+   STATION — Footer
+   ========================================== */
+.station-popup-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.station-confirm-btn {
+  padding: 10px 24px;
+  background: #4ade80;
+  color: #000;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  transition: transform 0.15s;
+}
+.station-confirm-btn:hover { transform: scale(1.04); }
+
+/* ==========================================
+   SINK PANEL
+   ========================================== */
+.sink-panel {
+  background: linear-gradient(135deg, #1e3a5f, #1a2744);
+  text-align: center;
+}
+
+.water-toggle-btn {
+  margin: 0 auto 16px;
+  padding: 12px 28px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  transition: all 0.3s;
+}
+.water-toggle-btn.on {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.water-stream-visual {
+  width: 6px;
+  height: 80px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(135, 206, 235, 0.9), rgba(135, 206, 235, 0.3));
+  border-radius: 3px;
+  transform-origin: top;
+}
+
+.sink-ingredients-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  padding: 20px;
+}
+
+.sink-ingredient-card {
+  position: relative;
+  width: 80px;
+  height: 90px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 3px solid #ddd;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: border-color 0.3s, background 0.3s;
+}
+.sink-ingredient-card.washed {
+  border-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.2);
+}
+
+.sink-ingredient-img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.sink-ingredient-name {
+  font-size: 10px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.wash-check {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  background: #4CAF50;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.sink-instruction {
+  padding: 10px;
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.sink-progress {
+  padding: 8px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+/* ==========================================
+   STOVE PANEL
+   ========================================== */
+.stove-panel {
+  max-width: 1000px;
+  background: #0f172a;
+}
+
+.stove-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+  min-height: 400px;
+}
+
+@media (max-width: 768px) {
+  .stove-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Steps Panel */
+.stove-steps-panel {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  padding: 16px;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+.stove-steps-panel.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.stove-steps-panel h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #e2e8f0;
+}
+
+.stove-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: background 0.2s;
+}
+.stove-step.completed {
+  background: rgba(74, 222, 128, 0.08);
+}
+.stove-step.in-progress {
+  background: rgba(251, 191, 36, 0.1);
+  border-left: 3px solid #fbbf24;
+}
+
+.step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: #94a3b8;
+}
+.stove-step.completed .step-num { background: #4ade80; color: #000; }
+.stove-step.in-progress .step-num { background: #fbbf24; color: #000; }
+
+.step-text {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #cbd5e1;
+}
+
+.step-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.cooking-complete-banner {
+  margin-top: 16px;
+  padding: 20px;
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid #4ade80;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #4ade80;
+}
+.cooking-complete-banner .proceed-btn {
+  margin-top: 12px;
+}
+
+/* Controls Panel */
+.stove-controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.stove-controls-panel h3 {
+  font-size: 16px;
+  color: #e2e8f0;
+}
+
+.stove-temp-display {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 14px;
+}
+.temp-label {
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.temp-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: #fbbf24;
+  display: block;
+  margin: 4px 0 8px;
+}
+.temp-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.temp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #fbbf24, #ef4444);
+  transition: width 0.3s;
+}
+
+.stove-timer-display {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  color: #e2e8f0;
+  padding: 8px;
+}
+
+/* Cookware */
+.cookware-selection {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+}
+.cookware-selection p {
+  margin-bottom: 10px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+.cookware-options {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.cookware-btn {
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.cookware-btn:hover {
+  border-color: #fbbf24;
+  transform: scale(1.05);
+}
+
+.cookware-selected {
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid #4ade80;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  font-size: 18px;
+  color: #4ade80;
+}
+
+/* Burner */
+.burner-toggle {
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s;
+}
+.burner-toggle:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.burner-toggle.on {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  border-color: #ef4444;
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+}
+
+/* Heat Controls */
+.heat-controls {
+  display: flex;
+  gap: 8px;
+}
+.heat-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+.heat-btn:hover { background: rgba(255, 255, 255, 0.1); }
+.heat-btn.active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Warnings */
+.cooking-warning {
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fca5a5;
+  text-align: center;
+  animation: pulse-warning 1s ease-in-out infinite;
+}
+
+@keyframes pulse-warning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
