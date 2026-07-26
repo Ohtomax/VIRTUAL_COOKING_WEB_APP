@@ -1,50 +1,33 @@
-// ==========================================
-// GAME TYPE DEFINITIONS
-// ==========================================
-
-// --- Screen / Navigation ---
+// ─── Screen / Navigation ───────────────────────────────────────
 export type ScreenName =
-  | 'main-menu'
-  | 'kitchen-tools'
-  | 'level-select'
-  | 'recipe-select'
-  | 'recipe-card'
-  | 'kitchen'
-  | 'tutorial'
-  | 'progress'
-  | 'settings'
-  | 'achievements'
-  | 'player-stats'
-  | 'master-chef-mode'
-  | 'results'
+  | 'main-menu' | 'kitchen-tools' | 'level-select' | 'recipe-select'
+  | 'recipe-card' | 'kitchen' | 'tutorial' | 'progress'
+  | 'settings' | 'master-chef-mode' | 'results' | 'level-complete' | 'pre-test' | 'post-test'
 
-// --- Game Phase ---
 export type GamePhase =
-  | 'menu'
-  | 'tools-exploration'
-  | 'level-select'
-  | 'recipe-select'
-  | 'recipe-card'
-  | 'ingredient-selection'
-  | 'preparation'
-  | 'cooking'
-  | 'results'
+  | 'menu' | 'tools-exploration' | 'level-select' | 'recipe-select'
+  | 'recipe-card' | 'ingredient-selection' | 'preparation' | 'cooking' | 'results' | 'level-complete' | 'pre-test' | 'post-test'
 
-// --- Preparation Sub-Phases ---
 export type PreparationTask = 'washing' | 'slicing' | 'measuring'
+export type HeatLevel       = 'off' | 'low' | 'medium' | 'high'
+export type CuttingTechnique =
+  | 'chopping' | 'slicing' | 'dicing' | 'julienne'
+  | 'brunoise' | 'mince' | 'cube' | 'chiffonade'
+  | 'crushed' | 'diagonal cut' | 'straight cut'
+  | 'mixed cut' | 'slice' | 'chop' | 'dice'
+export type CookwareType    = 'pot' | 'pan' | 'wok'
+export type StationName     = 'fridge' | 'cabinet' | 'table' | 'sink' | 'stove' | 'tools'
 
-// --- Cooking ---
-export type HeatLevel = 'off' | 'low' | 'medium' | 'high'
-export type CuttingTechnique = 'chopping' | 'slicing' | 'dicing' | 'julienne'
-export type CookwareType = 'pot' | 'pan' | 'wok'
-export type StationName = 'fridge' | 'cabinet' | 'table' | 'sink' | 'stove' | 'tools'
-
-// --- Tool Data ---
+// ─── Tools ─────────────────────────────────────────────────────
 export interface ToolType {
+  id: string
   name: string
   image: string
   use: string
   bestFor: string
+  category: 'knife' | 'pot' | 'pan' | 'utensil' | 'measuring'
+  canCut?: boolean           // knives can be selected for prep stage
+  cutTechnique?: CuttingTechnique  // default technique for this knife
 }
 
 export interface ToolCategory {
@@ -56,113 +39,67 @@ export interface ToolCategory {
 }
 
 export interface ToolItem {
-  id: string
-  name: string
-  image: string
-  category: string
+  id: string; name: string; image: string; category: string
 }
 
-// --- Ingredient Data ---
+// ─── Ingredients ───────────────────────────────────────────────
 export interface Ingredient {
-  id: string
-  name: string
-  image: string
-  quantity: string
+  id: string; name: string; image: string; quantity: string
 }
 
 export interface RequiredIngredient {
   id: number
-  name: string
+  name: string            // display name (resolved fridge name when possible)
   collected: boolean
   location: StationName
+  ingredientId?: string   // resolved fridge ingredient id — matching is ID-based
+  image?: string          // resolved fridge ingredient image
 }
 
-// --- Recipe Data ---
-export interface Recipe {
-  id: number
+// ─── Inventory ─────────────────────────────────────────────────
+export interface InventoryItem {
+  id: string
   name: string
-  level: number
-  category: string
   image: string
-  ingredients: string[]
-  tools: string[]
-  steps: string[]
+  type: 'ingredient' | 'tool'
+  quantity?: string
+  toolType?: ToolType
+}
+
+// ─── Recipe / Level ────────────────────────────────────────────
+export interface Recipe {
+  id: number; name: string; level: number; category: string
+  image: string; ingredients: string[]; tools: string[]; steps: string[]
   minScore?: number
+  // per-ingredient cut instructions
+  cutInstructions?: Record<string, { technique: CuttingTechnique; size: string; description: string }>
+  cookingDuration: number;
 }
 
-// --- Level Data ---
 export interface Level {
-  id: number
-  title: string
-  subtitle: string
-  recipes: number[]
-  requirement: string
-  minScore: number
-  image: string
-  isFinalChallenge?: boolean
+  id: number; title: string; subtitle: string; recipes: number[]
+  requirement: string; minScore: number; image: string; isFinalChallenge?: boolean
 }
 
-// --- Scoring ---
-export interface Scores {
-  accuracy: number
-  washing: number
-  cutting: number
-  cooking: number
-  timing: number
-}
-
+// ─── Scoring ───────────────────────────────────────────────────
+export interface Scores { accuracy: number; washing: number; cutting: number; measuring: number; cooking: number; timing: number }
 export type Grade = 'A+' | 'A' | 'A-' | 'B+' | 'B' | 'B-' | 'C+' | 'C' | 'C-' | 'D'
 
-// --- Feedback ---
+// ─── Feedback ──────────────────────────────────────────────────
 export type FeedbackType = 'success' | 'warning' | 'error' | 'info'
+export interface FeedbackMessage { message: string; type: FeedbackType; timestamp: number }
+export interface CurrentFeedback  { message: string; type: FeedbackType }
 
-export interface FeedbackMessage {
-  message: string
-  type: FeedbackType
-  timestamp: number
-}
+// ─── Progress ──────────────────────────────────────────────────
+export interface RecipeMasteryData { completed: boolean; bestScore: number; stars: number; masteryPercentage: number }
+export interface LevelProgressData { completed: boolean; averageScore: number; recipesCompleted: number }
+export interface PlayerProfile { totalScore: number; recipesCompleted: number; currentLevel: number; achievementBadges: string[] }
 
-export interface CurrentFeedback {
-  message: string
-  type: FeedbackType
-}
+// ─── Audio ─────────────────────────────────────────────────────
+export interface AudioSettings { musicEnabled: boolean; sfxEnabled: boolean; masterVolume: number }
 
-// --- Mastery & Progress ---
-export interface RecipeMasteryData {
-  completed: boolean
-  bestScore: number
-  stars: number
-  masteryPercentage: number
-}
+// ─── Cooking step ──────────────────────────────────────────────
+export interface CookingStep { id: number; name: string; status: 'pending' | 'in-progress' | 'completed' }
 
-export interface LevelProgressData {
-  completed: boolean
-  averageScore: number
-  recipesCompleted: number
-}
-
-export interface PlayerProfile {
-  totalScore: number
-  recipesCompleted: number
-  currentLevel: number
-  achievementBadges: string[]
-}
-
-// --- Audio Settings ---
-export interface AudioSettings {
-  musicEnabled: boolean
-  sfxEnabled: boolean
-  masterVolume: number
-}
-
-// --- Cooking Step ---
-export interface CookingStep {
-  id: number
-  name: string
-  status: 'pending' | 'in-progress' | 'completed'
-}
-
-// --- Shared Props ---
-export interface SetScreenProps {
-  setScreen: (screen: ScreenName) => void
-}
+// ─── Shared props ──────────────────────────────────────────────
+export interface SetScreenProps { setScreen: (screen: ScreenName) => void }

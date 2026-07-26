@@ -1,167 +1,219 @@
 import { useState } from 'react'
-import { Lock, CheckCircle, Star, Clock, AlertCircle } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Lock, CheckCircle2, Star, Clock, AlertCircle, ChefHat } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { levels, recipes, getCategoriesInLevel } from '../data/recipes'
 import useGameStore from '../store/gameStore'
 import type { SetScreenProps, Level, Recipe } from '../types'
 
+const catIcons = [ChefHat, Star, Clock, CheckCircle2]
+
 export default function LevelSelection({ setScreen }: SetScreenProps) {
-  const { setSelectedRecipe, setSelectedLevel, unlockedLevels, unlockedRecipes, recipeMastery, levelProgress } = useGameStore()
-  const [activeLevel, setActiveLevel] = useState<Level | null>(null)
+  const { setSelectedRecipe, resetGame, unlockedLevels, unlockedRecipes, recipeMastery, levelProgress } = useGameStore()
+  const [activeLevel, setActiveLevel]       = useState<Level | null>(null)
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [levelIndex, setLevelIndex]         = useState(0)
 
-  const isLevelLocked = (id: number) => id !== 1 && !unlockedLevels.includes(id)
-  const isRecipeUnlocked = (id: number) => unlockedRecipes.includes(id)
-  const isRecipeCompleted = (id: number) => recipeMastery[id]?.completed ?? false
+  const isLocked   = (id: number) => id !== 1 && !unlockedLevels.includes(id)
+  const isUnlocked = (id: number) => unlockedRecipes.includes(id)
+  const isDone     = (id: number) => recipeMastery[id]?.completed ?? false
 
-  const getLevelProgress = (levelId: number): number => {
-    const level = levels.find((l) => l.id === levelId)
-    if (!level) return 0
-    const done = level.recipes.filter((rid) => recipeMastery[rid]?.completed).length
-    return (done / level.recipes.length) * 100
+  const goPrevLevel = () => setLevelIndex(i => Math.max(0, i - 1))
+  const goNextLevel = () => setLevelIndex(i => Math.min(levels.length - 1, i + 1))
+
+  const pct = (levelId: number) => {
+    const lv = levels.find(l => l.id === levelId)
+    if (!lv) return 0
+    return (lv.recipes.filter(r => isDone(r)).length / lv.recipes.length) * 100
   }
 
-  const handleRecipeSelect = (recipe: Recipe) => {
-    if (!isRecipeUnlocked(recipe.id)) return
-    setSelectedRecipe(recipe)
-    setScreen('recipe-card') // Go to recipe card page first (per narrative)
+  const pick = (r: Recipe) => {
+    if (!isUnlocked(r.id)) return
+    resetGame(); setSelectedRecipe(r); setScreen('recipe-card')
   }
 
-  // ---- LEVEL GRID ----
-  if (!activeLevel) {
-    return (
-      <div className="panel level-selection-panel">
-        <button className="back-btn" onClick={() => setScreen('main-menu')}>← Back</button>
-        <h1 className="level-title">Select Your Cooking Level</h1>
+  /* ── Level carousel ── */
+  if (!activeLevel) return (
+    <div className="g-page">
+      <div className="g-navbar">
+        <button className="g-back-btn" onClick={() => setScreen('kitchen-tools')}>
+          <ChevronLeft size={20} strokeWidth={2.5} /><span>Back</span>
+        </button>
+        <span className="g-navbar-title">Levels</span>
+      </div>
+      <div className="g-page-body g-page-body--no-sheet">
+        <h1 className="ls-page-title">Select Level</h1>
+        <p className="ls-page-sub">Complete all recipes in a level to unlock the next one.</p>
 
-        <div className="level-grid">
-          {levels.map((level) => {
-            const locked = isLevelLocked(level.id)
-            const progress = getLevelProgress(level.id)
-            const completed = levelProgress[level.id]?.completed ?? false
+        <div className="kt-carousel">
+          <button
+            className="kt-carousel-arrow"
+            onClick={goPrevLevel}
+            disabled={levelIndex === 0}
+            aria-label="Previous level">
+            <ChevronLeft size={34} strokeWidth={2.5} />
+          </button>
 
+          <div className="ls-carousel-viewport">
+            {levels.map((lv, i) => {
+              const locked    = isLocked(lv.id)
+              const completed = levelProgress[lv.id]?.completed ?? false
+              const offset    = i - levelIndex
+              if (Math.abs(offset) > 1) return null
+
+              return (
+                <motion.div key={lv.id}
+                  className={`ls-card ls-carousel-card ${locked ? 'locked' : ''} ${completed ? 'completed' : ''} ${offset === 0 ? 'ls-carousel-card--active' : 'ls-carousel-card--peek'}`}
+                  onClick={() => offset === 0 ? (!locked && setActiveLevel(lv)) : setLevelIndex(i)}
+                  animate={{
+                    x: offset * 640,
+                    scale: offset === 0 ? 1 : 0.8,
+                    opacity: offset === 0 ? 1 : 0.4,
+                    zIndex: offset === 0 ? 10 : 1,
+                  }}
+                  initial={false}
+                  transition={{ type: 'spring', damping: 24, stiffness: 220 }}
+                  whileHover={offset === 0 && !locked ? { scale: 1.015 } : {}}
+                  whileTap={offset === 0 && !locked ? { scale: 0.98 } : {}}>
+                  {locked    && <div className="ls-badge ls-badge-lock"><Lock size={18} /></div>}
+                  {completed && <div className="ls-badge ls-badge-done"><CheckCircle2 size={18} /></div>}
+                  <img src={lv.image} alt={lv.title}
+                    className={`ls-card-img ${locked ? 'dim' : ''}`}
+                    onError={e => { (e.target as HTMLImageElement).style.display='none' }} />
+                  <div className="ls-card-body">
+                    <div className="ls-card-eyebrow">Level {String(lv.id).padStart(2,'0')}</div>
+                    <div className="ls-card-title">{lv.title}</div>
+                    <div className="ls-card-sub">{lv.subtitle}</div>
+                    <div className="g-bar-track"><div className="g-bar-fill" style={{ width: `${pct(lv.id)}%` }} /></div>
+                    <div className="ls-card-meta">
+                      <span><Star size={14} /> Min {lv.minScore}%</span>
+                      <span><Clock size={14} /> {lv.recipes.length} recipes</span>
+                    </div>
+                    <button className={`ls-card-btn ${locked ? 'locked-btn' : completed ? 'done-btn' : ''}`} disabled={locked}>
+                      {locked ? <><Lock size={16} /> Locked</> : completed ? <><CheckCircle2 size={16} /> Completed</> : <>Start Level <ChevronRight size={16} /></>}
+                    </button>
+                  </div>
+                </motion.div>
+              )
+            })}
+          </div>
+
+          <button
+            className="kt-carousel-arrow"
+            onClick={goNextLevel}
+            disabled={levelIndex === levels.length - 1}
+            aria-label="Next level">
+            <ChevronRight size={34} strokeWidth={2.5} />
+          </button>
+        </div>
+
+        <div className="kt-carousel-dots">
+          {levels.map((lv, i) => (
+            <button
+              key={lv.id}
+              className={`kt-carousel-dot ${i === levelIndex ? 'active' : ''} ${levelProgress[lv.id]?.completed ? 'viewed' : ''}`}
+              onClick={() => setLevelIndex(i)}
+              aria-label={`Go to ${lv.title}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+
+  /* ── Category selection ── */
+  const cats = getCategoriesInLevel(activeLevel.id)
+  if (cats.length > 1 && !activeCategory) return (
+    <div className="g-page">
+      <div className="g-navbar">
+        <button className="g-back-btn" onClick={() => setActiveLevel(null)}>
+          <ChevronLeft size={20} strokeWidth={2.5} /><span>Back</span>
+        </button>
+        <span className="g-navbar-title">{activeLevel.title}</span>
+      </div>
+      <div className="g-page-body">
+        <div className="ls-cats-header">
+          <h1 className="ls-page-title">{activeLevel.title}</h1>
+          <p className="ls-page-sub" style={{ marginBottom: 0 }}>Choose a category to begin</p>
+        </div>
+        <div className="ls-notice">
+          <AlertCircle size={18} />{activeLevel.requirement}
+        </div>
+
+        <div className="ls-cat-list">
+          {cats.map((cat, i) => {
+            const ids  = recipes.filter(r => r.level === activeLevel.id && r.category === cat).map(r => r.id)
+            const done = ids.filter(isDone).length
+            const isComplete = done === ids.length
+            const CatIcon = catIcons[i % catIcons.length]
             return (
-              <div
-                key={level.id}
-                className={`level-card ${locked ? 'locked' : ''} ${completed ? 'completed' : ''}`}
-                onClick={() => !locked && setActiveLevel(level)}
-              >
-                {locked && <div className="card-badge"><Lock size={20} /></div>}
-                {completed && <div className="card-badge success"><CheckCircle size={20} /></div>}
-
-                <div className="level-image-wrapper">
-                  <img src={level.image} alt={level.title} className={`level-image ${locked ? 'grayscale' : ''}`} />
-                </div>
-
-                <div className="level-content">
-                  <h2>{level.title}</h2>
-                  <p className="level-subtitle">{level.subtitle}</p>
-
-                  <div className="progress-track">
-                    <div className="progress-track-bar" style={{ width: `${progress}%` }} />
+              <motion.div key={cat}
+                className={`ls-cat-card ${isComplete ? 'done' : ''}`}
+                onClick={() => setActiveCategory(cat)}
+                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.06 }} whileTap={{ scale: 0.99 }}>
+                <div className="ls-cat-icon"><CatIcon size={26} strokeWidth={1.8} /></div>
+                <div className="ls-cat-body">
+                  <div className="ls-cat-name">
+                    {cat}
+                    {isComplete && <CheckCircle2 size={16} className="ls-cat-arrow" style={{ color: 'var(--green)' }} />}
                   </div>
-
-                  <div className="level-meta">
-                    <span><Star size={14} /> Min {level.minScore}%</span>
-                    <span><Clock size={14} /> {level.recipes.length} recipes</span>
+                  <div className="ls-cat-count">{done}/{ids.length} recipes completed</div>
+                  <div className="g-bar-track">
+                    <div className={`g-bar-fill ${isComplete ? 'g-bar-fill--green' : ''}`} style={{ width: `${(done/ids.length)*100}%` }} />
                   </div>
-
-                  <button className="level-start-btn" disabled={locked}>
-                    {locked ? '🔒 Locked' : completed ? '✓ Completed' : 'Start Level'}
-                  </button>
                 </div>
-              </div>
+                <ChevronRight size={22} className="ls-cat-arrow" />
+              </motion.div>
             )
           })}
         </div>
       </div>
-    )
-  }
+    </div>
+  )
 
-  // ---- CATEGORY SELECTION (Level 1 has two categories) ----
-  const categories = getCategoriesInLevel(activeLevel.id)
-  if (categories.length > 1 && !activeCategory) {
-    return (
-      <div className="panel">
-        <button className="back-btn" onClick={() => setActiveLevel(null)}>← Back</button>
-        <h1 className="level-title">{activeLevel.title}</h1>
-        <p className="level-subtitle">{activeLevel.subtitle}</p>
-
-        <div className="requirement-box">
-          <AlertCircle size={18} />
-          <span>{activeLevel.requirement}</span>
-        </div>
-
-        <h2 className="section-heading">Select a Category</h2>
-
-        <div className="category-grid">
-          {categories.map((cat) => {
-            const catRecipeIds = recipes.filter((r) => r.level === activeLevel.id && r.category === cat).map((r) => r.id)
-            const done = catRecipeIds.filter((id) => recipeMastery[id]?.completed).length
-
-            return (
-              <div key={cat} className="category-card" onClick={() => setActiveCategory(cat)}>
-                <h3>{cat}</h3>
-                <div className="category-progress">{done}/{catRecipeIds.length} completed</div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    )
-  }
-
-  // ---- RECIPE GRID ----
-  const levelRecipes = activeCategory
-    ? recipes.filter((r) => r.level === activeLevel.id && r.category === activeCategory)
-    : recipes.filter((r) => activeLevel.recipes.includes(r.id))
+  /* ── Recipe grid ── */
+  const list = activeCategory
+    ? recipes.filter(r => r.level === activeLevel.id && r.category === activeCategory)
+    : recipes.filter(r => activeLevel.recipes.includes(r.id))
 
   return (
-    <div className="panel">
-      <button className="back-btn" onClick={() => (activeCategory ? setActiveCategory(null) : setActiveLevel(null))}>
-        ← Back
-      </button>
-
-      <h1 className="level-title">{activeCategory ? `${activeCategory} — ${activeLevel.title}` : activeLevel.title}</h1>
-
-      <div className="requirement-box">
-        <AlertCircle size={18} />
-        <span>{activeLevel.requirement}</span>
+    <div className="g-page">
+      <div className="g-navbar">
+        <button className="g-back-btn" onClick={() => activeCategory ? setActiveCategory(null) : setActiveLevel(null)}>
+          <ChevronLeft size={20} strokeWidth={2.5} /><span>Back</span>
+        </button>
+        <span className="g-navbar-title">{activeCategory ?? activeLevel.title}</span>
       </div>
-
-      <div className="recipe-grid">
-        {levelRecipes.map((recipe) => {
-          const unlocked = isRecipeUnlocked(recipe.id)
-          const completed = isRecipeCompleted(recipe.id)
-          const mastery = recipeMastery[recipe.id]
-
-          return (
-            <div
-              key={recipe.id}
-              className={`recipe-card ${!unlocked ? 'locked' : ''} ${completed ? 'completed' : ''}`}
-              onClick={() => handleRecipeSelect(recipe)}
-            >
-              {!unlocked && <div className="card-badge"><Lock size={18} /></div>}
-              {completed && <div className="card-badge success"><CheckCircle size={18} /></div>}
-
-              <img src={recipe.image} alt={recipe.name} className={`recipe-image ${!unlocked ? 'grayscale' : ''}`} />
-
-              <div className="recipe-card-body">
-                <h3>{recipe.name}</h3>
-                <div className="recipe-meta">
-                  <span>{recipe.ingredients.length} ingredients</span>
-                  <span>•</span>
-                  <span>{recipe.tools.length} tools</span>
+      <div className="g-page-body">
+        <h1 className="ls-page-title">{activeCategory ?? activeLevel.title}</h1>
+        <div className="ls-notice">
+          <AlertCircle size={18} />{activeLevel.requirement}
+        </div>
+        <div className="ls-recipe-grid">
+          {list.map((r, i) => {
+            const unlocked = isUnlocked(r.id); const done = isDone(r.id)
+            return (
+              <motion.div key={r.id}
+                className={`ls-recipe-card ${!unlocked ? 'locked' : ''} ${done ? 'completed' : ''}`}
+                onClick={() => pick(r)}
+                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }} whileTap={unlocked ? { scale: 0.96 } : {}}>
+                {!unlocked && <div className="ls-badge ls-badge-lock" style={{top:8,right:8,width:28,height:28}}><Lock size={14}/></div>}
+                {done      && <div className="ls-badge ls-badge-done" style={{top:8,right:8,width:28,height:28}}><CheckCircle2 size={14}/></div>}
+                <img src={r.image} alt={r.name}
+                  className={`ls-recipe-img ${!unlocked ? 'dim' : ''}`}
+                  onError={e => { (e.target as HTMLImageElement).style.display='none' }} />
+                <div className="ls-recipe-body">
+                  <div className="ls-recipe-name">{r.name}</div>
+                  <div className="ls-recipe-meta">{r.ingredients.length} ingredients · {r.tools.length} tools</div>
+                  {done && recipeMastery[r.id] && (
+                    <div className="ls-recipe-stars">{'★'.repeat(recipeMastery[r.id].stars)} {recipeMastery[r.id].bestScore}%</div>
+                  )}
                 </div>
-                {completed && mastery && (
-                  <div className="recipe-score">
-                    {'⭐'.repeat(mastery.stars)} {mastery.bestScore}%
-                  </div>
-                )}
-                {!unlocked && <div className="recipe-locked-label">🔒 Complete previous recipe first</div>}
-              </div>
-            </div>
-          )
-        })}
+              </motion.div>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

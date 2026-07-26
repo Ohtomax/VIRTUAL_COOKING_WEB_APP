@@ -1,105 +1,407 @@
-/* ==========================================
-   EDUCATIONAL KITCHEN LAYOUT
-   ========================================== */
-.virtual-cooking-laboratory {
+/* =====================================================
+   EDUCATIONAL KITCHEN — iOS / Apple Design Language
+   SF Pro inspired: rounded corners, frosted glass,
+   clean hierarchy, system blues, precise spacing.
+   ===================================================== */
+
+/* ── CSS tokens ── */
+:root {
+  --ios-blue:       #0A84FF;
+  --ios-blue-dim:   rgba(10, 132, 255, 0.18);
+  --ios-green:      #30D158;
+  --ios-green-dim:  rgba(48, 209, 88, 0.18);
+  --ios-red:        #FF453A;
+  --ios-orange:     #FF9F0A;
+  --ios-label:      rgba(255, 255, 255, 0.95);
+  --ios-label-sec:  rgba(255, 255, 255, 0.55);
+  --ios-label-ter:  rgba(255, 255, 255, 0.30);
+  --ios-fill:       rgba(255, 255, 255, 0.10);
+  --ios-fill-sec:   rgba(255, 255, 255, 0.07);
+  --ios-sep:        rgba(255, 255, 255, 0.12);
+  --ios-glass:      rgba(18, 18, 20, 0.72);
+  --ios-glass-btn:  rgba(255, 255, 255, 0.13);
+  --ios-radius-xl:  20px;
+  --ios-radius-lg:  16px;
+  --ios-radius-md:  12px;
+  --ios-radius-sm:  10px;
+  --ios-radius-pill: 100px;
+  --ios-blur:       saturate(180%) blur(20px);
+}
+
+/* ── Root ── */
+.ek-root {
+  position: relative;
   width: 100%;
   height: 100vh;
-  background-image: url('/assets/ui/virtualcooking.png');
+  overflow: hidden;
+  font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Background ── */
+.ek-bg {
+  position: absolute;
+  inset: 0;
   background-size: cover;
   background-position: center;
-  position: relative;
-  overflow: hidden;
+  z-index: 0;
+}
+.ek-bg-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,0.40) 0%,
+    rgba(0,0,0,0.20) 45%,
+    rgba(0,0,0,0.55) 100%
+  );
 }
 
-.kitchen-back-btn {
+/* ── Navbar (iOS top bar style) ── */
+.ek-navbar {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  z-index: 1000;
-  color: #333;
-}
-
-.kitchen-counter-hud {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid #4CAF50;
-  border-radius: 12px;
-  z-index: 1000;
-  font-size: 16px;
-  color: #333;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 56px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--ios-glass);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
+  border-bottom: 0.5px solid var(--ios-sep);
 }
 
-/* Feedback Toast */
-.feedback-toast {
+.ek-nav-back {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--ios-blue);
+  font-size: 17px;
+  font-weight: 400;
+  cursor: pointer;
+  padding: 6px 4px;
+  border-radius: var(--ios-radius-sm);
+  transition: opacity 0.15s;
+  min-width: 72px;
+}
+.ek-nav-back:active { opacity: 0.5; }
+
+.ek-nav-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ios-label);
+  letter-spacing: -0.3px;
+  text-align: center;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Step pill strip ── */
+.ek-steps-strip {
   position: absolute;
-  top: 80px;
+  top: 68px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 12px 24px;
-  border-radius: 25px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--ios-glass);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
+  border: 0.5px solid var(--ios-sep);
+  border-radius: var(--ios-radius-pill);
+  padding: 8px 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+
+.ek-step-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ek-step-bubble {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  flex-shrink: 0;
+  transition: background 0.25s, color 0.25s;
+}
+.ek-step-bubble.idle   { background: var(--ios-fill); color: var(--ios-label-ter); }
+.ek-step-bubble.active { background: var(--ios-blue); color: #fff; }
+.ek-step-bubble.done   { background: var(--ios-green); color: #fff; }
+
+.ek-step-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ios-label-ter);
+  white-space: nowrap;
+  transition: color 0.25s;
+}
+.ek-step-text.active { color: var(--ios-blue);  font-weight: 600; }
+.ek-step-text.done   { color: var(--ios-green); }
+
+.ek-step-line {
+  width: 20px; height: 1.5px;
+  background: var(--ios-sep);
+  margin: 0 6px;
+  border-radius: 2px;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+.ek-step-line.done { background: var(--ios-green); }
+
+/* ═══════════════════════════════════════════
+   STATION BUTTONS
+   Apple Human Interface: frosted glass pill,
+   icon + label, no emoji, no border on rest,
+   hairline border on active/done states.
+   ═══════════════════════════════════════════ */
+.ek-stations {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none; /* let children receive events */
+}
+
+.ek-btn {
+  /* Layout */
+  position: absolute;
+  pointer-events: all;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 20px;
+  min-width: 110px;
+
+  /* Glass surface */
+  background: var(--ios-glass-btn);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
+  border: 0.5px solid var(--ios-sep);
+  border-radius: var(--ios-radius-xl);
+
+  /* Type */
+  color: var(--ios-label);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: background 0.18s, border-color 0.18s, box-shadow 0.18s, transform 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Icon container — circular tinted background */
+.ek-btn-icon-wrap {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--ios-fill);
+  color: var(--ios-label);
+  transition: background 0.18s, color 0.18s;
+  flex-shrink: 0;
+}
+
+/* ── Hover (desktop) ── */
+@media (hover: hover) {
+  .ek-btn:hover {
+    background: rgba(255,255,255,0.20);
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+  .ek-btn:hover .ek-btn-icon-wrap {
+    background: rgba(255,255,255,0.18);
+  }
+}
+
+/* ── Default ── */
+.ek-btn--default .ek-btn-icon-wrap { color: var(--ios-label); }
+
+/* ── Done ── */
+.ek-btn--done {
+  border-color: rgba(48, 209, 88, 0.45);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(48,209,88,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.ek-btn--done .ek-btn-icon-wrap {
+  background: var(--ios-green-dim);
+  color: var(--ios-green);
+}
+
+/* ── CTA (stove when ready) ── */
+.ek-btn--cta {
+  background: rgba(10, 132, 255, 0.20);
+  border-color: rgba(10, 132, 255, 0.50);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(10,132,255,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.ek-btn--cta .ek-btn-icon-wrap {
+  background: var(--ios-blue-dim);
+  color: var(--ios-blue);
+}
+
+/* ── Locked ── */
+.ek-btn--locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: rgba(255,255,255,0.06);
+}
+.ek-btn--locked:hover { background: var(--ios-glass-btn); }
+
+/* ── Done checkmark ── */
+.ek-btn-check {
+  color: var(--ios-green);
+  flex-shrink: 0;
+}
+
+/* ── Position each button (calibrated to kitchen-main.jpg) ── */
+/* Fridge — left-center */
+.ek-btn:nth-child(1) { top: 30%; left: 3%; }
+/* Cabinet — upper-center-left */
+.ek-btn:nth-child(2) { top: 11%; left: 26%; }
+/* Prep table — lower-center-left */
+.ek-btn:nth-child(3) { bottom: 22%; left: 26%; }
+/* Sink — right upper */
+.ek-btn:nth-child(4) { top: 26%; right: 3%; }
+/* Stove — right lower */
+.ek-btn:nth-child(5) { bottom: 22%; right: 3%; }
+
+/* ═══════════════════════════════════════════
+   BOTTOM ACTION SHEET (iOS sheet style)
+   ═══════════════════════════════════════════ */
+.ek-action-sheet {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 14px 20px 28px;           /* 28px bottom = safe area */
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--ios-glass);
+  backdrop-filter: var(--ios-blur);
+  -webkit-backdrop-filter: var(--ios-blur);
+  border-top: 0.5px solid var(--ios-sep);
+}
+
+.ek-action-hint {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ios-label-sec);
+  letter-spacing: -0.1px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.ek-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 22px;
+  border-radius: var(--ios-radius-pill);
+  font-family: inherit;
   font-size: 15px;
   font-weight: 600;
-  z-index: 2000;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}
-.feedback-toast.success { background: #4ade80; color: #000; }
-.feedback-toast.error { background: #ef4444; color: #fff; }
-.feedback-toast.warning { background: #fbbf24; color: #000; }
-.feedback-toast.info { background: #60a5fa; color: #000; }
-
-/* Kitchen Stations */
-.kitchen-station {
-  position: absolute;
-  padding: 12px 20px;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
+  letter-spacing: -0.2px;
+  border: none;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ek-action-btn--ready {
+  background: var(--ios-blue);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(10, 132, 255, 0.45);
+}
+.ek-action-btn--ready:active { opacity: 0.75; }
+
+.ek-action-btn--idle {
+  background: var(--ios-fill);
+  color: var(--ios-label-ter);
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════
+   FEEDBACK TOAST
+   ═══════════════════════════════════════════ */
+.ek-toast {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  padding: 10px 20px;
+  border-radius: var(--ios-radius-pill);
   font-size: 14px;
   font-weight: 600;
-  z-index: 100;
-  transition: transform 0.2s, background 0.2s;
-  backdrop-filter: blur(4px);
-}
-.kitchen-station:hover {
-  transform: scale(1.08);
-  background: rgba(0, 0, 0, 0.8);
-  border-color: #fbbf24;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-.refrigerator-area { left: 14%; top: 25%; }
-.cabinet-area { left: 42%; top: 18%; }
-.table-area { left: 58%; top: 55%; }
-.sink-area { left: 74%; top: 25%; }
-.stove-area { left: 86%; top: 40%; }
+.ek-toast--success { background: var(--ios-green);  color: #fff; }
+.ek-toast--error   { background: var(--ios-red);    color: #fff; }
+.ek-toast--warning { background: var(--ios-orange); color: #fff; }
+.ek-toast--info    { background: var(--ios-blue);   color: #fff; }
 
-/* Kitchen Hints */
-.kitchen-hint {
-  position: absolute;
-  left: 65%;
-  top: 38%;
-  padding: 12px 20px;
-  background: #4CAF50;
-  color: white;
-  border-radius: 25px;
-  font-size: 15px;
-  font-weight: 700;
-  z-index: 100;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+/* ═══════════════════════════════════════════
+   STATION BUTTON POSITIONS
+   Calibrated to kitchen-main.jpg:
+   - Fridge:   far left, vertically centered
+   - Cabinet:  upper center-left (glass cabinet doors)
+   - Table:    lower center-left (cutting board area)
+   - Sink:     far right (sink visible right edge)
+   - Stove:    center of frame, lower half (stove burners)
+   ═══════════════════════════════════════════ */
+
+/* Override nth-child positions with precise placement */
+.ek-stations .ek-btn:nth-child(1) { /* Fridge */
+  left: 2%;
+  top: 50%;
+  transform: translateY(-50%);
 }
-.kitchen-hint.cooking-hint { background: #FF9800; left: 80%; }
+.ek-stations .ek-btn:nth-child(2) { /* Cabinet */
+  left: 22%;
+  top: 9%;
+}
+.ek-stations .ek-btn:nth-child(3) { /* Prep Table */
+  left: 22%;
+  bottom: 20%;
+}
+.ek-stations .ek-btn:nth-child(4) { /* Sink */
+  right: 2%;
+  top: 24%;
+}
+
+/* STOVE — sits directly over the stove burners in the image
+   The stove is center-frame, lower half of kitchen-main.jpg */
+.ek-stations .ek-btn:nth-child(5) {
+  left: 50%;
+  top: 58%;
+  transform: translateX(-50%);
+  /* Extra glow when ready to cook so it's obvious */
+}
+.ek-stations .ek-btn:nth-child(5).ek-btn--cta {
+  box-shadow:
+    0 0 0 1px rgba(10,132,255,0.5),
+    0 0 28px 6px rgba(10,132,255,0.25),
+    0 4px 24px rgba(0,0,0,0.4);
+}

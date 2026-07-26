@@ -1,52 +1,62 @@
-import { ChefHat, BookOpen, BarChart3, Settings, Crown, Lock } from 'lucide-react'
+import { ChefHat, BookOpen, BarChart3, Settings, Trophy, Lock, ChevronRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 import useGameStore from '../store/gameStore'
 import type { SetScreenProps } from '../types'
+import logo from '../../public/assets/bg/upperlogo.png'
+
+const MENU_ITEMS = (allDone: boolean) => [
+  { icon: ChefHat,                 label: 'Start Game',    sub: 'Begin your cooking journey',      screen: 'kitchen-tools'    as const, primary: true,  locked: false     },
+  { icon: BookOpen,                label: 'Tutorial',      sub: 'Learn how to play',               screen: 'tutorial'         as const, primary: false, locked: false     },
+  { icon: BarChart3,               label: 'Progress',      sub: 'View your cooking history',        screen: 'progress'         as const, primary: false, locked: false     },
+  { icon: Settings,                label: 'Settings',      sub: 'Audio & preferences',             screen: 'settings'         as const, primary: false, locked: false     },
+  { icon: allDone ? Trophy : Lock, label: 'Challenge',     sub: allDone ? 'Final assessment' : 'Complete all levels first', screen: 'master-chef-mode' as const, primary: false, locked: !allDone },
+]
 
 export default function MainMenu({ setScreen }: SetScreenProps) {
-  const { levelProgress, recipeMastery } = useGameStore()
-
-  // Challenge mode unlocks after completing levels 1–4
-  const allLevelsComplete = [1, 2, 3, 4].every((id) => levelProgress[id]?.completed)
+  const { levelProgress } = useGameStore()
+  const allDone = [1, 2, 3, 4].every(id => levelProgress[id]?.completed)
+  const items   = MENU_ITEMS(allDone)
 
   return (
     <div className="main-menu" style={{ backgroundImage: "url('/assets/bg/main-bg.jpg')" }}>
-      <div className="menu-overlay" />
+      <div className="menu-scrim" />
 
-      <div className="center-menu-container">
-        <img src="/assets/ui/game-logo.png" alt="Virtual Cooking Laboratory" className="game-logo" />
+      <div className="menu-inner">
+        {/* Logo */}
+        <motion.img src={logo} alt="Logo" className="menu-logo"
+          initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', damping: 18, stiffness: 200 }} />
 
-        <div className="wood-menu-wrapper">
-          {/* Start Game → Tool Identification first */}
-          <button className="wood-menu-btn start-btn" onClick={() => setScreen('kitchen-tools')}>
-            <div className="btn-icon"><ChefHat size={26} /></div>
-            <div className="btn-content"><span className="btn-title">START GAME</span></div>
-          </button>
+        <motion.h1 className="menu-title"
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}>
+          Virtual Cooking Lab
+        </motion.h1>
+        <motion.p className="menu-tagline"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ delay: 0.18 }}>
+          Learn to cook. Master the kitchen.
+        </motion.p>
 
-          <button className="wood-menu-btn" onClick={() => setScreen('tutorial')}>
-            <div className="btn-icon"><BookOpen size={26} /></div>
-            <div className="btn-content"><span className="btn-title">TUTORIAL</span></div>
-          </button>
-
-          <button className="wood-menu-btn" onClick={() => setScreen('progress')}>
-            <div className="btn-icon"><BarChart3 size={26} /></div>
-            <div className="btn-content"><span className="btn-title">PROGRESS</span></div>
-          </button>
-
-          <button className="wood-menu-btn" onClick={() => setScreen('settings')}>
-            <div className="btn-icon"><Settings size={26} /></div>
-            <div className="btn-content"><span className="btn-title">SETTINGS</span></div>
-          </button>
-
-          <button
-            className={`wood-menu-btn master-chef-btn ${!allLevelsComplete ? 'locked-btn' : ''}`}
-            onClick={() => allLevelsComplete && setScreen('master-chef-mode')}
-          >
-            <div className="btn-icon">{allLevelsComplete ? <Crown size={26} /> : <Lock size={26} />}</div>
-            <div className="btn-content">
-              <span className="btn-title">CHALLENGE MODE</span>
-              <small>{allLevelsComplete ? 'Final Challenge Unlocked' : 'Complete All Levels First'}</small>
-            </div>
-          </button>
+        {/* Menu buttons — compact sizing */}
+        <div className="menu-list">
+          {items.map(({ icon: Icon, label, sub, screen, primary, locked }, i) => (
+            <motion.button key={label}
+              className={`menu-item ${primary ? 'menu-item--primary' : ''} ${locked ? 'menu-item--locked' : ''}`}
+              onClick={() => !locked && setScreen(screen)}
+              initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.22 + i * 0.06, type: 'spring', damping: 20 }}
+              whileTap={!locked ? { scale: 0.97 } : {}}>
+              <div className="menu-item-icon">
+                <Icon size={20} strokeWidth={2} />
+              </div>
+              <div className="menu-item-text">
+                <span className="menu-item-title">{label}</span>
+                <span className="menu-item-sub">{sub}</span>
+              </div>
+              <ChevronRight size={16} strokeWidth={2.5} className="menu-item-arrow" />
+            </motion.button>
+          ))}
         </div>
       </div>
     </div>

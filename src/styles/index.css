@@ -1,48 +1,63 @@
-/* ==========================================
-   BASE RESET & VARIABLES
-   ========================================== */
+/* ════════════════════════════════════════════════
+   GLOBAL TOKENS — Big, bold, game-feel
+   ════════════════════════════════════════════════ */
 :root {
-  --color-bg: #1a1a2e;
-  --color-surface: rgba(0, 0, 0, 0.3);
-  --color-surface-hover: rgba(255, 255, 255, 0.08);
-  --color-text: #f0f0f0;
-  --color-text-muted: #888;
-  --color-accent: #fbbf24;
-  --color-success: #4ade80;
-  --color-error: #ef4444;
-  --color-warning: #fbbf24;
-  --color-info: #60a5fa;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --gold:        #F5A623;
+  --gold-bright: #FFD060;
+  --gold-dim:    rgba(245,166,35,0.22);
+  --gold-glow:   rgba(245,166,35,0.38);
+  --amber:       #E8820C;
+  --amber-dim:   rgba(232,130,12,0.15);
+  --green:       #34C759;
+  --green-dim:   rgba(52,199,89,0.18);
+  --red:         #FF3B30;
+  --blue:        #0A84FF;
+  --blue-dim:    rgba(10,132,255,0.18);
+  --purple:      #BF5AF2;
+
+  --bg:        #0D0A05;
+  --surface-1: #1E1608;
+  --surface-2: #2A1F0A;
+  --surface-3: #3A2D10;
+  --glass:     rgba(20,14,4,0.84);
+  --glass-warm:rgba(245,166,35,0.07);
+
+  --text-1: #FFEFD5;
+  --text-2: rgba(255,239,213,0.65);
+  --text-3: rgba(255,239,213,0.38);
+  --text-4: rgba(255,239,213,0.18);
+
+  --border:        rgba(245,166,35,0.20);
+  --border-bright: rgba(245,166,35,0.50);
+  --sep:           rgba(255,255,255,0.09);
+
+  --blur: saturate(200%) blur(24px);
+
+  /* Radii — slightly bigger */
+  --r-sm:   12px;
+  --r-md:   18px;
+  --r-lg:   24px;
+  --r-xl:   32px;
+  --r-pill: 100px;
+
+  --sh-sm:  0 2px 12px rgba(0,0,0,0.55);
+  --sh-md:  0 6px 28px rgba(0,0,0,0.65);
+  --sh-lg:  0 14px 56px rgba(0,0,0,0.75);
+  --sh-gold:0 0 28px rgba(245,166,35,0.35);
 }
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html, body, #root {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; width: 100%; overflow: hidden; }
 
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--color-bg);
-  color: var(--color-text);
+  font-family: -apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
+  background: var(--bg); color: var(--text-1);
   -webkit-font-smoothing: antialiased;
+  font-size: 16px; /* base bump */
 }
+button { cursor: pointer; border: none; font-family: inherit; background: none; -webkit-tap-highlight-color: transparent; }
+img    { max-width: 100%; display: block; }
 
-button {
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }

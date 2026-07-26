@@ -1,15 +1,14 @@
 import type { Recipe, Level } from '../types'
 
 export const recipes: Recipe[] = [
-  // ==========================================
-  // Level 1 — Mother Sauces
-  // ==========================================
+
+  // ══════════════════════════════════════════
+  // Level 1 — Mother Sauces & Soups
+  // ══════════════════════════════════════════
   {
-    id: 1,
-    name: 'Bechamel Sauce',
-    level: 1,
-    category: 'Sauce',
+    id: 1, name: 'Bechamel Sauce', level: 1, category: 'Sauce',
     image: '/assets/levels/level1/Sauces/Bechamel/bechamel.png',
+    minScore: 70, cookingDuration: 45,
     ingredients: ['Butter', 'Flour', 'Milk', 'Salt', 'Pepper'],
     tools: ['Saucepan', 'Whisk', 'Measuring cups'],
     steps: [
@@ -22,11 +21,9 @@ export const recipes: Recipe[] = [
     ],
   },
   {
-    id: 2,
-    name: 'Espagnole Sauce',
-    level: 1,
-    category: 'Sauce',
+    id: 2, name: 'Espagnole Sauce', level: 1, category: 'Sauce',
     image: '/assets/levels/level1/Sauces/Espagnole/espagnole.png',
+    minScore: 70, cookingDuration: 45,
     ingredients: ['Beef stock', 'Butter', 'Carrots', 'Celery', 'Flour', 'Onion', 'Pepper', 'Salt', 'Tomato paste'],
     tools: ['Saucepan', 'Whisk', 'Knife', 'Cutting board'],
     steps: [
@@ -37,13 +34,16 @@ export const recipes: Recipe[] = [
       'Simmer for 2–3 hours',
       'Strain and serve',
     ],
+    cutInstructions: {
+      Carrots: { technique: 'dice', size: 'standard', description: 'dice cut' },
+      Celery:  { technique: 'dice', size: 'standard', description: 'dice cut' },
+      Onion:   { technique: 'dice', size: 'standard', description: 'dice cut' },
+    },
   },
   {
-    id: 3,
-    name: 'Tomato Sauce',
-    level: 1,
-    category: 'Sauce',
+    id: 3, name: 'Tomato Sauce', level: 1, category: 'Sauce',
     image: '/assets/levels/level1/Sauces/Tomato/tomatosauce.jpg',
+    minScore: 70, cookingDuration: 45,
     ingredients: ['Garlic', 'Olive oil', 'Onion', 'Pepper', 'Salt', 'Tomatoes'],
     tools: ['Saucepan', 'Knife', 'Cutting board'],
     steps: [
@@ -55,13 +55,16 @@ export const recipes: Recipe[] = [
       'Season with salt and pepper',
       'Serve or store for later use',
     ],
+    cutInstructions: {
+      Garlic:   { technique: 'mince', size: 'standard', description: 'mince cut' },
+      Onion:    { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      Tomatoes: { technique: 'chop',  size: 'standard', description: 'chop cut'  },
+    },
   },
   {
-    id: 4,
-    name: 'Hollandaise Sauce',
-    level: 1,
-    category: 'Sauce',
+    id: 4, name: 'Hollandaise Sauce', level: 1, category: 'Sauce',
     image: '/assets/levels/level1/Sauces/Hollandaise/hollandaise-sauce.jpg',
+    minScore: 70, cookingDuration: 45,
     ingredients: ['Butter', 'Egg yolks', 'Lemon juice', 'Salt'],
     tools: ['Double boiler', 'Whisk', 'Saucepan'],
     steps: [
@@ -73,16 +76,10 @@ export const recipes: Recipe[] = [
       'Serve immediately',
     ],
   },
-
-  // ==========================================
-  // Level 1 — Mother Soups
-  // ==========================================
   {
-    id: 5,
-    name: 'Chicken Noodle Soup',
-    level: 1,
-    category: 'Mother Soup',
+    id: 5, name: 'Chicken Noodle Soup', level: 1, category: 'Mother Soup',
     image: '/assets/levels/level1/MotherSoup/Chicken Noodle Soup/chicken-noodle-soup.jpg',
+    minScore: 70, cookingDuration: 45,
     ingredients: ['Carrot', 'Celery', 'Chicken breast', 'Chicken broth', 'Cooking oil', 'Egg noodles', 'Garlic', 'Onion', 'Parsley', 'Pepper', 'Salt'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -95,13 +92,17 @@ export const recipes: Recipe[] = [
       'Season with salt and pepper',
       'Serve hot',
     ],
+    cutInstructions: {
+      Carrots: { technique: 'slice', size: 'standard', description: 'slice cut' },
+      Celery:  { technique: 'slice', size: 'standard', description: 'slice cut' },
+      Onion:   { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      Garlic:  { technique: 'mince', size: 'standard', description: 'mince cut' },
+    },
   },
   {
-    id: 6,
-    name: 'Butternut Squash Soup',
-    level: 1,
-    category: 'Mother Soup',
+    id: 6, name: 'Butternut Squash Soup', level: 1, category: 'Mother Soup',
     image: '/assets/levels/level1/MotherSoup/Butternut Squash Soup/butternut-squash-soup.png',
+    minScore: 70, cookingDuration: 45,
     ingredients: ['Butter', 'Butternut squash', 'Cream', 'Garlic', 'Onion', 'Pepper', 'Salt', 'Vegetable broth'],
     tools: ['Pot', 'Knife', 'Cutting board', 'Blender'],
     steps: [
@@ -113,13 +114,15 @@ export const recipes: Recipe[] = [
       'Add cream and season',
       'Serve warm',
     ],
+    cutInstructions: {
+      Onion:  { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      Garlic: { technique: 'mince', size: 'standard', description: 'mince cut' },
+    },
   },
   {
-    id: 7,
-    name: 'Tomato Soup',
-    level: 1,
-    category: 'Mother Soup',
+    id: 7, name: 'Tomato Soup', level: 1, category: 'Mother Soup',
     image: '/assets/levels/level1/MotherSoup/Tomato Soup/tomatosauce.jpg',
+    minScore: 70, cookingDuration: 45,
     ingredients: ['Cream', 'Garlic', 'Onion', 'Pepper', 'Salt', 'Tomatoes'],
     tools: ['Pot', 'Knife', 'Cutting board', 'Blender'],
     steps: [
@@ -131,13 +134,16 @@ export const recipes: Recipe[] = [
       'Season with salt and pepper',
       'Serve hot with crusty bread',
     ],
+    cutInstructions: {
+      Garlic:   { technique: 'mince', size: 'standard', description: 'mince cut' },
+      Onion:    { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      Tomatoes: { technique: 'chop',  size: 'standard', description: 'chop cut'  },
+    },
   },
   {
-    id: 8,
-    name: 'Corn Chowder',
-    level: 1,
-    category: 'Mother Soup',
+    id: 8, name: 'Corn Chowder', level: 1, category: 'Mother Soup',
     image: '/assets/levels/level1/MotherSoup/Corn Crowder/creamy-corn-.png',
+    minScore: 70, cookingDuration: 45,
     ingredients: ['Butter', 'Chicken broth', 'Corn kernels', 'Milk', 'Onion', 'Pepper', 'Potatoes', 'Salt'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -148,17 +154,19 @@ export const recipes: Recipe[] = [
       'Season with salt and pepper',
       'Serve hot',
     ],
+    cutInstructions: {
+      Onion:    { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      Potatoes: { technique: 'cube',  size: 'standard', description: 'cube cut'  },
+    },
   },
 
-  // ==========================================
+  // ══════════════════════════════════════════
   // Level 2 — Filipino Basic Dishes
-  // ==========================================
+  // ══════════════════════════════════════════
   {
-    id: 9,
-    name: 'Chicken Adobo',
-    level: 2,
-    category: 'Filipino Basic',
+    id: 9, name: 'Chicken Adobo', level: 2, category: 'Filipino Basic',
     image: '/assets/levels/level2/Basic/ChickenAdobo/adobo.jpg',
+    minScore: 75, cookingDuration: 60,
     ingredients: ['Bay leaves', 'Chicken', 'Cooking oil', 'Garlic', 'Peppercorns', 'Soy sauce', 'Vinegar', 'Water'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -170,13 +178,14 @@ export const recipes: Recipe[] = [
       'Remove chicken and fry until golden brown',
       'Reduce sauce and pour over chicken',
     ],
+    cutInstructions: {
+      Garlic: { technique: 'mince', size: 'standard', description: 'mince cut' },
+    },
   },
   {
-    id: 10,
-    name: 'Pork Sinigang',
-    level: 2,
-    category: 'Filipino Basic',
+    id: 10, name: 'Pork Sinigang', level: 2, category: 'Filipino Basic',
     image: '/assets/levels/level2/Basic/PorkSinigang/pork sinigang.jpg',
+    minScore: 75, cookingDuration: 60,
     ingredients: ['Kangkong', 'Onion', 'Pork belly', 'Radish', 'Sinigang mix', 'Sitaw', 'Tomato', 'Water'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -188,13 +197,18 @@ export const recipes: Recipe[] = [
       'Simmer until vegetables are cooked',
       'Serve hot with rice',
     ],
+    cutInstructions: {
+      Tomato:   { technique: 'slice',         size: 'standard', description: 'slice cut'         },
+      Onion:    { technique: 'slice',         size: 'standard', description: 'slice cut'         },
+      Radish:   { technique: 'slice',         size: 'standard', description: 'slice cut'         },
+      Kangkong: { technique: 'straight cut',  size: 'standard', description: 'straight cut'      },
+      Sitaw:    { technique: 'diagonal cut',  size: 'standard', description: 'diagonal cut'      },
+    },
   },
   {
-    id: 11,
-    name: 'Pakbet',
-    level: 2,
-    category: 'Filipino Basic',
+    id: 11, name: 'Pakbet', level: 2, category: 'Filipino Basic',
     image: '/assets/levels/level2/Basic/Pakbet/pakbet.jpg',
+    minScore: 75, cookingDuration: 60,
     ingredients: ['Ampalaya', 'Bagoong alamang', 'Cooking oil', 'Squash', 'Eggplant', 'Garlic', 'Onion', 'Sitaw', 'Tomato', 'Water'],
     tools: ['Wok', 'Knife', 'Cutting board'],
     steps: [
@@ -205,17 +219,23 @@ export const recipes: Recipe[] = [
       'Add bagoong alamang',
       'Stir-fry until vegetables are cooked but still crisp',
     ],
+    cutInstructions: {
+      Tomato:   { technique: 'slice', size: 'standard', description: 'slice cut' },
+      Onion:    { technique: 'slice', size: 'standard', description: 'slice cut' },
+      Eggplant: { technique: 'slice', size: 'standard', description: 'slice cut' },
+      Ampalaya: { technique: 'slice', size: 'standard', description: 'slice cut' },
+      Squash:   { technique: 'cube',  size: 'standard', description: 'cube cut'  },
+      Garlic:   { technique: 'mince', size: 'standard', description: 'mince cut' },
+    },
   },
 
-  // ==========================================
+  // ══════════════════════════════════════════
   // Level 3 — Intermediate
-  // ==========================================
+  // ══════════════════════════════════════════
   {
-    id: 12,
-    name: 'Beef Caldereta',
-    level: 3,
-    category: 'Intermediate',
+    id: 12, name: 'Beef Caldereta', level: 3, category: 'Intermediate',
     image: '/assets/levels/level3/Intermediate/BeefCaldereta/beefcaldereta.jpg',
+    minScore: 80, cookingDuration: 90,
     ingredients: ['Beef', 'Bell pepper', 'Carrots', 'Cooking oil', 'Garlic', 'Liver spread', 'Onion', 'Pepper', 'Potatoes', 'Salt', 'Tomato sauce', 'Water'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -228,13 +248,18 @@ export const recipes: Recipe[] = [
       'Add potatoes, carrots, and bell pepper',
       'Simmer until vegetables are cooked',
     ],
+    cutInstructions: {
+      Onion:      { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      Garlic:     { technique: 'mince', size: 'standard', description: 'mince cut' },
+      Potatoes:   { technique: 'cube',  size: 'standard', description: 'cube cut'  },
+      Carrot:     { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      'Bell pepper': { technique: 'slice', size: 'standard', description: 'slice cut' },
+    },
   },
   {
-    id: 13,
-    name: 'Fish Escabeche',
-    level: 3,
-    category: 'Intermediate',
+    id: 13, name: 'Fish Escabeche', level: 3, category: 'Intermediate',
     image: '/assets/levels/level3/Intermediate/FishEscabeche/fishescabeche.jpg',
+    minScore: 80, cookingDuration: 90,
     ingredients: ['Bell pepper', 'Carrot', 'Cooking oil', 'Cornstarch', 'Tilapia', 'Onion', 'Pepper', 'Salt', 'Vinegar', 'Water'],
     tools: ['Pan', 'Knife', 'Cutting board', 'Saucepan'],
     steps: [
@@ -246,13 +271,17 @@ export const recipes: Recipe[] = [
       'Thicken with cornstarch slurry',
       'Pour sauce over fried fish',
     ],
+    cutInstructions: {
+      Onion:         { technique: 'julienne', size: 'standard', description: 'julienne cut' },
+      'Bell pepper': { technique: 'julienne', size: 'standard', description: 'julienne cut' },
+      Garlic:        { technique: 'mince',    size: 'standard', description: 'mince cut'    },
+      Carrot:        { technique: 'julienne', size: 'standard', description: 'julienne cut' },
+    },
   },
   {
-    id: 14,
-    name: 'Bulalo',
-    level: 3,
-    category: 'Intermediate',
+    id: 14, name: 'Bulalo', level: 3, category: 'Intermediate',
     image: '/assets/levels/level3/Intermediate/Bulalo/bulalo.jpg',
+    minScore: 80, cookingDuration: 90,
     ingredients: ['Beef shank', 'Cabbage', 'Corn cobs', 'Onion', 'Pepper', 'Potatoes', 'Salt', 'Water'],
     tools: ['Large pot', 'Knife', 'Cutting board'],
     steps: [
@@ -264,13 +293,16 @@ export const recipes: Recipe[] = [
       'Season with salt and pepper',
       'Serve hot with broth',
     ],
+    cutInstructions: {
+      Onion:    { technique: 'slice', size: 'standard', description: 'slice cut' },
+      Potatoes: { technique: 'cube',  size: 'standard', description: 'cube cut'  },
+      Cabbage:  { technique: 'chop',  size: 'standard', description: 'chop cut'  },
+    },
   },
   {
-    id: 15,
-    name: 'Kare-Kare',
-    level: 3,
-    category: 'Intermediate',
+    id: 15, name: 'Kare-Kare', level: 3, category: 'Intermediate',
     image: '/assets/levels/level3/Intermediate/kare-kare/karekare.jpg',
+    minScore: 80, cookingDuration: 90,
     ingredients: ['Beef', 'Bok choy', 'Eggplant', 'Onion', 'Peanut butter', 'Salt', 'String beans', 'Water'],
     tools: ['Pot', 'Pan', 'Knife', 'Cutting board'],
     steps: [
@@ -282,17 +314,20 @@ export const recipes: Recipe[] = [
       'Season with salt',
       'Serve with bagoong on the side',
     ],
+    cutInstructions: {
+      Eggplant: { technique: 'slice',        size: 'standard', description: 'slice cut'    },
+      Sitaw:    { technique: 'straight cut', size: 'standard', description: 'straight cut' },
+      Onion:    { technique: 'slice',        size: 'standard', description: 'slice cut'    },
+    },
   },
 
-  // ==========================================
+  // ══════════════════════════════════════════
   // Level 4 — Advanced
-  // ==========================================
+  // ══════════════════════════════════════════
   {
-    id: 16,
-    name: 'Spaghetti',
-    level: 4,
-    category: 'Advanced',
+    id: 16, name: 'Spaghetti', level: 4, category: 'Advanced',
     image: '/assets/levels/level4/Advance/pasta/spaghetti.jpg',
+    minScore: 85, cookingDuration: 120,
     ingredients: ['Pasta', 'Ground pork', 'Spag sauce', 'Onion', 'Garlic', 'Cooking oil', 'Cheese', 'Pepper', 'Salt', 'Water'],
     tools: ['Pot', 'Pan', 'Knife', 'Cutting board'],
     steps: [
@@ -304,13 +339,15 @@ export const recipes: Recipe[] = [
       'Season with salt and pepper',
       'Toss with pasta and top with cheese',
     ],
+    cutInstructions: {
+      Onion:  { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      Garlic: { technique: 'mince', size: 'standard', description: 'mince cut' },
+    },
   },
   {
-    id: 17,
-    name: 'Pork Afritada',
-    level: 4,
-    category: 'Advanced',
+    id: 17, name: 'Pork Afritada', level: 4, category: 'Advanced',
     image: '/assets/levels/level4/Advance/PorkAfritada/porkafritada.jpg',
+    minScore: 85, cookingDuration: 120,
     ingredients: ['Pork', 'Tomato sauce', 'Potatoes', 'Carrot', 'Bell pepper', 'Onion', 'Garlic', 'Cooking oil', 'Pepper', 'Salt', 'Water'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -322,13 +359,18 @@ export const recipes: Recipe[] = [
       'Add potatoes, carrots, and bell pepper',
       'Simmer until vegetables are cooked',
     ],
+    cutInstructions: {
+      Potatoes:      { technique: 'cube',  size: 'standard', description: 'cube cut'  },
+      Carrots:       { technique: 'slice', size: 'standard', description: 'slice cut' },
+      Onion:         { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      'Bell pepper': { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      Garlic:        { technique: 'mince', size: 'standard', description: 'mince cut' },
+    },
   },
   {
-    id: 18,
-    name: 'Beef Morcon',
-    level: 4,
-    category: 'Advanced',
+    id: 18, name: 'Beef Morcon', level: 4, category: 'Advanced',
     image: '/assets/levels/level4/Advance/BeefMorcon/beefmorcon.png',
+    minScore: 85, cookingDuration: 120,
     ingredients: ['Beef', 'Hotdog', 'Carrot', 'Boiled egg', 'Soy sauce', 'Cooking oil', 'Pepper', 'Salt', 'Beef broth', 'Pickles relish'],
     tools: ['Pot', 'Knife', 'Cutting board', 'Twine'],
     steps: [
@@ -340,13 +382,15 @@ export const recipes: Recipe[] = [
       'Simmer beef roll until tender',
       'Slice and serve with sauce',
     ],
+    cutInstructions: {
+      Carrot:        { technique: 'julienne', size: 'standard', description: 'julienne cut' },
+      'Bell pepper': { technique: 'julienne', size: 'standard', description: 'julienne cut' },
+    },
   },
   {
-    id: 19,
-    name: 'King Ranch Chicken',
-    level: 4,
-    category: 'Advanced',
+    id: 19, name: 'King Ranch Chicken', level: 4, category: 'Advanced',
     image: '/assets/levels/level4/Advance/KingRanchChicken/kingranch.jpg',
+    minScore: 85, cookingDuration: 120,
     ingredients: ['Chicken shredded', 'Corn tortillas', 'Shredded cheese', 'Bell pepper', 'Onion', 'Cream of mushroom soup', 'Chicken broth', 'Cooking oil', 'Tomato'],
     tools: ['Baking dish', 'Pan', 'Knife', 'Cutting board'],
     steps: [
@@ -358,57 +402,45 @@ export const recipes: Recipe[] = [
       'Bake at 350°F for 30 minutes',
       'Serve hot',
     ],
+    cutInstructions: {
+      Onion:         { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      'Bell pepper': { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+      Tomato:        { technique: 'dice',  size: 'standard', description: 'dice cut'  },
+    },
   },
 ]
 
 export const levels: Level[] = [
   {
-    id: 1,
-    title: 'Level 1: Soups & Sauces',
+    id: 1, title: 'Level 1: Soups & Sauces',
     subtitle: 'Beginner Stage — Mother Sauces & Soups',
     recipes: [1, 2, 3, 4, 5, 6, 7, 8],
-    requirement: 'Complete all recipes with minimum 80% average score',
-    minScore: 80,
-    image: '/assets/levels/level1/soups.jpg',
+    requirement: 'Complete all recipes with minimum 70% average score',
+    minScore: 70, image: '/assets/levels/level1/soups.jpg',
   },
   {
-    id: 2,
-    title: 'Level 2: Filipino Basic',
+    id: 2, title: 'Level 2: Filipino Basic',
     subtitle: 'Easy Filipino Cooking',
     recipes: [9, 10, 11],
-    requirement: 'Complete all recipes with minimum 85% average score',
-    minScore: 85,
-    image: '/assets/levels/level2/filipino-basic.jpg',
+    requirement: 'Complete all recipes with minimum 75% average score',
+    minScore: 75, image: '/assets/levels/level2/filipino-basic.jpg',
   },
   {
-    id: 3,
-    title: 'Level 3: Intermediate',
+    id: 3, title: 'Level 3: Intermediate',
     subtitle: 'Intermediate Filipino Cuisine',
     recipes: [12, 13, 14, 15],
-    requirement: 'Complete all recipes with minimum 90% average score',
-    minScore: 90,
-    image: '/assets/levels/level3/intermediate.jpg',
+    requirement: 'Complete all recipes with minimum 80% average score',
+    minScore: 80, image: '/assets/levels/level3/intermediate.jpg',
   },
   {
-    id: 4,
-    title: 'Level 4: Advanced',
+    id: 4, title: 'Level 4: Advanced',
     subtitle: 'Advanced Culinary Challenge',
     recipes: [16, 17, 18, 19],
-    requirement: 'Complete all recipes with minimum 95% average score',
-    minScore: 95,
-    image: '/assets/levels/level4/advanced.jpg',
+    requirement: 'Complete all recipes with minimum 85% average score',
+    minScore: 85, image: '/assets/levels/level4/advanced.jpg',
   },
 ]
 
-// Helper: get recipes for a level
-export const getRecipesByLevel = (levelId: number): Recipe[] =>
-  recipes.filter((r) => r.level === levelId)
-
-// Helper: get recipe by id
-export const getRecipeById = (id: number): Recipe | undefined =>
-  recipes.find((r) => r.id === id)
-
-// Helper: get categories in a level
-export const getCategoriesInLevel = (levelId: number): string[] => [
-  ...new Set(recipes.filter((r) => r.level === levelId).map((r) => r.category)),
-]
+export const getRecipesByLevel  = (levelId: number): Recipe[]        => recipes.filter(r => r.level === levelId)
+export const getRecipeById      = (id: number): Recipe | undefined   => recipes.find(r => r.id === id)
+export const getCategoriesInLevel = (levelId: number): string[]      => [...new Set(recipes.filter(r => r.level === levelId).map(r => r.category))]

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { recipes } from '../data/recipes'
-import { findIngredientLocation, matchesIngredient } from '../data/ingredients'
+import { findIngredientLocation, matchesIngredient, resolveIngredientByName } from '../data/ingredients'
 import type {
   Recipe,
   Level,
@@ -11,9 +11,7 @@ import type {
   Grade,
   HeatLevel,
   CuttingTechnique,
-  CookwareType,
   StationName,
-  PreparationTask,
   FeedbackType,
   FeedbackMessage,
   CurrentFeedback,
@@ -44,7 +42,6 @@ interface GameState {
   washedIngredients: string[]
   slicedIngredients: string[]
   measuredIngredients: string[]
-  currentPreparationTask: PreparationTask | null
   washingProgress: Record<string, number>
   cuttingProgress: Record<string, { technique: CuttingTechnique; progress: number }>
   measuringProgress: Record<string, { amount: number; accuracy: number }>
@@ -57,17 +54,14 @@ interface GameState {
   actualCutType: Record<string, CuttingTechnique>
 
   // Cooking
+  isChallengeMode: boolean
   heatLevel: HeatLevel
-  cookingTimer: number
   cookingDuration: number
-  cookingIngredients: Ingredient[]
   isCooking: boolean
   burnedFood: boolean
   undercookedFood: boolean
   stirCount: number
   requiredStirs: number
-  selectedCookware: CookwareType | null
-  cookingStartTime: number | null
   cookingElapsedTime: number
 
   // Scoring
@@ -87,6 +81,8 @@ interface GameState {
   unlockedLevels: number[]
   playerProfile: PlayerProfile
   toolsViewed: number[]
+  selectedKnifeId: string | null  // knife chosen from cabinet
+  inventoryToolIds: string[]       // all tools picked from cabinet
 }
 
 // ==========================================
@@ -103,7 +99,6 @@ interface GameActions {
   selectIngredient: (ingredient: Ingredient) => boolean
 
   // Preparation
-  startPreparationTask: (task: PreparationTask) => void
   washIngredient: (name: string) => void
   sliceIngredient: (name: string, technique: CuttingTechnique) => void
   measureIngredient: (name: string, amount: number, accuracy: number) => void
@@ -113,15 +108,12 @@ interface GameActions {
 
   // Cooking
   setHeatLevel: (level: HeatLevel) => void
-  setCookingTimer: (time: number) => void
   setCookingDuration: (duration: number) => void
   startCooking: () => void
   stopCooking: () => void
-  addCookingIngredient: (ingredient: Ingredient) => void
   incrementStirCount: () => void
   setBurnedFood: (burned: boolean) => void
   setUndercookedFood: (undercooked: boolean) => void
-  setSelectedCookware: (cookware: CookwareType | null) => void
   setCookingElapsedTime: (time: number) => void
 
   // Scoring
@@ -132,6 +124,9 @@ interface GameActions {
   saveLevelProgress: (levelId: number, score: number) => void
   markToolViewed: (toolId: number) => void
   isAllToolsViewed: () => boolean
+  setSelectedKnife: (id: string | null) => void
+  addInventoryTool: (id: string) => void
+  removeInventoryTool: (id: string) => void
 
   // Feedback
   addFeedback: (message: string, type: FeedbackType) => void
@@ -161,7 +156,6 @@ const initialSessionState: Omit<
   washedIngredients: [],
   slicedIngredients: [],
   measuredIngredients: [],
-  currentPreparationTask: null,
   washingProgress: {},
   cuttingProgress: {},
   measuringProgress: {},
@@ -171,23 +165,22 @@ const initialSessionState: Omit<
   expectedCutType: {},
   actualCutType: {},
   heatLevel: 'off',
-  cookingTimer: 0,
   cookingDuration: 0,
-  cookingIngredients: [],
   isCooking: false,
   burnedFood: false,
   undercookedFood: false,
   stirCount: 0,
   requiredStirs: 5,
-  selectedCookware: null,
-  cookingStartTime: null,
   cookingElapsedTime: 0,
-  scores: { accuracy: 0, washing: 0, cutting: 0, cooking: 0, timing: 0 },
+  selectedKnifeId: null,
+  inventoryToolIds: [],
+  scores: { accuracy: 0, washing: 0, cutting: 0, measuring: 0, cooking: 0, timing: 0 },
   totalScore: 0,
   starRating: 0,
   grade: null,
   feedbackMessages: [],
   currentFeedback: null,
+  isChallengeMode: false
 }
 
 // ==========================================
@@ -214,12 +207,17 @@ const useGameStore = create<GameStore>()(
       // ---- Ingredients ----
       initializeIngredients: (recipe) => {
         set({
-          requiredIngredients: recipe.ingredients.map((name, i) => ({
-            id: i + 1,
-            name,
-            collected: false,
-            location: findIngredientLocation(name),
-          })),
+          requiredIngredients: recipe.ingredients.map((name, i) => {
+            const resolved = resolveIngredientByName(name)
+            return {
+              id: i + 1,
+              name: resolved?.name ?? name,     // show the fridge display name
+              collected: false,
+              location: findIngredientLocation(name),
+              ingredientId: resolved?.id,        // ID-based matching
+              image: resolved?.image,            // image-based display
+            }
+          }),
           collectedIngredients: [],
           selectedIngredients: [],
           ingredientErrors: 0,
@@ -236,22 +234,34 @@ const useGameStore = create<GameStore>()(
             selectedIngredients: s.selectedIngredients.filter((i) => i.id !== ingredient.id),
             collectedIngredients: s.collectedIngredients.filter((i) => i.id !== ingredient.id),
             requiredIngredients: s.requiredIngredients.map((r) =>
-              matchesIngredient(ingredient.name, r.name) ? { ...r, collected: false } : r,
+              (r.ingredientId === ingredient.id || matchesIngredient(ingredient.name, r.name))
+                ? { ...r, collected: false } : r,
             ),
             currentFeedback: { message: `${ingredient.name} removed`, type: 'info' },
           }))
           return false
         }
 
-        // Check if required
+        // No recipe loaded → free exploration: collect anything
+        if (state.requiredIngredients.length === 0) {
+          set((s) => ({
+            collectedIngredients: [...s.collectedIngredients, ingredient],
+            selectedIngredients: [...s.selectedIngredients, ingredient],
+            currentFeedback: { message: `${ingredient.name} added!`, type: 'success' },
+          }))
+          return true
+        }
+
+        // Check if required — ID match first (exact image+name pair), name fallback
         const required = state.requiredIngredients.find(
-          (r) => !r.collected && matchesIngredient(ingredient.name, r.name),
+          (r) => !r.collected &&
+            (r.ingredientId === ingredient.id || matchesIngredient(ingredient.name, r.name)),
         )
 
         if (required) {
           set((s) => ({
             requiredIngredients: s.requiredIngredients.map((r) =>
-              matchesIngredient(ingredient.name, r.name) ? { ...r, collected: true } : r,
+              r.id === required.id ? { ...r, collected: true } : r,
             ),
             collectedIngredients: [...s.collectedIngredients, ingredient],
             selectedIngredients: [...s.selectedIngredients, ingredient],
@@ -270,7 +280,6 @@ const useGameStore = create<GameStore>()(
       },
 
       // ---- Preparation ----
-      startPreparationTask: (task) => set({ currentPreparationTask: task }),
 
       washIngredient: (name) => {
         set((s) => {
@@ -287,7 +296,9 @@ const useGameStore = create<GameStore>()(
           if (s.slicedIngredients.includes(name)) return s
           return {
             slicedIngredients: [...s.slicedIngredients, name],
-            cuttingProgress: { ...s.cuttingProgress, [name]: { technique, progress: 100 } },
+            cuttingProgress:   { ...s.cuttingProgress, [name]: { technique, progress: 100 } },
+            // Record what the player actually chose — scoring compares this vs expectedCutType
+            actualCutType: { ...s.actualCutType, [name]: technique },
           }
         })
       },
@@ -325,37 +336,77 @@ const useGameStore = create<GameStore>()(
 
       // ---- Cooking ----
       setHeatLevel: (level) => set({ heatLevel: level }),
-      setCookingTimer: (time) => set({ cookingTimer: time }),
       setCookingDuration: (duration) => set({ cookingDuration: duration }),
-      startCooking: () => set({ isCooking: true, cookingStartTime: Date.now() }),
+      startCooking: () => set({ isCooking: true }),
       stopCooking: () => set({ isCooking: false }),
-      addCookingIngredient: (ingredient) =>
-        set((s) => ({ cookingIngredients: [...s.cookingIngredients, ingredient] })),
       incrementStirCount: () => set((s) => ({ stirCount: s.stirCount + 1 })),
       setBurnedFood: (burned) => set({ burnedFood: burned }),
       setUndercookedFood: (undercooked) => set({ undercookedFood: undercooked }),
-      setSelectedCookware: (cookware) => set({ selectedCookware: cookware }),
       setCookingElapsedTime: (time) => set({ cookingElapsedTime: time }),
 
       // ---- Scoring ----
       calculateScores: () => {
         const s = get()
 
+        // ── Ingredient accuracy: correct collected vs total required ──
         const totalRequired = s.requiredIngredients.length
-        const correctCount = s.collectedIngredients.length
-        const accuracy = totalRequired > 0 ? (correctCount / totalRequired) * 100 : 0
+        // Only count ingredients that were actually required AND collected
+        const correctlyCollected = s.collectedIngredients.filter(ci =>
+          s.requiredIngredients.some(r =>
+            r.ingredientId === ci.id || r.name.toLowerCase() === ci.name.toLowerCase()
+          )
+        ).length
+        const accuracy = totalRequired > 0
+          ? Math.min(100, (correctlyCollected / totalRequired) * 100)
+          : 100
 
-        const washReq = s.requiredIngredients.length
-        const washed = s.washedIngredients.length
-        const washing = washReq > 0 ? (washed / washReq) * 100 : 0
+        // ── Washing score: skip non-washable items entirely ──
+        // isWashable imported below via resolveIngredientByName check
+        const washableRequired = s.requiredIngredients.filter(r => {
+          // mark as washable if their id is NOT in the pantry set
+          const NON_WASH = new Set(['butter','cream','milk','eggyolks','lemonjuice',
+            'liverspread','shreddedcheese','cheese','creammushroom','chickenshredded',
+            'boiledegg','hotdog','bagoongalamang','groundpork','picklesrelish',
+            'beefstock','chickenbroth','vegetablesbroth','cookingoil','oliveoil',
+            'flour','cornstarch','pepper','salt','peppercorn','soysauce','vinegar',
+            'tomatopaste','tomatosauce','sinigangmix','peanutbutter','corntortillas',
+            'pasta','spagsauce','eggnoodles','water'])
+          return !NON_WASH.has(r.ingredientId ?? '')
+        })
+        const washedCount = washableRequired.filter(r =>
+          s.washedIngredients.includes(r.name)
+        ).length
+        const washing = washableRequired.length > 0
+          ? (washedCount / washableRequired.length) * 100
+          : 100   // no washable ingredients → full marks
 
+        // ── Cutting technique: award points for EVERY sliced ingredient.
+        //    expectedCutType may be empty (no recipe hints), so any cut = 100.
+        //    If expected is set, compare to player's actual choice. ──
+        const slicedNames = s.slicedIngredients
         let correctCuts = 0
-        let totalCuts = 0
-        for (const ing in s.expectedCutType) {
-          totalCuts++
-          if (s.actualCutType[ing] === s.expectedCutType[ing]) correctCuts++
+        let totalCuts = slicedNames.length   // one point per sliceable ingredient
+
+        if (totalCuts > 0) {
+          for (const name of slicedNames) {
+            const expected = s.expectedCutType[name]
+            const actual   = s.actualCutType[name]
+            if (!expected || !actual) {
+              // No expected type set → award full credit for cutting it at all
+              correctCuts++
+            } else if (actual === expected) {
+              correctCuts++
+            }
+            // else wrong technique → 0 for this ingredient (but still made the cut, no penalty below 0)
+          }
         }
-        const cutting = totalCuts > 0 ? (correctCuts / totalCuts) * 100 : 0
+        const cutting = totalCuts > 0 ? (correctCuts / totalCuts) * 100 : 100
+
+        // ── Measuring accuracy: average of all measured ingredient accuracies ──
+        const measureEntries = Object.values(s.measuringProgress) as { amount: number; accuracy: number }[]
+        const measuring = measureEntries.length > 0
+          ? measureEntries.reduce((sum, m) => sum + m.accuracy, 0) / measureEntries.length
+          : 100
 
         let cooking = 100
         if (s.burnedFood) cooking = 0
@@ -367,7 +418,9 @@ const useGameStore = create<GameStore>()(
           timing = Math.max(0, 100 - (diff / s.cookingDuration) * 100)
         }
 
-        const total = accuracy * 0.3 + washing * 0.15 + cutting * 0.2 + cooking * 0.25 + timing * 0.1
+        // If no washable ingredients, washing is 100% (full marks) and weight stays
+        // This keeps the formula stable regardless of ingredient composition
+        const total = accuracy * 0.25 + washing * 0.15 + cutting * 0.15 + measuring * 0.10 + cooking * 0.25 + timing * 0.10
         const rounded = Math.round(total)
 
         let starRating = 0
@@ -387,7 +440,7 @@ const useGameStore = create<GameStore>()(
         else if (rounded >= 70) grade = 'C-'
 
         set({
-          scores: { accuracy, washing, cutting, cooking, timing },
+          scores: { accuracy, washing, cutting, measuring, cooking, timing },
           totalScore: rounded,
           starRating,
           grade,
@@ -413,10 +466,11 @@ const useGameStore = create<GameStore>()(
             recipesCompleted: s.playerProfile.recipesCompleted + (prev?.completed ? 0 : 1),
           }
 
-          // Unlock next recipe
+          // Unlock next recipe — only when minimum score is reached (game narrative rule)
           const recipe = recipes.find((r) => r.id === recipeId)
           const newUnlocked = [...s.unlockedRecipes]
-          if (recipe) {
+          const passedMinScore = score >= (recipe?.minScore ?? 70)
+          if (recipe && passedMinScore) {
             const sameCategory = recipes
               .filter((r) => r.level === recipe.level && r.category === recipe.category)
               .sort((a, b) => a.id - b.id)
@@ -446,10 +500,47 @@ const useGameStore = create<GameStore>()(
             }
           }
 
+          // ── Level completion check (auto) ──
+          // A level is complete when EVERY recipe in it is completed with min score.
+          const allMastery = { ...s.recipeMastery, [recipeId]: newMastery }
+          const newLevels = [...s.unlockedLevels]
+          const newLevelProgress = { ...s.levelProgress }
+          if (recipe) {
+            const levelRecipes = recipes.filter((r) => r.level === recipe.level)
+            const doneRecipes = levelRecipes.filter((r) => {
+              const m = allMastery[r.id]
+              return m?.completed && m.bestScore >= (r.minScore ?? 70)
+            })
+            const avg = doneRecipes.length
+              ? Math.round(doneRecipes.reduce((sum, r) => sum + (allMastery[r.id]?.bestScore ?? 0), 0) / doneRecipes.length)
+              : 0
+            const levelDone = doneRecipes.length === levelRecipes.length
+
+            newLevelProgress[recipe.level] = {
+              completed: levelDone,
+              averageScore: avg,
+              recipesCompleted: doneRecipes.length,
+            }
+
+            // Unlock next level when this one is fully done
+            if (levelDone) {
+              const next = recipe.level + 1
+              const nextExists = recipes.some((r) => r.level === next)
+              if (nextExists && !newLevels.includes(next)) {
+                newLevels.push(next)
+                // Also unlock the first recipe of the next level
+                const firstNext = recipes.filter((r) => r.level === next).sort((a, b) => a.id - b.id)[0]
+                if (firstNext && !newUnlocked.includes(firstNext.id)) newUnlocked.push(firstNext.id)
+              }
+            }
+          }
+
           return {
-            recipeMastery: { ...s.recipeMastery, [recipeId]: newMastery },
+            recipeMastery: allMastery,
             playerProfile: newProfile,
             unlockedRecipes: newUnlocked,
+            unlockedLevels: newLevels,
+            levelProgress: newLevelProgress,
           }
         })
       },
@@ -483,6 +574,17 @@ const useGameStore = create<GameStore>()(
           return { toolsViewed: [...s.toolsViewed, toolId] }
         })
       },
+
+      setSelectedKnife: (id) => set({ selectedKnifeId: id }),
+
+      addInventoryTool: (id) => set(s => ({
+        inventoryToolIds: s.inventoryToolIds.includes(id) ? s.inventoryToolIds : [...s.inventoryToolIds, id]
+      })),
+
+      removeInventoryTool: (id) => set(s => ({
+        inventoryToolIds: s.inventoryToolIds.filter(t => t !== id),
+        selectedKnifeId: s.selectedKnifeId === id ? null : s.selectedKnifeId,
+      })),
 
       isAllToolsViewed: () => {
         const s = get()
@@ -527,3 +629,7 @@ const useGameStore = create<GameStore>()(
 )
 
 export default useGameStore
+
+// ── INVENTORY EXTENSION (appended) ──────────────────────────────
+// selectedKnife: the knife the player picked from cabinet
+// inventoryTools: tools the player added to their inventory from cabinet
