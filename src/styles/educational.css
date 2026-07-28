@@ -786,18 +786,18 @@
    SINK LAYOUT UPDATE (replaces old sink-content / faucet-area)
    ═══════════════════════════════════════════════════════════ */
 
-/* Water flow — faucet spout tip in sink-bg.jpg is ~51% from left, ~43% from top */
+/* Water flow — faucet spout tip in sink-bg.jpg is ~50.8% from left, ~49.5% from top */
 .sink-water-flow {
   position: absolute;
-  left: 51%;
-  top: 43%;
+  left: 48.7%;
+  top: 51%;
   z-index: 6; pointer-events: none;
   display: flex; flex-direction: column; align-items: center;
   transform: translateX(-50%);
   transform-origin: top center;
 }
 .sink-water-stream {
-  width: 12px; height: 140px;
+  width: 35px; height: 350px;
   background: linear-gradient(
     180deg,
     rgba(160,220,255,1.0) 0%,
@@ -1214,49 +1214,60 @@
 .gp-knife-badge img { width: 34px; height: 34px; object-fit: contain; }
 .gp-knife-missing { color: #ff9a8a; }
 .gp-board-zone {
-  position: absolute; z-index: 8; top: 50%; left: 50%;
-  transform: translate(-50%, -55%);
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  position: absolute; z-index: 8; top: 46%; left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
 }
-.gp-board { position: relative; width: min(400px, 84vw); }
-.gp-board-img { width: 100%; display: block; filter: drop-shadow(0 10px 30px rgba(0,0,0,.6)); }
+.gp-board {
+  position: relative;
+  width: min(620px, 90vw);
+  height: 320px;
+  background: radial-gradient(ellipse at center, rgba(74, 46, 22, 0.85) 0%, rgba(42, 24, 10, 0.92) 100%);
+  border: 4px solid rgba(212, 147, 54, 0.4);
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), inset 0 2px 10px rgba(255, 220, 150, 0.15);
+  display: flex; align-items: center; justify-content: center;
+}
+.gp-board-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: drop-shadow(0 10px 30px rgba(0,0,0,.6)); border-radius: 20px; }
 .gp-board-hint {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 700; color: rgba(255,239,213,.75);
-  text-shadow: 0 2px 6px rgba(0,0,0,.8);
+  font-size: 20px; font-weight: 800; color: #ffe9c9;
+  text-shadow: 0 2px 8px rgba(0,0,0,.9); pointer-events: none;
 }
 .gp-board-item {
-  position: absolute; top: 18%; left: 50%; transform: translateX(-50%);
-  width: 42%; height: 56%; object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,.55)); pointer-events: none;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 220px; height: 220px; object-fit: contain;
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,.7)); pointer-events: none;
 }
 .gp-board-result {
-  position: absolute; top: 8%; left: 50%; transform: translateX(-50%);
-  width: 74%; height: 74%; object-fit: contain;
-  filter: drop-shadow(0 6px 16px rgba(0,0,0,.55)); pointer-events: none;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 240px; height: 240px; object-fit: contain;
+  filter: drop-shadow(0 12px 28px rgba(0,0,0,.75)); pointer-events: none;
 }
 .gp-knife-chop {
-  position: absolute; top: 20%; left: 30%; width: 55%;
+  position: absolute; top: 20%; left: 25%; width: 220px;
   pointer-events: none; z-index: 5;
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,.6));
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,.7));
 }
 .gp-result-label {
-  font-size: 17px; font-weight: 800; color: var(--green);
-  text-shadow: 0 2px 8px rgba(0,0,0,.8);
+  font-size: 20px; font-weight: 800; color: var(--green);
+  background: rgba(10, 6, 2, 0.85); padding: 6px 18px; border-radius: 20px;
+  border: 1px solid rgba(82, 196, 26, 0.4);
+  text-shadow: 0 2px 8px rgba(0,0,0,.9);
 }
 .gp-cut-bubbles {
-  position: absolute; z-index: 20; bottom: 126px; left: 0; right: 0;
-  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; padding: 0 16px;
+  position: absolute; z-index: 20; bottom: 120px; left: 0; right: 0;
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; padding: 0 16px;
 }
 .gp-cut-bubble {
-  display: flex; flex-direction: column; align-items: center; gap: 5px;
-  width: 90px; padding: 10px 6px 8px;
-  background: rgba(20,13,4,.92); border: 2.5px solid var(--gold);
-  border-radius: 18px; cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,.55), 0 0 12px rgba(245,166,35,.3);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  width: 105px; padding: 12px 8px 10px;
+  background: rgba(20,13,4,.94); border: 2.5px solid var(--gold);
+  border-radius: 20px; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,.65), 0 0 12px rgba(245,166,35,.35);
 }
-.gp-cut-bubble img { width: 62px; height: 62px; object-fit: contain; border-radius: 10px; }
-.gp-cut-bubble span { font-size: 11px; font-weight: 800; color: #ffe9c9; text-transform: capitalize; }
+.gp-cut-bubble img { width: 68px; height: 68px; object-fit: contain; border-radius: 12px; background: rgba(255,255,255,0.06); }
+.gp-cut-bubble span { font-size: 12px; font-weight: 800; color: #ffe9c9; text-transform: capitalize; }
 
 /* ── STOVE game ── */
 .gst-burner-zone { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
@@ -1552,7 +1563,9 @@
   .gp-cut-bubble { width: 74px; padding: 8px 4px 6px; }
   .gp-cut-bubble img { width: 52px; height: 52px; }
   .gp-board-zone { transform: translate(-50%, -50%); }
-  .gp-board { width: min(300px, 80vw); }
+  .gp-board { width: min(340px, 88vw); height: 200px; }
+  .gp-board-item { width: 140px; height: 140px; }
+  .gp-board-result { width: 150px; height: 150px; }
   .stove-layout { grid-template-columns: 1fr; padding-top: 120px; }
   .sink-layout { grid-template-columns: 1fr; gap: 10px; }
   .gf-shelves { left: 4%; right: 4%; }
