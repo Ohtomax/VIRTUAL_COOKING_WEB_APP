@@ -122,28 +122,28 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
       {/* Station buttons — ALL UNLOCKED */}
       <div className="ek-stations">
         <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
-          style={{ left: '2%', top: '38%' }} onClick={() => setActive('fridge')} whileTap={{ scale: 0.92 }}>
+          style={{ left: '2%', top: '38%' }} onClick={() => setActive('fridge')}>
           <div className="ek-stn-icon"><Refrigerator size={28} strokeWidth={1.5} /></div>
           <span>Refrigerator</span>
           {allCollected && <CheckCircle2 size={15} className="ek-stn-check" />}
         </motion.button>
 
         <motion.button className={`ek-stn-btn ${inventoryToolIds.length > 0 ? 'ek-stn-btn--done' : ''}`}
-          style={{ left: '26%', top: '8%' }} onClick={() => setActive('cabinet')} whileTap={{ scale: 0.92 }}>
+          style={{ left: '26%', top: '8%' }} onClick={() => setActive('cabinet')}>
           <div className="ek-stn-icon"><GalleryVerticalEnd size={28} strokeWidth={1.5} /></div>
           <span>Cabinet</span>
           {inventoryToolIds.length > 0 && <span className="ek-stn-badge">{inventoryToolIds.length}</span>}
         </motion.button>
 
         <motion.button className={`ek-stn-btn ${allSliced ? 'ek-stn-btn--done' : kitchenStep==='slicing'||kitchenStep==='measuring' ? 'ek-stn-btn--cta' : ''}`}
-          style={{ left: '26%', bottom: '22%' }} onClick={() => setActive('prep')} whileTap={{ scale: 0.92 }}>
+          style={{ left: '26%', bottom: '22%' }} onClick={() => setActive('prep')}>
           <div className="ek-stn-icon"><Scissors size={28} strokeWidth={1.5} /></div>
           <span>Prep Table</span>
           {allSliced && <CheckCircle2 size={15} className="ek-stn-check" />}
         </motion.button>
 
         <motion.button className={`ek-stn-btn ${allWashed ? 'ek-stn-btn--done' : kitchenStep==='washing' ? 'ek-stn-btn--cta' : ''}`}
-          style={{ right: '2%', top: '24%' }} onClick={() => setActive('sink')} whileTap={{ scale: 0.92 }}>
+          style={{ right: '2%', top: '24%' }} onClick={() => setActive('sink')}>
           <div className="ek-stn-icon"><Droplets size={28} strokeWidth={1.5} /></div>
           <span>Sink</span>
           {allWashed && <CheckCircle2 size={15} className="ek-stn-check" />}
@@ -151,9 +151,7 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
 
         <motion.button className={`ek-stn-btn ${kitchenStep === 'cooking' ? 'ek-stn-btn--cta' : ''}`}
           style={{ left: '50%', top: '58%', transform: 'translateX(-50%)' }}
-          onClick={() => setActive('stove')} whileTap={{ scale: 0.92 }}
-          animate={kitchenStep === 'cooking' ? { scale: [1, 1.05, 1] } : {}}
-          transition={kitchenStep === 'cooking' ? { repeat: Infinity, duration: 2, ease: 'easeInOut' } : {}}>
+          onClick={() => setActive('stove')}>
           <div className="ek-stn-icon"><Flame size={28} strokeWidth={1.5} /></div>
           <span>Stove</span>
         </motion.button>

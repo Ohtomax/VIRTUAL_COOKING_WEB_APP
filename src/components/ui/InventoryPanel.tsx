@@ -25,20 +25,17 @@ export default function InventoryPanel() {
   return (
     <>
       {/* Toggle tab (always visible on right edge) */}
-      <motion.button
+      <button
         className="inv-toggle-tab"
         onClick={() => setOpen(o => !o)}
-        whileTap={{ scale: 0.94 }}
         title="Toggle Inventory"
       >
         <Package2 size={18} strokeWidth={2} />
         {(ingCount + toolCount) > 0 && (
           <span className="inv-toggle-badge">{ingCount + toolCount}</span>
         )}
-        <motion.div animate={{ rotate: open ? 0 : 180 }} transition={{ duration: 0.2 }}>
-          <ChevronRight size={14} strokeWidth={2.5} />
-        </motion.div>
-      </motion.button>
+        <ChevronRight size={14} strokeWidth={2.5} />
+      </button>
 
       {/* Sliding panel */}
       <AnimatePresence>

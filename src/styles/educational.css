@@ -1488,7 +1488,7 @@
   display: flex; align-items: center; justify-content: center;
   transition: transform .12s;
 }
-.ek-stn-btn:hover .ek-stn-icon { transform: scale(1.1); box-shadow: 0 0 0 3px #7a4a22, 0 0 22px rgba(245,166,35,.6), 0 6px 16px rgba(0,0,0,.65), inset 0 -4px 8px rgba(0,0,0,.4), inset 0 3px 5px rgba(255,220,150,.35); }
+.ek-stn-btn:hover .ek-stn-icon { box-shadow: 0 0 0 3px #7a4a22, 0 0 22px rgba(245,166,35,.6), 0 6px 16px rgba(0,0,0,.65), inset 0 -4px 8px rgba(0,0,0,.4), inset 0 3px 5px rgba(255,220,150,.35); }
 .ek-stn-btn span {
   margin-top: -8px; z-index: 2;
   padding: 5px 14px; border-radius: 10px;
@@ -1499,8 +1499,7 @@
   white-space: nowrap;
 }
 .ek-stn-btn--done .ek-stn-icon { border-color: #4cd964; box-shadow: 0 0 0 3px #2c5a1c, 0 0 18px rgba(76,217,100,.5), 0 6px 16px rgba(0,0,0,.65), inset 0 -4px 8px rgba(0,0,0,.4); color: #b8ffca; }
-.ek-stn-btn--cta .ek-stn-icon  { animation: cf-bounce 1.4s ease-in-out infinite; box-shadow: 0 0 0 3px #7a4a22, 0 0 26px rgba(245,166,35,.85), 0 6px 16px rgba(0,0,0,.65), inset 0 3px 5px rgba(255,220,150,.35); }
-@keyframes cf-bounce { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-7px) scale(1.06); } }
+.ek-stn-btn--cta .ek-stn-icon  { box-shadow: 0 0 0 3px #7a4a22, 0 0 26px rgba(245,166,35,.85), 0 6px 16px rgba(0,0,0,.65), inset 0 3px 5px rgba(255,220,150,.35); }
 .ek-stn-check { position: absolute; top: -2px; right: -2px; background: #fff; border-radius: 50%; }
 .ek-stn-badge { top: -4px; right: -4px; border: 2px solid #3a2210; }
 /* ═══ Results: dish reveal + unlock banners ═══ */
