@@ -51,7 +51,7 @@ export default function FridgeView({ onClose, selectedRecipe, station, title }: 
     selectIngredient(ing)
   }
 
-  const perShelf = Math.ceil(sorted.length / SHELF_TOPS.length)
+  const perShelf = 10;
 
   return (
     <motion.div className="sv-root gf-root" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
