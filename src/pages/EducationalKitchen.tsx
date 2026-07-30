@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Refrigerator, GalleryVerticalEnd, Scissors, Droplets, Flame, ChevronLeft, CheckCircle2, ChevronRight } from 'lucide-react'
+import { Refrigerator, GalleryVerticalEnd, Scissors, Droplets, Flame, ChevronLeft, CheckCircle2, ChevronRight, Snowflake, Package } from 'lucide-react'
 import FridgeView    from '../components/Fridgeview'
 import CabinetView   from '../components/Cabinetview'
 import PrepView      from '../components/Prepview'
@@ -13,7 +13,7 @@ import { isWashable } from '../data/ingredients'
 import { getSlicesForIngredient } from '../data/sliceimages'
 
 interface Props { onBack: () => void; onFinish: () => void }
-type Station     = 'fridge' | 'cabinet' | 'prep' | 'sink' | 'stove' | null
+type Station     = 'freezer' | 'fridge' | 'shelf' | 'cabinet' | 'prep' | 'sink' | 'stove' | null
 type KitchenStep = 'ingredients' | 'washing' | 'slicing' | 'measuring' | 'cooking'
 
 const STEPS: { key: KitchenStep; label: string }[] = [
@@ -69,7 +69,7 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
   }
 
   const hint: Record<KitchenStep, string> = {
-    ingredients: allCollected ? '✓ All collected!' : `Open Refrigerator — ${collected}/${req}`,
+    ingredients: allCollected ? '✓ All collected!' : `Gather Ingredients — ${collected}/${req}`,
     washing:     allWashed    ? '✓ All washed!'   : `Open Sink — ${washedIngredients.length}/${washables.length} need washing`,
     slicing:     allSliced    ? '✓ All sliced!'   : `Open Prep Table — ${slicedIngredients.length}/${sliceables.length} need slicing`,
     measuring:   allMeasured  ? '✓ All measured!' : `Open Prep Table — ${measuredIngredients.length}/${collected} measured`,
@@ -80,7 +80,9 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
     ? toolCategories[0].types.find(k => k.id === selectedKnifeId) : null
 
   // ── Full-screen station views — all unlocked ──
-  if (active === 'fridge')  return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} />
+  if (active === 'freezer') return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="freezer" title="❄️ Freezer" />
+  if (active === 'fridge')  return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="fridge" title="🧊 Refrigerator" />
+  if (active === 'shelf')   return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="shelf" title="🥫 Pantry Shelf" />
   if (active === 'cabinet') return <CabinetView onClose={() => setActive(null)} />
   if (active === 'prep')    return <PrepView onClose={() => setActive(null)} />
   if (active === 'sink')    return <SinkView onClose={() => setActive(null)} />
@@ -122,10 +124,21 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
       {/* Station buttons — ALL UNLOCKED */}
       <div className="ek-stations">
         <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
-          style={{ left: '2%', top: '38%' }} onClick={() => setActive('fridge')}>
+          style={{ left: '2%', top: '16%' }} onClick={() => setActive('freezer')}>
+          <div className="ek-stn-icon"><Snowflake size={28} strokeWidth={1.5} /></div>
+          <span>Freezer</span>
+        </motion.button>
+
+        <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
+          style={{ left: '2%', top: '44%' }} onClick={() => setActive('fridge')}>
           <div className="ek-stn-icon"><Refrigerator size={28} strokeWidth={1.5} /></div>
           <span>Refrigerator</span>
-          {allCollected && <CheckCircle2 size={15} className="ek-stn-check" />}
+        </motion.button>
+
+        <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
+          style={{ right: '16%', top: '10%' }} onClick={() => setActive('shelf')}>
+          <div className="ek-stn-icon"><Package size={28} strokeWidth={1.5} /></div>
+          <span>Pantry Shelf</span>
         </motion.button>
 
         <motion.button className={`ek-stn-btn ${inventoryToolIds.length > 0 ? 'ek-stn-btn--done' : ''}`}

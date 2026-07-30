@@ -16,7 +16,7 @@ export type CuttingTechnique =
   | 'crushed' | 'diagonal cut' | 'straight cut'
   | 'mixed cut' | 'slice' | 'chop' | 'dice'
 export type CookwareType    = 'pot' | 'pan' | 'wok'
-export type StationName     = 'fridge' | 'cabinet' | 'table' | 'sink' | 'stove' | 'tools'
+export type StationName     = 'fridge' | 'freezer' | 'shelf' | 'cabinet' | 'table' | 'sink' | 'stove' | 'tools'
 
 // ─── Tools ─────────────────────────────────────────────────────
 export interface ToolType {
@@ -44,7 +44,7 @@ export interface ToolItem {
 
 // ─── Ingredients ───────────────────────────────────────────────
 export interface Ingredient {
-  id: string; name: string; image: string; quantity: string
+  id: string; name: string; image: string; quantity: string; location: 'freezer' | 'fridge' | 'shelf'
 }
 
 export interface RequiredIngredient {
