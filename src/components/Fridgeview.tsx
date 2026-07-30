@@ -35,9 +35,8 @@ export default function FridgeView({ onClose, selectedRecipe }: Props) {
 
   const list = allIngredients.filter(i =>
     !search || i.name.toLowerCase().includes(search.toLowerCase()))
-  // needed items first so they sit on the top shelves
-  const sorted = [...list].sort((a, b) =>
-    Number(isRequired(b)) - Number(isRequired(a)))
+  // Removed dynamic sorting to maintain the strict shelf order from ingredients.ts
+  const sorted = [...list]
 
   const collectedCount = selectedRecipe
     ? collectedIngredients.filter(i =>
