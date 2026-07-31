@@ -121,7 +121,7 @@ export default function PrepView({ onClose }: Props) {
 
       <AnimatePresence>
         {warn && (
-          <motion.div className="prep-unsafe-banner" style={{ position: 'absolute', top: 84, left: 20, right: 20, zIndex: 40 }}
+          <motion.div className="prep-unsafe-banner" style={{ position: 'absolute', top: 130, left: 20, right: 20, zIndex: 40 }}
             initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
             <AlertTriangle size={18} strokeWidth={2.5} /> {warn}
           </motion.div>
@@ -169,12 +169,14 @@ export default function PrepView({ onClose }: Props) {
                 onError={e => { (e.target as HTMLImageElement).src = '/assets/ingredients/onion.png' }} />
             )}
 
-            {phase === 'done' && resultImg && (
-              <motion.img key="result" src={resultImg} className="gp-board-result"
+            {phase === 'done' && (resultImg || boardItem) && (
+              <motion.img key="result" src={resultImg || boardItem?.image} className="gp-board-result"
                 initial={{ scale: 0.4, opacity: 0, rotate: -8 }}
                 animate={{ scale: 1, opacity: 1, rotate: 0 }}
                 transition={{ type: 'spring', damping: 12 }}
-                onError={e => { (e.target as HTMLImageElement).style.opacity = '0.3' }} />
+                onError={e => {
+                  if (boardItem) (e.target as HTMLImageElement).src = boardItem.image
+                }} />
             )}
           </AnimatePresence>
 
@@ -213,7 +215,9 @@ export default function PrepView({ onClose }: Props) {
                 transition={{ delay: i * 0.06, type: 'spring', damping: 13 }}
                 whileHover={{ scale: 1.12, y: -4 }} whileTap={{ scale: 0.9 }}>
                 <img src={img} alt={cutName}
-                  onError={e => { (e.target as HTMLImageElement).style.opacity = '0.3' }} />
+                  onError={e => {
+                    if (boardItem) (e.target as HTMLImageElement).src = boardItem.image
+                  }} />
                 <span>{cutName}</span>
               </motion.button>
             ))}

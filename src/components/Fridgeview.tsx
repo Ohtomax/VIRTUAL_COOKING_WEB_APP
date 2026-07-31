@@ -5,18 +5,18 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, Search, X } from 'lucide-react'
-import { allIngredients, matchesIngredient } from '../data/ingredients'
+import { getIngredientsByStation, matchesIngredient } from '../data/ingredients'
 import useGameStore from '../store/gameStore'
 import GameTray from './ui/GameTray.tsx'
-import type { Recipe, Ingredient } from '../types'
+import type { Recipe, Ingredient, StationName } from '../types'
 import GameTooltip from './ui/GameTooltip.tsx'
 
-interface Props { onClose: () => void; selectedRecipe: Recipe | null }
+interface Props { onClose: () => void; selectedRecipe: Recipe | null; station: StationName; title: string }
 
 /** Shelf rows mapped over fridge-bg.jpg open-fridge zones */
 const SHELF_TOPS = ['16%', '30%', '44%', '58%', '74%']
 
-export default function FridgeView({ onClose, selectedRecipe }: Props) {
+export default function FridgeView({ onClose, selectedRecipe, station, title }: Props) {
   const { selectIngredient, collectedIngredients, requiredIngredients, currentFeedback, clearFeedback } = useGameStore()
   const [search, setSearch] = useState('')
   const [flying, setFlying] = useState<Ingredient | null>(null)
@@ -33,11 +33,11 @@ export default function FridgeView({ onClose, selectedRecipe }: Props) {
     requiredIngredients.some(r =>
       r.ingredientId ? r.ingredientId === ing.id : matchesIngredient(ing.name, r.name))
 
-  const list = allIngredients.filter(i =>
+  const stationIngredients = getIngredientsByStation(station)
+  const list = stationIngredients.filter(i =>
     !search || i.name.toLowerCase().includes(search.toLowerCase()))
-  // needed items first so they sit on the top shelves
-  const sorted = [...list].sort((a, b) =>
-    Number(isRequired(b)) - Number(isRequired(a)))
+  // Removed dynamic sorting to maintain the strict shelf order from ingredients.ts
+  const sorted = [...list]
 
   const collectedCount = selectedRecipe
     ? collectedIngredients.filter(i =>
@@ -51,18 +51,18 @@ export default function FridgeView({ onClose, selectedRecipe }: Props) {
     selectIngredient(ing)
   }
 
-  const perShelf = Math.ceil(sorted.length / SHELF_TOPS.length)
+  const perShelf = 10;
 
   return (
     <motion.div className="sv-root gf-root" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <div className="sv-bg" style={{ backgroundImage: "url('/assets/kitchen/fridge-bg.jpg')" }} />
+      <div className="sv-bg" style={{ backgroundImage: station === 'shelf' ? "none" : "url('/assets/kitchen/fridge-bg.jpg')", backgroundColor: station === 'shelf' ? '#2c221a' : 'transparent' }} />
       <div className="gf-scrim" />
 
       <div className="sv-navbar">
         <button className="g-back-btn" onClick={onClose}>
           <ChevronLeft size={20} strokeWidth={2.5} /><span>Kitchen</span>
         </button>
-        <div className="sv-navbar-title">🧊 Refrigerator</div>
+        <div className="sv-navbar-title">{title}</div>
         <div className="sv-counter">{collectedCount}/{selectedRecipe?.ingredients.length ?? '∞'}</div>
       </div>
 

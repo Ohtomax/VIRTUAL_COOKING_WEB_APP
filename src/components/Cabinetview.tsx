@@ -76,7 +76,7 @@ export default function CabinetView({ onClose }: Props) {
                     initial={{ opacity: 0, y: 14, scale: 0.7 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ delay: r * 0.08 + i * 0.04, type: 'spring', damping: 15 }}
-                    whileHover={{ scale: 1.12, y: -6 }} whileTap={{ scale: 0.86 }}>
+                    whileHover={{ scale: 1.8, y: -6 }} whileTap={{ scale: 2 }}>
                     <button className="gc-info" onClick={e => { e.stopPropagation(); setDetail(tool) }}>
                       <Info size={11} strokeWidth={2.5} />
                     </button>

@@ -9,7 +9,7 @@ export interface CutPattern {
   icon: string          // emoji shorthand for the selector
 }
 
-export const CUT_PATTERNS: Record<CuttingTechnique, CutPattern> = {
+export const CUT_PATTERNS: Partial<Record<CuttingTechnique, CutPattern>> = {
   chopping: {
     label: 'Chopping',
     description: 'Large irregular cuts with quick downward motions.',

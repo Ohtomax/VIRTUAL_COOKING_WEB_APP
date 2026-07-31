@@ -2,7 +2,7 @@ import { ChefHat, BookOpen, BarChart3, Settings, Trophy, Lock, ChevronRight } fr
 import { motion } from 'framer-motion'
 import useGameStore from '../store/gameStore'
 import type { SetScreenProps } from '../types'
-import logo from '../../public/assets/bg/upperlogo.png'
+const logo = '/assets/bg/upperlogo.png'
 
 const MENU_ITEMS = (allDone: boolean) => [
   { icon: ChefHat,                 label: 'Start Game',    sub: 'Begin your cooking journey',      screen: 'kitchen-tools'    as const, primary: true,  locked: false     },
