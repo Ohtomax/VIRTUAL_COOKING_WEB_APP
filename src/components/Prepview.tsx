@@ -147,9 +147,6 @@ export default function PrepView({ onClose }: Props) {
       {mode === 'cut' && (
       <div className="gp-board-zone">
         <div className="gp-board">
-          <img src="/assets/kitchen/chopping-board.png" alt="board" className="gp-board-img"
-            onError={e => { (e.target as HTMLImageElement).style.opacity = '0' }} />
-
           <AnimatePresence mode="wait">
             {phase === 'empty' && (
               <motion.div key="hint" className="gp-board-hint"
