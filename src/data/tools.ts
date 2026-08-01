@@ -43,7 +43,6 @@ export const toolCategories: ToolCategory[] = [
       { id:'paella',    name:'Paella Pan',         image:'/assets/kitchen/paella pan.png',     use:'Wide shallow rice dishes',        bestFor:'Paella, seafood',          category:'pan' },
       { id:'roasting',  name:'Roasting Pan',       image:'/assets/kitchen/roasting pan.png',   use:'Oven roasting large cuts',        bestFor:'Roasts, turkey',           category:'pan' },
       { id:'saucepan',  name:'Sauce Pan',          image:'/assets/kitchen/sauce pan.png',      use:'Small quantity heating',          bestFor:'Sauces, soups, eggs',      category:'pan' },
-      { id:'pan',       name:'General Pan',        image:'/assets/kitchen/pan.png',            use:'All-purpose pan',                 bestFor:'Everyday cooking',         category:'pan' },
     ],
   },
   {
