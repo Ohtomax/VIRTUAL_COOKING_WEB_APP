@@ -1,15 +1,17 @@
 /**
- * PrepView — Cooking Fever style cutting:
+ * PrepView — Cooking Fever style cutting with SOP 2 compliance:
  * 1. Tap a washed ingredient in the tray → it lands on the chopping board
- * 2. Cut-style bubbles pop up around the board (real slice photos)
- * 3. Tap one → chop-chop knife animation → sliced result stays on the board
+ * 2. NEW: Stabilize step — player must tap "Stabilize" to lay the vegetable flat (SOP 2)
+ * 3. Cut-style bubbles pop up around the board (real slice photos)
+ * 4. Tap one → chop-chop knife animation → sliced result with uniformity feedback
  */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, AlertTriangle } from 'lucide-react'
+import { ChevronLeft, AlertTriangle, Shield } from 'lucide-react'
 import { getSlicesForIngredient } from '../data/sliceimages'
 import { isWashable } from '../data/ingredients'
 import { toolCategories } from '../data/tools'
+import { getRandomTip } from '../data/sopData'
 import useGameStore from '../store/gameStore'
 import GameTray from './ui/GameTray'
 import GameTooltip from './ui/GameTooltip'
@@ -17,13 +19,15 @@ import type { CuttingTechnique } from '../types'
 
 interface Props { onClose: () => void }
 
-type Phase = 'empty' | 'placed' | 'cutting' | 'done'
+type Phase = 'empty' | 'placed' | 'stabilizing' | 'stabilized' | 'cutting' | 'done'
 
 export default function PrepView({ onClose }: Props) {
   const {
     collectedIngredients, slicedIngredients, sliceIngredient,
     washedIngredients, selectedKnifeId,
     measuredIngredients, measureIngredient,
+    detectUnsafeCutting, addStabilizedIngredient, stabilizedIngredients,
+    setKnifeStability, setCutUniformity,
   } = useGameStore()
 
   const [mode, setMode] = useState<'cut' | 'measure'>('cut')
@@ -31,13 +35,36 @@ export default function PrepView({ onClose }: Props) {
   const [measureVal, setMeasureVal] = useState(0)
 
   const [boardItem, setBoardItem] = useState<{ name: string; image: string } | null>(null)
-  const [phase, setPhase]         = useState<Phase>('empty')
+  const [phase, setPhase] = useState<Phase>('empty')
   const [resultImg, setResultImg] = useState<string | null>(null)
   const [resultCut, setResultCut] = useState('')
-  const [warn, setWarn]           = useState('')
+  const [warn, setWarn] = useState('')
+  const [sopTip, setSopTip] = useState('')
+
+  // SOP tracking
+  const [totalCutAttempts, setTotalCutAttempts] = useState(0)
+  const [stabilizedCuts, setStabilizedCuts] = useState(0)
 
   const knife = selectedKnifeId
     ? toolCategories[0].types.find(k => k.id === selectedKnifeId) : null
+
+  // SOP 2 tip rotation
+  useEffect(() => {
+    setSopTip(getRandomTip('prep'))
+    const iv = setInterval(() => setSopTip(getRandomTip('prep')), 8000)
+    return () => clearInterval(iv)
+  }, [])
+
+  // Update SOP scores when leaving
+  useEffect(() => {
+    return () => {
+      if (totalCutAttempts > 0) {
+        const stabilityPct = Math.round((stabilizedCuts / totalCutAttempts) * 100)
+        setKnifeStability(stabilityPct)
+        setCutUniformity(stabilityPct) // uniform cuts correlate with stabilized prep
+      }
+    }
+  }, [totalCutAttempts, stabilizedCuts, setKnifeStability, setCutUniformity])
 
   /** Parse "2 tbsp" / "½ cup" / "500g" → { target, unit, step } */
   const parseQty = (q: string) => {
@@ -71,7 +98,7 @@ export default function PrepView({ onClose }: Props) {
   }
 
   const placeOnBoard = (name: string) => {
-    if (phase === 'cutting') return
+    if (phase === 'cutting' || phase === 'stabilizing') return
     if (slicedIngredients.includes(name)) return
     // Non-sliceable ingredients skip the board entirely — measure only
     if (!getSlicesForIngredient(name)) {
@@ -90,11 +117,39 @@ export default function PrepView({ onClose }: Props) {
     setPhase('placed')
   }
 
+  /** SOP 2: Stabilize the vegetable on the board before cutting */
+  const stabilize = () => {
+    if (!boardItem || phase !== 'placed') return
+    setPhase('stabilizing')
+    // Animate stabilization (wobble then settle)
+    setTimeout(() => {
+      setPhase('stabilized')
+      addStabilizedIngredient(boardItem.name)
+    }, 600)
+  }
+
+  /** SOP 2: Skip stabilization (unsafe — triggers warning) */
+  const skipStabilize = () => {
+    if (!boardItem || phase !== 'placed') return
+    detectUnsafeCutting(true)
+    setWarn('⚠ SOP Warning: Stabilize vegetables before cutting!')
+    setTimeout(() => setWarn(''), 2000)
+    setPhase('stabilized') // Allow cutting but record the violation
+  }
+
   const applyCut = (cutName: string, img: string) => {
     if (!boardItem) return
     if (!knife) {
       setWarn('Pick a knife from the Cabinet first!'); setTimeout(() => setWarn(''), 1800); return
     }
+
+    // SOP 2 tracking
+    setTotalCutAttempts(n => n + 1)
+    const wasStabilized = stabilizedIngredients.includes(boardItem.name)
+    if (wasStabilized) {
+      setStabilizedCuts(n => n + 1)
+    }
+
     setPhase('cutting')
     setTimeout(() => {
       setResultImg(img); setResultCut(cutName)
@@ -118,6 +173,19 @@ export default function PrepView({ onClose }: Props) {
         <div className="sv-navbar-title">🔪 Prep Table</div>
         <div className="sv-counter">{slicedIngredients.length}/{collectedIngredients.length}</div>
       </div>
+
+      {/* SOP 2 Tip Banner */}
+      <AnimatePresence mode="wait">
+        {sopTip && (
+          <motion.div className="sop-tip-banner sop-tip-banner--prep"
+            key={sopTip}
+            initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.3 }}>
+            <span className="sop-tip-icon">📋</span>
+            <span className="sop-tip-text">{sopTip}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {warn && (
@@ -145,63 +213,112 @@ export default function PrepView({ onClose }: Props) {
 
       {/* Chopping board center stage */}
       {mode === 'cut' && (
-      <div className="gp-board-zone">
-        <div className="gp-board">
-          <AnimatePresence mode="wait">
-            {phase === 'empty' && (
-              <motion.div key="hint" className="gp-board-hint"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                👇 Tap a washed ingredient below
+        <div className="gp-board-zone">
+          <div className="gp-board">
+            <AnimatePresence mode="wait">
+              {phase === 'empty' && (
+                <motion.div key="hint" className="gp-board-hint"
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  👇 Tap a washed ingredient below
+                </motion.div>
+              )}
+
+              {boardItem && (phase === 'placed' || phase === 'stabilizing' || phase === 'stabilized') && (
+                <motion.img key={`raw-${boardItem.name}`} src={boardItem.image} className="gp-board-item"
+                  initial={{ y: 120, scale: 0.5, opacity: 0 }}
+                  animate={phase === 'stabilizing'
+                    ? { y: 0, scale: 1, opacity: 1, rotate: [0, -3, 3, -1, 0] }
+                    : phase === 'stabilized'
+                      ? { y: 0, scale: 1, opacity: 1, rotate: 0 }
+                      : { y: 0, scale: 1, opacity: 1 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={phase === 'stabilizing'
+                    ? { duration: 0.6 }
+                    : { type: 'spring', damping: 14 }}
+                  onError={e => { (e.target as HTMLImageElement).src = '/assets/ingredients/onion.png' }} />
+              )}
+
+              {boardItem && phase === 'cutting' && (
+                <motion.img key={`cut-${boardItem.name}`} src={boardItem.image} className="gp-board-item"
+                  animate={{ y: 0, scale: [1, 0.94, 1.02, 0.96, 1], opacity: 1 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{ duration: 0.6 }}
+                  onError={e => { (e.target as HTMLImageElement).src = '/assets/ingredients/onion.png' }} />
+              )}
+
+              {phase === 'done' && (resultImg || boardItem) && (
+                <motion.img key="result" src={resultImg || boardItem?.image} className="gp-board-result"
+                  initial={{ scale: 0.4, opacity: 0, rotate: -8 }}
+                  animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                  transition={{ type: 'spring', damping: 12 }}
+                  onError={e => {
+                    if (boardItem) (e.target as HTMLImageElement).src = boardItem.image
+                  }} />
+              )}
+            </AnimatePresence>
+
+            {/* Knife chop animation overlay */}
+            <AnimatePresence>
+              {phase === 'cutting' && knife && (
+                <motion.img key="knife" src={knife.image} className="gp-knife-chop"
+                  initial={{ x: '-70%', y: '-40%', rotate: -35, opacity: 1 }}
+                  animate={{ x: ['-70%', '-10%', '-40%', '0%'], y: ['-40%', '-10%', '-30%', '-5%'], rotate: [-35, -5, -25, 0] }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.65, ease: 'easeInOut' }} />
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* SOP 2: Stabilize prompt — appears after placing ingredient on board */}
+          <AnimatePresence>
+            {phase === 'placed' && boardItem && (
+              <motion.div className="sop-stabilize-prompt"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}>
+                <Shield size={18} strokeWidth={2} />
+                <span>Lay flat before cutting (SOP 2)</span>
+                <div className="sop-stabilize-actions">
+                  <motion.button className="sop-stabilize-btn sop-stabilize-btn--safe"
+                    onClick={stabilize}
+                    whileTap={{ scale: 0.92 }}>
+                    ✋ Stabilize
+                  </motion.button>
+                  <motion.button className="sop-stabilize-btn sop-stabilize-btn--skip"
+                    onClick={skipStabilize}
+                    whileTap={{ scale: 0.92 }}>
+                    Skip
+                  </motion.button>
+                </div>
               </motion.div>
             )}
-
-            {boardItem && phase !== 'done' && (
-              <motion.img key={`raw-${boardItem.name}`} src={boardItem.image} className="gp-board-item"
-                initial={{ y: 120, scale: 0.5, opacity: 0 }}
-                animate={phase === 'cutting'
-                  ? { y: 0, scale: [1, 0.94, 1.02, 0.96, 1], opacity: 1 }
-                  : { y: 0, scale: 1, opacity: 1 }}
-                exit={{ opacity: 0, scale: 0.7 }}
-                transition={phase === 'cutting' ? { duration: 0.6 } : { type: 'spring', damping: 14 }}
-                onError={e => { (e.target as HTMLImageElement).src = '/assets/ingredients/onion.png' }} />
-            )}
-
-            {phase === 'done' && (resultImg || boardItem) && (
-              <motion.img key="result" src={resultImg || boardItem?.image} className="gp-board-result"
-                initial={{ scale: 0.4, opacity: 0, rotate: -8 }}
-                animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                transition={{ type: 'spring', damping: 12 }}
-                onError={e => {
-                  if (boardItem) (e.target as HTMLImageElement).src = boardItem.image
-                }} />
-            )}
           </AnimatePresence>
 
-          {/* Knife chop animation overlay */}
+          {/* Stabilized confirmation */}
           <AnimatePresence>
-            {phase === 'cutting' && knife && (
-              <motion.img key="knife" src={knife.image} className="gp-knife-chop"
-                initial={{ x: '-70%', y: '-40%', rotate: -35, opacity: 1 }}
-                animate={{ x: ['-70%', '-10%', '-40%', '0%'], y: ['-40%', '-10%', '-30%', '-5%'], rotate: [-35, -5, -25, 0] }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.65, ease: 'easeInOut' }} />
+            {phase === 'stabilized' && boardItem && (
+              <motion.div className="sop-stabilized-badge"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}>
+                ✅ Stabilized — choose a cut style
+              </motion.div>
             )}
           </AnimatePresence>
-        </div>
 
-        {phase === 'done' && (
-          <motion.div className="gp-result-label"
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            ✅ {boardItem?.name} — {resultCut}!
-          </motion.div>
-        )}
-      </div>
+          {phase === 'done' && (
+            <motion.div className="gp-result-label"
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+              ✅ {boardItem?.name} — {resultCut}!
+            </motion.div>
+          )}
+        </div>
 
       )}
 
-      {/* Cut-style bubbles around the board */}
+      {/* Cut-style bubbles around the board — now appears after stabilization */}
       <AnimatePresence>
-        {phase === 'placed' && slices && (
+        {phase === 'stabilized' && slices && (
           <motion.div className="gp-cut-bubbles"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             {Object.entries(slices).map(([cutName, img], i) => (
@@ -280,7 +397,7 @@ export default function PrepView({ onClose }: Props) {
         })()}
       </AnimatePresence>
 
-      <GameTooltip id="prep" text="Tap a washed ingredient, then choose how to cut it. Use Measure tab for liquids." />
+      <GameTooltip id="prep" text="SOP: Stabilize vegetables flat on the board before cutting. Use Measure tab for liquids." />
 
       <GameTray highlight={mode === 'cut' ? 'slice' : 'none'} onItemTap={mode === 'cut' ? placeOnBoard : openMeasure} />
     </motion.div>

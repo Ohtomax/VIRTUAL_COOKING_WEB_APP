@@ -1,14 +1,15 @@
 /**
- * StoveView — Cooking Fever style cooking.
- * Implements game narrative §8 Cooking Stage.
- * Cookware lands on burner, ingredients hop in, fire + cook/burn timer states.
+ * StoveView — Cooking Fever style cooking with SOP 1 & 4 compliance.
+ * SOP 1: Cookware alignment — must match recipe's recommended cookware/burner size.
+ * SOP 4: Cooking execution — careful ingredient drops, flame centering checks.
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, Flame, CheckCircle2 } from 'lucide-react'
+import { ChevronLeft, Flame, CheckCircle2, Target } from 'lucide-react'
 import useGameStore from '../store/gameStore'
 import { toolCategories } from '../data/tools'
 import { getSlicesForIngredient } from '../data/sliceimages'
+import { RECIPE_COOKWARE, getRandomTip } from '../data/sopData'
 import type { Recipe, HeatLevel } from '../types'
 import GameTray from './ui/GameTray'
 import GameTooltip from './ui/GameTooltip'
@@ -21,11 +22,15 @@ interface Props {
 
 /** Seconds after "done" before food burns */
 const BURN_BUFFER = 12
+/** Minimum ms between ingredient drops (SOP 4 — careful placement) */
+const MIN_DROP_INTERVAL = 800
+/** Seconds between flame centering checks */
+const FLAME_CHECK_INTERVAL = 15
 
 const FALLBACK_POTS = [
-  { id: 'pot', name: 'Stock Pot', img: '/assets/kitchen/stock pot.png' },
-  { id: 'pan', name: 'Fry Pan',   img: '/assets/kitchen/fry pan.png'   },
-  { id: 'wok', name: 'Wok',       img: '/assets/kitchen/wok pan.png'   },
+  { id: 'pot', name: 'Stock Pot', img: '/assets/kitchen/stock pot.png', type: 'pot' as const },
+  { id: 'pan', name: 'Fry Pan',   img: '/assets/kitchen/fry pan.png',  type: 'pan' as const },
+  { id: 'wok', name: 'Wok',       img: '/assets/kitchen/wok pan.png',  type: 'wok' as const },
 ]
 
 type CookState = 'idle' | 'cooking' | 'done' | 'burnt'
@@ -35,6 +40,10 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
     collectedIngredients, slicedIngredients,
     heatLevel, setHeatLevel, setBurnedFood, setCookingElapsedTime,
     startCooking, stopCooking, inventoryToolIds,
+    setCookwareMatch, setFlameCentering, setIngredientDropScore,
+    recordLastDropTimestamp, lastDropTimestamp,
+    recordFlameCenteringCheck, recordFlameCenteringResponse,
+    flameCenteringChecks, flameCenteringResponses,
   } = useGameStore()
 
   // Derive thresholds from the selected recipe (fallback 45s)
@@ -46,7 +55,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
     .map(id => allTools.find(t => t.id === id && (t.category === 'pot' || t.category === 'pan')))
     .filter(Boolean)
   const cookwareOptions = invPots.length
-    ? invPots.map(t => ({ id: t!.id, name: t!.name, img: t!.image }))
+    ? invPots.map(t => ({ id: t!.id, name: t!.name, img: t!.image, type: t!.category as 'pot' | 'pan' | 'wok' }))
     : FALLBACK_POTS
 
   const [cookware, setCookware] = useState<typeof cookwareOptions[0] | null>(null)
@@ -56,14 +65,74 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
   const [seconds, setSeconds]   = useState(0)
   const [state, setState]       = useState<CookState>('idle')
   const [notice, setNotice]     = useState('')
+  const [sopTip, setSopTip]     = useState('')
 
-  const flash = (msg: string) => { setNotice(msg); setTimeout(() => setNotice(''), 1800) }
+  // SOP 1: Cookware alignment feedback
+  const [cookwareAligned, setCookwareAligned] = useState<boolean | null>(null)
+  // SOP 4: Flame centering check
+  const [showFlameCheck, setShowFlameCheck] = useState(false)
+  // SOP 4: Track rapid drops
+  const rapidDropCount = useRef(0)
+  const totalDropCount = useRef(0)
 
-  const readyIngredients = collectedIngredients.filter(i => slicedIngredients.includes(i.name))
+  // Cleanup refs
+  const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hopTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (flashTimer.current) clearTimeout(flashTimer.current)
+      if (hopTimer.current) clearTimeout(hopTimer.current)
+    }
+  }, [])
+
+  const flash = useCallback((msg: string) => {
+    if (flashTimer.current) clearTimeout(flashTimer.current)
+    setNotice(msg)
+    flashTimer.current = setTimeout(() => setNotice(''), 1800)
+  }, [])
+
+  // SOP tip rotation
+  useEffect(() => {
+    setSopTip(getRandomTip('stove'))
+    const iv = setInterval(() => setSopTip(getRandomTip('stove')), 8000)
+    return () => clearInterval(iv)
+  }, [])
+
+  const readyIngredients = collectedIngredients.filter(i =>
+    slicedIngredients.includes(i.name) || !getSlicesForIngredient(i.name)
+  )
   const allInPot = readyIngredients.length > 0 && readyIngredients.every(i => inPot.includes(i.name))
 
+  // SOP 1: Check cookware alignment when cookware is selected
+  const selectCookware = (c: typeof cookwareOptions[0]) => {
+    setCookware(c)
+    if (selectedRecipe) {
+      const recommended = RECIPE_COOKWARE[selectedRecipe.id]
+      if (recommended) {
+        const matches = c.type === recommended.cookware || c.id === recommended.cookware
+        setCookwareAligned(matches)
+        setCookwareMatch(matches ? 100 : 40)
+        if (!matches) {
+          flash(`⚠ SOP: ${recommended.cookware} is recommended for ${selectedRecipe.name}!`)
+        } else {
+          flash(`✓ Perfect cookware match! 🎯`)
+        }
+      } else {
+        setCookwareAligned(true)
+        setCookwareMatch(100)
+      }
+    }
+  }
+
+  // SOP 4: Careful ingredient dropping
   const dropIn = (name: string) => {
     if (state === 'done' || state === 'burnt') return
+    // SOP 4 & code review fix: block drops while cooking
+    if (state === 'cooking') {
+      flash('Turn off the fire before adding more ingredients! 🔥')
+      return
+    }
     const ing = collectedIngredients.find(i => i.name === name)
     if (!ing) return
     if (!cookware) { flash('Pick a cookware first! 🍳'); return }
@@ -71,11 +140,22 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
     if (getSlicesForIngredient(name) && !slicedIngredients.includes(name)) {
       flash(`✂ Slice the ${ing.name} at the Prep Table first!`); return
     }
+
+    // SOP 4: Check drop speed
+    const now = Date.now()
+    totalDropCount.current += 1
+    if (lastDropTimestamp > 0 && (now - lastDropTimestamp) < MIN_DROP_INTERVAL) {
+      rapidDropCount.current += 1
+      flash('⚠ SOP: Add ingredients carefully — don\'t rush! 🍳')
+    }
+    recordLastDropTimestamp(now)
+
+    if (hopTimer.current) clearTimeout(hopTimer.current)
     setHopping({ img: ing.image, key: Date.now() })
-    setTimeout(() => {
+    hopTimer.current = setTimeout(() => {
       setHopping(null)
       setInPot(p => p.includes(name) ? p : [...p, name])
-    }, 680)
+    }, 1100) // Slower animation (SOP 4: deliberate placement)
   }
 
   const toggleFire = () => {
@@ -86,21 +166,59 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
     else stopCooking()
   }
 
+  // Timer
   useEffect(() => {
     if (!fireOn || state === 'burnt') return
     const iv = setInterval(() => setSeconds(s => s + 1), 1000)
     return () => clearInterval(iv)
   }, [fireOn, state])
 
+  // Burn / done detection
   useEffect(() => {
     if (seconds >= BURN_SECONDS && state !== 'burnt') {
       setState('burnt'); setBurnedFood(true)
     } else if (seconds >= COOK_SECONDS && state === 'cooking') {
       setState('done')
     }
-  }, [seconds, BURN_SECONDS, COOK_SECONDS, state])
+  }, [seconds, BURN_SECONDS, COOK_SECONDS, state, setBurnedFood])
 
-  const finish = () => { stopCooking(); setCookingElapsedTime(seconds); onFinishCooking() }
+  // SOP 4: Flame centering check — appears every FLAME_CHECK_INTERVAL seconds while cooking
+  useEffect(() => {
+    if (!fireOn || state !== 'cooking') return
+    const iv = setInterval(() => {
+      recordFlameCenteringCheck()
+      setShowFlameCheck(true)
+      // Auto-dismiss after 5 seconds if not tapped
+      setTimeout(() => setShowFlameCheck(false), 5000)
+    }, FLAME_CHECK_INTERVAL * 1000)
+    return () => clearInterval(iv)
+  }, [fireOn, state, recordFlameCenteringCheck])
+
+  const respondFlameCheck = () => {
+    recordFlameCenteringResponse()
+    setShowFlameCheck(false)
+    flash('✓ Flame centered! Good monitoring! 🎯')
+  }
+
+  // SOP 4: Calculate flame centering and drop scores on finish
+  const finish = () => {
+    stopCooking()
+    setCookingElapsedTime(seconds)
+
+    // SOP 4: Flame centering score
+    if (flameCenteringChecks > 0) {
+      const centerPct = Math.round((flameCenteringResponses / flameCenteringChecks) * 100)
+      setFlameCentering(centerPct)
+    }
+
+    // SOP 4: Ingredient drop score
+    if (totalDropCount.current > 0) {
+      const carefulPct = Math.round(((totalDropCount.current - rapidDropCount.current) / totalDropCount.current) * 100)
+      setIngredientDropScore(carefulPct)
+    }
+
+    onFinishCooking()
+  }
 
   const cookPct = Math.min(100, (seconds / COOK_SECONDS) * 100)
 
@@ -117,15 +235,71 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
         <div className="sv-counter">⏱ {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')}</div>
       </div>
 
+      {/* SOP Tip Banner */}
+      <AnimatePresence mode="wait">
+        {sopTip && !showFlameCheck && (
+          <motion.div className="sop-tip-banner sop-tip-banner--stove"
+            key={sopTip}
+            initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.3 }}>
+            <span className="sop-tip-icon">📋</span>
+            <span className="sop-tip-text">{sopTip}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* SOP 1: Cookware alignment badge */}
+      {cookware && cookwareAligned !== null && (
+        <motion.div className={`sop-alignment-badge ${cookwareAligned ? 'aligned' : 'misaligned'}`}
+          initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}>
+          {cookwareAligned
+            ? <><CheckCircle2 size={14} strokeWidth={2.5} /> Cookware aligned</>
+            : <><Target size={14} strokeWidth={2.5} /> Misaligned</>}
+        </motion.div>
+      )}
+
+      {/* SOP 4: Flame centering check overlay */}
+      <AnimatePresence>
+        {showFlameCheck && (
+          <motion.div className="sop-flame-check"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}>
+            <motion.button className="sop-flame-check-btn"
+              onClick={respondFlameCheck}
+              whileTap={{ scale: 0.92 }}
+              animate={{ boxShadow: ['0 0 0 0 rgba(255,180,0,0.4)', '0 0 0 12px rgba(255,180,0,0)', '0 0 0 0 rgba(255,180,0,0.4)'] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}>
+              <Target size={20} strokeWidth={2} />
+              <span>Check Flame</span>
+            </motion.button>
+            <span className="sop-flame-check-hint">SOP: Tap to confirm flame is centered</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Burner zone: fire + cookware + contents */}
       <div className="gst-burner-zone">
+        {/* SOP 1: Burner size ring indicator */}
+        {!cookware && selectedRecipe && RECIPE_COOKWARE[selectedRecipe.id] && (
+          <motion.div className={`sop-burner-ring sop-burner-ring--${RECIPE_COOKWARE[selectedRecipe.id].burnerSize}`}
+            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }}>
+            <span>{RECIPE_COOKWARE[selectedRecipe.id].burnerSize} burner</span>
+          </motion.div>
+        )}
+
         <AnimatePresence>
           {fireOn && state !== 'burnt' && (
             <motion.img key="fire" src="/assets/kitchen/fire.png" className="gst-fire"
               initial={{ opacity: 0, scale: 0.6 }}
-              animate={{ opacity: 1, scale: [1, 1.08, 1] }}
+              animate={{ 
+                opacity: 1, 
+                scale: heatLevel === 'low' ? [0.65, 0.7, 0.65] 
+                     : heatLevel === 'high' ? [0.95, 1.0, 0.95] 
+                     : [0.8, 0.85, 0.8] 
+              }}
               exit={{ opacity: 0, scale: 0.6 }}
-              transition={{ repeat: Infinity, duration: 0.45 }} />
+              transition={{ repeat: Infinity, duration: 1.2 }} />
           )}
         </AnimatePresence>
 
@@ -180,9 +354,9 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
           {hopping && (
             <motion.img key={hopping.key} src={hopping.img} className="gst-hop"
               initial={{ top: '95%', left: '50%', scale: 0.85, opacity: 1 }}
-              animate={{ top: ['95%', '48%', '56%'], scale: [0.85, 0.6, 0.35], opacity: [1, 1, 0] }}
+              animate={{ top: ['95%', '55%', '68%'], left: ['50%', '59%', '68%'], scale: [0.85, 0.6, 0.35], opacity: [1, 1, 0] }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.68, times: [0, 0.55, 1], ease: 'easeOut' }} />
+              transition={{ duration: 1.1, times: [0, 0.55, 1], ease: 'easeOut' }} />
           )}
         </AnimatePresence>
       </div>
@@ -191,10 +365,11 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
       <div className="gst-controls">
         {!cookware ? (
           <div className="gst-pick-row">
-            <span className="gst-pick-label">Pick cookware:</span>
+            <span className="gst-pick-label">Pick cookware{selectedRecipe && RECIPE_COOKWARE[selectedRecipe.id]
+              ? ` (recommended: ${RECIPE_COOKWARE[selectedRecipe.id].cookware})` : ''}:</span>
             {cookwareOptions.map(c => (
               <motion.button key={c.id} className="gst-pick-btn"
-                onClick={() => setCookware(c)} whileTap={{ scale: 0.9 }}>
+                onClick={() => selectCookware(c)} whileTap={{ scale: 0.9 }}>
                 <img src={c.img} alt={c.name}
                   onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                 <span>{c.name}</span>
@@ -241,7 +416,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
         </p>
       </div>
 
-      <GameTooltip id="stove" text="Pick cookware, add ingredients, then light the fire. Don't let it burn!" />
+      <GameTooltip id="stove" text="SOP: Match cookware to burner size, add ingredients carefully, and monitor the flame!" />
       <GameTray highlight="none" onItemTap={dropIn} />
     </motion.div>
   )

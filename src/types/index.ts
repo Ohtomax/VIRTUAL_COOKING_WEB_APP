@@ -101,5 +101,18 @@ export interface AudioSettings { musicEnabled: boolean; sfxEnabled: boolean; mas
 // ─── Cooking step ──────────────────────────────────────────────
 export interface CookingStep { id: number; name: string; status: 'pending' | 'in-progress' | 'completed' }
 
+// ─── SOP Compliance ────────────────────────────────────────────
+export interface SOPComplianceEntry {
+  followed: boolean
+  details: string
+}
+
+export interface SOPResultSummary {
+  sopId: string
+  title: string
+  status: 'pass' | 'warn' | 'fail'
+  feedback: string
+}
+
 // ─── Shared props ──────────────────────────────────────────────
 export interface SetScreenProps { setScreen: (screen: ScreenName) => void }

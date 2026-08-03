@@ -3666,8 +3666,8 @@
 
 .gp-board-item {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 32%;
+  left: 34%;
   transform: translate(-50%, -50%);
   width: 220px;
   height: 220px;
@@ -3690,7 +3690,7 @@
 
 .gp-knife-chop {
   position: absolute;
-  top: 20%;
+  top: 52%;
   left: 25%;
   width: 220px;
   pointer-events: none;
@@ -3753,7 +3753,7 @@
 
 /* ── STOVE game ── */
 .gst-burner-zone {
-  position: absolute;
+  position: absolute; 
   inset: 0;
   z-index: 6;
   pointer-events: none;
@@ -3761,17 +3761,17 @@
 
 .gst-fire {
   position: absolute;
-  left: 50%;
-  top: 64%;
-  width: 170px;
+  left: 53%;
+  top: 54%;
+  width: 300px;
   transform: translate(-50%, -50%);
   filter: drop-shadow(0 0 30px rgba(255, 140, 0, .75));
 }
 
 .gst-pot {
   position: absolute;
-  left: 50%;
-  top: 56%;
+  left: 55%;
+  top: 43%;
   transform: translate(-50%, -50%);
   width: 210px;
 }
@@ -5090,4 +5090,340 @@
   border-top: 2px solid var(--border);
   padding-top: 8px;
   font-size: 18px;
+}
+
+/* ═══════════════════════════════════════════════════
+   SOP — Standard Operating Procedure visual indicators
+   ═══════════════════════════════════════════════════ */
+
+/* ── SOP Tip Banner (all stations) ── */
+.sop-tip-banner {
+  position: absolute;
+  top: 56px;
+  left: 12px;
+  right: 12px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255, 200, 55, 0.18) 0%, rgba(255, 160, 20, 0.12) 100%);
+  border: 1px solid rgba(255, 200, 55, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.sop-tip-banner--prep { top: 100px; }
+.sop-tip-banner--stove { top: 56px; }
+
+.sop-tip-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.sop-tip-text {
+  font-size: 12px;
+  color: rgba(255, 230, 160, 0.95);
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+/* ── SOP 2: Stabilize Prompt (PrepView) ── */
+.sop-stabilize-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  margin-top: 8px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(99, 102, 241, 0.1) 100%);
+  border: 1px solid rgba(99, 130, 246, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(200, 220, 255, 0.95);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sop-stabilize-prompt > svg {
+  color: rgba(147, 197, 253, 0.9);
+}
+
+.sop-stabilize-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.sop-stabilize-btn {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.sop-stabilize-btn--safe {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.35);
+}
+
+.sop-stabilize-btn--safe:hover {
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.5);
+}
+
+.sop-stabilize-btn--skip {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 200, 150, 0.8);
+  border: 1px solid rgba(255, 150, 50, 0.25);
+}
+
+.sop-stabilize-btn--skip:hover {
+  background: rgba(255, 150, 50, 0.15);
+}
+
+.sop-stabilized-badge {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(134, 239, 172, 0.95);
+  padding: 6px 12px;
+  margin-top: 6px;
+  border-radius: 8px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+/* ── SOP 3: Wash Immersion + Dirt Particles (SinkView) ── */
+.gs-basin-item--immersed {
+  transition: opacity 0.3s ease;
+}
+
+.gs-basin-item--immersed.immerse img {
+  opacity: 0.65;
+  filter: brightness(0.85) saturate(0.8);
+}
+
+.gs-basin-item--immersed.rinse img {
+  opacity: 1;
+  filter: brightness(1.05) saturate(1.1);
+  transition: all 0.5s ease;
+}
+
+.gs-phase-label {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(200, 230, 255, 0.9);
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.3px;
+}
+
+.gs-ring-fill--rinse {
+  stroke: #22d3ee !important;
+}
+
+.gs-dirt-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #8b6914 30%, #5c4a0e 100%);
+  top: 40%;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: 0 0 3px rgba(100, 70, 10, 0.5);
+}
+
+/* ── SOP 1: Cookware Alignment Badge (StoveView) ── */
+.sop-alignment-badge {
+  position: absolute;
+  top: 56px;
+  right: 12px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.sop-alignment-badge.aligned {
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: rgba(134, 239, 172, 0.95);
+}
+
+.sop-alignment-badge.misaligned {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: rgba(253, 224, 71, 0.95);
+}
+
+/* ── SOP 1: Burner Size Ring Indicator ── */
+.sop-burner-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 180, 50, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 68%;
+  top: 70%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.sop-burner-ring span {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 200, 100, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sop-burner-ring--small {
+  width: 100px;
+  height: 100px;
+}
+
+.sop-burner-ring--medium {
+  width: 140px;
+  height: 140px;
+}
+
+.sop-burner-ring--large {
+  width: 180px;
+  height: 180px;
+}
+
+/* ── SOP 4: Flame Centering Check (StoveView) ── */
+.sop-flame-check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.sop-flame-check-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 180, 0, 0.25) 0%, rgba(255, 120, 0, 0.2) 100%);
+  border: 2px solid rgba(255, 180, 0, 0.5);
+  color: rgba(255, 230, 160, 0.95);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.sop-flame-check-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 180, 0, 0.4) 0%, rgba(255, 120, 0, 0.35) 100%);
+}
+
+.sop-flame-check-btn:active {
+  transform: scale(0.95);
+}
+
+.sop-flame-check-hint {
+  font-size: 11px;
+  color: rgba(255, 200, 150, 0.7);
+  font-weight: 500;
+}
+
+/* ── Results Screen: SOP Compliance Section ── */
+.rs-sop-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.rs-sop-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.rs-sop-row--pass {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.rs-sop-row--pass .rs-sop-icon {
+  color: #22c55e;
+}
+
+.rs-sop-row--warn {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.rs-sop-row--warn .rs-sop-icon {
+  color: #f59e0b;
+}
+
+.rs-sop-row--fail {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.rs-sop-row--fail .rs-sop-icon {
+  color: #ef4444;
+}
+
+.rs-sop-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rs-sop-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rs-sop-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1, rgba(255, 255, 255, 0.92));
+  line-height: 1.2;
+}
+
+.rs-sop-feedback {
+  font-size: 12px;
+  color: var(--text-2, rgba(255, 255, 255, 0.55));
+  line-height: 1.3;
 }

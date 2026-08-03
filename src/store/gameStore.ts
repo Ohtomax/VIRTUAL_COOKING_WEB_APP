@@ -19,6 +19,8 @@ import type {
   LevelProgressData,
   PlayerProfile,
   GamePhase,
+  SOPComplianceEntry,
+  SOPResultSummary,
 } from '../types'
 
 // ==========================================
@@ -63,6 +65,20 @@ interface GameState {
   stirCount: number
   requiredStirs: number
   cookingElapsedTime: number
+
+  // SOP Compliance
+  sopCompliance: Record<string, SOPComplianceEntry>
+  cookwareMatchScore: number
+  flameCenteringScore: number
+  knifeStabilityScore: number
+  cutUniformityScore: number
+  washThoroughnessScore: number
+  ingredientDropScore: number
+  sopResults: SOPResultSummary[]
+  lastDropTimestamp: number
+  flameCenteringChecks: number
+  flameCenteringResponses: number
+  stabilizedIngredients: string[]
 
   // Scoring
   scores: Scores
@@ -115,6 +131,19 @@ interface GameActions {
   setBurnedFood: (burned: boolean) => void
   setUndercookedFood: (undercooked: boolean) => void
   setCookingElapsedTime: (time: number) => void
+
+  // SOP Compliance
+  setCookwareMatch: (score: number) => void
+  setFlameCentering: (score: number) => void
+  setKnifeStability: (score: number) => void
+  setCutUniformity: (score: number) => void
+  setWashThoroughness: (score: number) => void
+  setIngredientDropScore: (score: number) => void
+  recordSopCompliance: (sopId: string, followed: boolean, details: string) => void
+  recordLastDropTimestamp: (ts: number) => void
+  recordFlameCenteringCheck: () => void
+  recordFlameCenteringResponse: () => void
+  addStabilizedIngredient: (name: string) => void
 
   // Scoring
   calculateScores: () => { totalScore: number; starRating: number; grade: Grade }
@@ -174,6 +203,19 @@ const initialSessionState: Omit<
   cookingElapsedTime: 0,
   selectedKnifeId: null,
   inventoryToolIds: [],
+  // SOP Compliance
+  sopCompliance: {},
+  cookwareMatchScore: 100,
+  flameCenteringScore: 100,
+  knifeStabilityScore: 100,
+  cutUniformityScore: 100,
+  washThoroughnessScore: 100,
+  ingredientDropScore: 100,
+  sopResults: [],
+  lastDropTimestamp: 0,
+  flameCenteringChecks: 0,
+  flameCenteringResponses: 0,
+  stabilizedIngredients: [],
   scores: { accuracy: 0, washing: 0, cutting: 0, measuring: 0, cooking: 0, timing: 0 },
   totalScore: 0,
   starRating: 0,
@@ -344,6 +386,26 @@ const useGameStore = create<GameStore>()(
       setUndercookedFood: (undercooked) => set({ undercookedFood: undercooked }),
       setCookingElapsedTime: (time) => set({ cookingElapsedTime: time }),
 
+      // ---- SOP Compliance ----
+      setCookwareMatch: (score) => set({ cookwareMatchScore: score }),
+      setFlameCentering: (score) => set({ flameCenteringScore: score }),
+      setKnifeStability: (score) => set({ knifeStabilityScore: score }),
+      setCutUniformity: (score) => set({ cutUniformityScore: score }),
+      setWashThoroughness: (score) => set({ washThoroughnessScore: score }),
+      setIngredientDropScore: (score) => set({ ingredientDropScore: score }),
+      recordSopCompliance: (sopId, followed, details) =>
+        set(s => ({
+          sopCompliance: { ...s.sopCompliance, [sopId]: { followed, details } },
+        })),
+      recordLastDropTimestamp: (ts) => set({ lastDropTimestamp: ts }),
+      recordFlameCenteringCheck: () => set(s => ({ flameCenteringChecks: s.flameCenteringChecks + 1 })),
+      recordFlameCenteringResponse: () => set(s => ({ flameCenteringResponses: s.flameCenteringResponses + 1 })),
+      addStabilizedIngredient: (name) => set(s => ({
+        stabilizedIngredients: s.stabilizedIngredients.includes(name)
+          ? s.stabilizedIngredients
+          : [...s.stabilizedIngredients, name],
+      })),
+
       // ---- Scoring ----
       calculateScores: () => {
         const s = get()
@@ -376,7 +438,7 @@ const useGameStore = create<GameStore>()(
         const washedCount = washableRequired.filter(r =>
           s.washedIngredients.includes(r.name)
         ).length
-        const washing = washableRequired.length > 0
+        let washing = washableRequired.length > 0
           ? (washedCount / washableRequired.length) * 100
           : 100   // no washable ingredients → full marks
 
@@ -400,7 +462,7 @@ const useGameStore = create<GameStore>()(
             // else wrong technique → 0 for this ingredient (but still made the cut, no penalty below 0)
           }
         }
-        const cutting = totalCuts > 0 ? (correctCuts / totalCuts) * 100 : 100
+        let cutting = totalCuts > 0 ? (correctCuts / totalCuts) * 100 : 100
 
         // ── Measuring accuracy: average of all measured ingredient accuracies ──
         const measureEntries = Object.values(s.measuringProgress) as { amount: number; accuracy: number }[]
@@ -417,6 +479,64 @@ const useGameStore = create<GameStore>()(
           const diff = Math.abs(s.cookingElapsedTime - s.cookingDuration)
           timing = Math.max(0, 100 - (diff / s.cookingDuration) * 100)
         }
+
+        // ── SOP Compliance multipliers (0.8× to 1.0×) ──
+        // SOP 3: Washing thoroughness affects washing score
+        const washMultiplier = 0.8 + (s.washThoroughnessScore / 100) * 0.2
+        washing = washing * washMultiplier
+
+        // SOP 2: Knife stability + cut uniformity affects cutting score
+        const cutMultiplier = 0.8 + (((s.knifeStabilityScore + s.cutUniformityScore) / 200) * 0.2)
+        cutting = cutting * cutMultiplier
+
+        // SOP 1 & 4: Cookware match + flame centering + careful drops affects cooking
+        const cookMultiplier = 0.8 + (((s.cookwareMatchScore + s.flameCenteringScore + s.ingredientDropScore) / 300) * 0.2)
+        cooking = cooking * cookMultiplier
+
+        // Build SOP results summary for the results screen
+        const sopResults: SOPResultSummary[] = [
+          {
+            sopId: 'sop1-cookware-alignment',
+            title: 'Cookware & Stove Alignment',
+            status: s.cookwareMatchScore >= 80 ? 'pass' : s.cookwareMatchScore >= 50 ? 'warn' : 'fail',
+            feedback: s.cookwareMatchScore >= 80
+              ? 'Cookware properly matched to burner size'
+              : s.cookwareMatchScore >= 50
+                ? 'Cookware size could be better matched to the burner'
+                : 'Cookware was not matched to the burner size',
+          },
+          {
+            sopId: 'sop2-knife-safety',
+            title: 'Knife Safety & Preparation',
+            status: s.knifeStabilityScore >= 80 ? 'pass' : s.knifeStabilityScore >= 50 ? 'warn' : 'fail',
+            feedback: s.knifeStabilityScore >= 80
+              ? 'Vegetables properly stabilized before cutting'
+              : s.knifeStabilityScore >= 50
+                ? 'Some ingredients were not stabilized before cutting'
+                : 'Ingredients were cut without proper stabilization — unsafe!',
+          },
+          {
+            sopId: 'sop3-washing',
+            title: 'Washing & Sanitation',
+            status: s.washThoroughnessScore >= 80 ? 'pass' : s.washThoroughnessScore >= 50 ? 'warn' : 'fail',
+            feedback: s.washThoroughnessScore >= 80
+              ? 'All vegetables washed thoroughly with full immersion'
+              : s.washThoroughnessScore >= 50
+                ? 'Some larger vegetables were not washed thoroughly enough'
+                : 'Vegetables were not properly immersed during washing',
+          },
+          {
+            sopId: 'sop4-cooking-execution',
+            title: 'Cooking Execution',
+            status: s.ingredientDropScore >= 80 && s.flameCenteringScore >= 80 ? 'pass'
+              : s.ingredientDropScore >= 50 && s.flameCenteringScore >= 50 ? 'warn' : 'fail',
+            feedback: s.ingredientDropScore >= 80 && s.flameCenteringScore >= 80
+              ? 'Ingredients added carefully and flame was properly monitored'
+              : s.ingredientDropScore < 50
+                ? 'Ingredients were added too haphazardly — be more deliberate!'
+                : 'Flame was not monitored closely enough during cooking',
+          },
+        ]
 
         // If no washable ingredients, washing is 100% (full marks) and weight stays
         // This keeps the formula stable regardless of ingredient composition
@@ -444,6 +564,7 @@ const useGameStore = create<GameStore>()(
           totalScore: rounded,
           starRating,
           grade,
+          sopResults,
         })
 
         return { totalScore: rounded, starRating, grade }
