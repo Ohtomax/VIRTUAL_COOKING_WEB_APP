@@ -3526,7 +3526,7 @@
 .gs-basin-item {
   position: absolute;
   z-index: 12;
-  left: 51%;
+  left: 48%;
   transform: translateX(-50%);
   width: 96px;
   height: 96px;
