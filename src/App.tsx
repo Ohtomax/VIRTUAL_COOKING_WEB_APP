@@ -55,7 +55,7 @@ export default function App() {
       {screen === 'kitchen-tools' && <KitchenTools setScreen={setScreen} />}
       {screen === 'level-select' && <LevelSelection setScreen={setScreen} />}
       {screen === 'recipe-card' && <RecipeCard setScreen={setScreen} />}
-      {screen === 'kitchen' && <EducationalKitchen onBack={() => setScreen('level-select')} onFinish={() => setScreen('results')} />}
+      {screen === 'kitchen' && <EducationalKitchen onBack={() => setScreen('recipe-card')} onFinish={() => setScreen('results')} />}
       {screen === 'results' && <ResultsScreen setScreen={setScreen} />}
       {screen === 'level-complete' && <LevelComplete setScreen={setScreen} />}
       {screen === 'pre-test' && <KnowledgeTest setScreen={setScreen} mode="pre" />}

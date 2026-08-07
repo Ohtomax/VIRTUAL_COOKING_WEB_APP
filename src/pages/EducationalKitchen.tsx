@@ -27,17 +27,21 @@ const STEPS: { key: KitchenStep; label: string }[] = [
 export default function EducationalKitchen({ onBack, onFinish }: Props) {
   const [active, setActive]    = useState<Station>(null)
   const [kitchenStep, setStep] = useState<KitchenStep>('ingredients')
+  const [showRecipeModal, setShowRecipeModal] = useState(false)
 
   const {
-    selectedRecipe, initializeIngredients,
+    selectedRecipe, initializeIngredients, requiredIngredients,
     collectedIngredients, washedIngredients, slicedIngredients, measuredIngredients,
     currentFeedback, clearFeedback, selectedKnifeId, inventoryToolIds,
     sliceIngredient, measureIngredient, isChallengeMode,
   } = useGameStore()
 
   useEffect(() => {
-    if (selectedRecipe) { initializeIngredients(selectedRecipe); setStep('ingredients') }
-  }, [selectedRecipe])
+    if (selectedRecipe && requiredIngredients.length === 0) {
+      initializeIngredients(selectedRecipe);
+      setStep('ingredients')
+    }
+  }, [selectedRecipe, requiredIngredients.length])
 
   useEffect(() => {
     if (!currentFeedback) return
@@ -100,7 +104,9 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
           <ChevronLeft size={20} strokeWidth={2.5} /><span>Back</span>
         </button>
         <div className="ek-nav-title">{selectedRecipe?.name ?? 'Kitchen'}</div>
-        <div style={{ width: 80 }} />
+        <button className="g-btn g-btn--gold" style={{ padding: '6px 14px', fontSize: 13, marginRight: 16, minWidth: 80 }} onClick={() => setShowRecipeModal(true)}>
+          Recipe
+        </button>
       </div>
 
       {/* Step strip — hidden in challenge mode */}
