@@ -6,6 +6,7 @@ import CabinetView   from '../components/Cabinetview'
 import PrepView      from '../components/Prepview'
 import SinkView      from '../components/Sinkview'
 import StoveView     from '../components/Stoveview'
+import RecipeCard    from './RecipeCard'
 import InventoryPanel from '../components/ui/InventoryPanel'
 import useGameStore  from '../store/gameStore'
 import { toolCategories } from '../data/tools'
@@ -197,6 +198,14 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {showRecipeModal && selectedRecipe && (
+        <div className="cab-detail-overlay" onClick={() => setShowRecipeModal(false)} style={{ zIndex: 100 }}>
+          <div className="cab-detail-panel" onClick={e => e.stopPropagation()} style={{ width: '90%', maxWidth: 700, maxHeight: '90vh', overflowY: 'auto', padding: 0, borderRadius: 24 }}>
+            <RecipeCard setScreen={() => {}} isPopup={true} onClose={() => setShowRecipeModal(false)} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

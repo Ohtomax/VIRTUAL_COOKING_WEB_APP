@@ -60,7 +60,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
 
   const [cookware, setCookware] = useState<typeof cookwareOptions[0] | null>(null)
   const [inPot, setInPot]       = useState<string[]>([])
-  const [hopping, setHopping]   = useState<{ img: string; key: number } | null>(null)
+  const [hopping, setHopping]   = useState<{ img: string; key: number, type: 'hop' | 'shake' } | null>(null)
   const [fireOn, setFireOn]     = useState(false)
   const [seconds, setSeconds]   = useState(0)
   const [state, setState]       = useState<CookState>('idle')
@@ -151,11 +151,12 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
     recordLastDropTimestamp(now)
 
     if (hopTimer.current) clearTimeout(hopTimer.current)
-    setHopping({ img: ing.image, key: Date.now() })
+    const isSeasoning = ['salt', 'pepper', 'peppercorns'].includes(name.toLowerCase())
+    setHopping({ img: ing.image, key: Date.now(), type: isSeasoning ? 'shake' : 'hop' })
     hopTimer.current = setTimeout(() => {
       setHopping(null)
       setInPot(p => p.includes(name) ? p : [...p, name])
-    }, 1100) // Slower animation (SOP 4: deliberate placement)
+    }, isSeasoning ? 800 : 1100) // Slower animation (SOP 4: deliberate placement)
   }
 
   const toggleFire = () => {
@@ -314,7 +315,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
                 onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
 
               <div className="gst-pot-contents">
-                {inPot.slice(0, 5).map((name, i) => {
+                {inPot.filter(n => !['salt', 'pepper', 'peppercorns'].includes(n.toLowerCase())).slice(0, 5).map((name, i) => {
                   const ing = collectedIngredients.find(x => x.name === name)
                   return ing ? (
                     <motion.img key={name} src={ing.image}
@@ -351,12 +352,26 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
         </AnimatePresence>
 
         <AnimatePresence>
-          {hopping && (
+          {hopping && hopping.type === 'hop' && (
             <motion.img key={hopping.key} src={hopping.img} className="gst-hop"
               initial={{ top: '95%', left: '50%', scale: 0.85, opacity: 1 }}
               animate={{ top: ['95%', '55%', '68%'], left: ['50%', '59%', '68%'], scale: [0.85, 0.6, 0.35], opacity: [1, 1, 0] }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.1, times: [0, 0.55, 1], ease: 'easeOut' }} />
+          )}
+          {hopping && hopping.type === 'shake' && (
+            <motion.img key={hopping.key} src={hopping.img} className="gst-shake"
+              initial={{ top: '65%', left: '60%', scale: 0, opacity: 0, rotate: 0 }}
+              animate={{ 
+                top: ['65%', '45%', '45%', '45%', '45%', '65%'], 
+                opacity: [0, 1, 1, 1, 1, 0], 
+                scale: [0, 1.2, 1.2, 1.2, 1.2, 0],
+                rotate: [0, -45, -20, -45, -20, 0] 
+              }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, times: [0, 0.2, 0.4, 0.6, 0.8, 1], ease: 'easeInOut' }} 
+              style={{ position: 'absolute', zIndex: 30, width: 60, height: 60, objectFit: 'contain', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))' }}
+            />
           )}
         </AnimatePresence>
       </div>

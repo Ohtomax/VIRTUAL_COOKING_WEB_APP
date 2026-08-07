@@ -4,11 +4,16 @@
  * required tools with icons, cooking steps timeline, and bottom CTA.
  */
 import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, ListChecks, UtensilsCrossed, BookOpen, Award, Target, Flame } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ListChecks, UtensilsCrossed, BookOpen, Award, Target, Flame, X } from 'lucide-react'
 import useGameStore from '../store/gameStore'
 import { resolveIngredientByName } from '../data/ingredients'
 import { toolCategories } from '../data/tools'
 import type { SetScreenProps } from '../types'
+
+interface RecipeCardProps extends SetScreenProps {
+  isPopup?: boolean;
+  onClose?: () => void;
+}
 
 function resolveToolByName(name: string) {
   const n = name.toLowerCase()
@@ -19,7 +24,7 @@ function resolveToolByName(name: string) {
   return null
 }
 
-export default function RecipeCard({ setScreen }: SetScreenProps) {
+export default function RecipeCard({ setScreen, isPopup, onClose }: RecipeCardProps) {
   const { selectedRecipe } = useGameStore()
 
   if (!selectedRecipe) {
@@ -41,8 +46,9 @@ export default function RecipeCard({ setScreen }: SetScreenProps) {
   }
 
   return (
-    <div className="g-page rc-page" style={{ overflowY: 'auto', paddingBottom: 110 }}>
+    <div className={isPopup ? "rc-page" : "g-page rc-page"} style={{ overflowY: 'auto', paddingBottom: isPopup ? 40 : 110, position: 'relative' }}>
       {/* Top Navbar */}
+      {!isPopup && (
       <div className="g-navbar">
         <button className="g-back-btn" onClick={() => setScreen('level-select')}>
           <ChevronLeft size={20} strokeWidth={2.5} /><span>Back</span>
@@ -50,6 +56,13 @@ export default function RecipeCard({ setScreen }: SetScreenProps) {
         <span className="g-navbar-title">Recipe Card</span>
         <div style={{ width: 60 }} />
       </div>
+      )}
+
+      {isPopup && (
+        <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, zIndex: 50, background: 'rgba(0,0,0,0.6)', borderRadius: '50%', border: 'none', color: '#fff', cursor: 'pointer', padding: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <X size={20} />
+        </button>
+      )}
 
       {/* Hero Banner with Dish Image */}
       <div className="rc-hero-wrap">
@@ -180,6 +193,7 @@ export default function RecipeCard({ setScreen }: SetScreenProps) {
       </div>
 
       {/* Bottom Sticky Action Bar */}
+      {!isPopup && (
       <div className="g-sheet" style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
         background: 'rgba(18, 12, 5, 0.94)', backdropFilter: 'blur(16px)',
@@ -196,6 +210,7 @@ export default function RecipeCard({ setScreen }: SetScreenProps) {
           <span>Proceed to Kitchen</span> <ChevronRight size={20} strokeWidth={2.5} />
         </motion.button>
       </div>
+      )}
     </div>
   )
 }
