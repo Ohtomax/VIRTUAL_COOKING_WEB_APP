@@ -3,7 +3,7 @@
  * Tap a tool → flies into your kit. Knives get a "select" star like
  * equipping an upgrade in Cooking Fever.
  */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, X, Info } from 'lucide-react'
 import { toolCategories } from '../data/tools'
@@ -13,7 +13,7 @@ import type { ToolType } from '../types'
 interface Props { onClose: () => void }
 
 export default function CabinetView({ onClose }: Props) {
-  const { selectedKnifeId, inventoryToolIds, setSelectedKnife, addInventoryTool, removeInventoryTool } = useGameStore()
+  const { selectedKnifeId, inventoryToolIds, setSelectedKnife, addInventoryTool, removeInventoryTool, selectedRecipe, currentFeedback, addFeedback, clearFeedback } = useGameStore()
   const [activeCat, setActiveCat] = useState(0)
   const [detail, setDetail]       = useState<ToolType | null>(null)
 
@@ -21,7 +21,28 @@ export default function CabinetView({ onClose }: Props) {
   const inInv    = (id: string) => inventoryToolIds.includes(id)
   const isKnife  = (id: string) => selectedKnifeId === id
 
+  useEffect(() => {
+    if (!currentFeedback) return
+    const t = setTimeout(clearFeedback, 2200)
+    return () => clearTimeout(t)
+  }, [currentFeedback, clearFeedback])
+
+  const checkIsNeeded = (tool: ToolType) => {
+    if (!selectedRecipe) return false
+    return selectedRecipe.tools.some(t => {
+      const n = t.toLowerCase()
+      return tool.name.toLowerCase() === n || tool.id === n || tool.name.toLowerCase().includes(n)
+    })
+  }
+
   const tapTool = (tool: ToolType) => {
+    if (selectedRecipe && selectedRecipe.level <= 2 && !inInv(tool.id)) {
+      if (!checkIsNeeded(tool)) {
+        addFeedback(`You don't need the ${tool.name} for this recipe!`, 'error')
+        return
+      }
+    }
+
     if (tool.canCut) {
       addInventoryTool(tool.id)
       setSelectedKnife(isKnife(tool.id) ? null : tool.id)
@@ -67,10 +88,11 @@ export default function CabinetView({ onClose }: Props) {
               {row.map((tool, i) => {
                 const owned  = inInv(tool.id)
                 const knifed = isKnife(tool.id)
+                const req = checkIsNeeded(tool)
                 return (
                   <motion.div key={tool.id}
                     role="button" tabIndex={0}
-                    className={`gc-tool ${owned ? 'owned' : ''} ${knifed ? 'knifed' : ''}`}
+                    className={`gc-tool ${owned ? 'owned' : ''} ${knifed ? 'knifed' : ''} ${req && !owned ? 'glow' : ''}`}
                     onClick={() => tapTool(tool)}
                     onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') tapTool(tool) }}
                     initial={{ opacity: 0, y: 14, scale: 0.7 }}
@@ -82,6 +104,7 @@ export default function CabinetView({ onClose }: Props) {
                     </button>
                     <img src={tool.image} alt={tool.name}
                       onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                    {req && !owned && <span className="gc-tool-need">!</span>}
                     {knifed && <motion.span className="gc-star" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }}>⭐</motion.span>}
                     {owned && !knifed && <span className="gc-owned">✓</span>}
                     <span className="gc-tool-label">{tool.name}</span>
@@ -123,6 +146,48 @@ export default function CabinetView({ onClose }: Props) {
                   : (inInv(detail.id) ? 'Remove from Kit' : 'Add to Kit')}
               </button>
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Tool Tray */}
+      <div className="gtray">
+        <div className="gtray-wood" />
+        <div className="gtray-items">
+          {inventoryToolIds.length === 0 && (
+            <span className="gtray-empty">Tap tools to add them to your kit…</span>
+          )}
+          {inventoryToolIds.map((id, i) => {
+            const t = toolCategories.flatMap(c => c.types).find(x => x.id === id)
+            if (!t) return null
+            const knifed = isKnife(id)
+            return (
+              <motion.button
+                key={id}
+                className="gtray-slot"
+                initial={{ scale: 0, y: 30 }}
+                animate={{ scale: 1, y: 0 }}
+                transition={{ delay: i * 0.05, type: 'spring', damping: 14 }}
+                whileTap={{ scale: 0.88 }}
+                title={t.name}
+              >
+                <img src={t.image} alt={t.name}
+                  onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                {knifed && <span className="gtray-badge gtray-badge--sliced" style={{ background: 'var(--gold)', color: '#1a0800' }}>⭐</span>}
+              </motion.button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Feedback toast */}
+      <AnimatePresence>
+        {currentFeedback && (
+          <motion.div
+            className={`ek-toast ek-toast--${currentFeedback.type}`}
+            style={{ position: 'absolute', bottom: 126, left: '50%', transform: 'translateX(-50%)', zIndex: 60 }}
+            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 14 }}>
+            {currentFeedback.message}
           </motion.div>
         )}
       </AnimatePresence>
