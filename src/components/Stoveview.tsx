@@ -170,7 +170,11 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
   // Timer
   useEffect(() => {
     if (!fireOn || state === 'burnt') return
-    const iv = setInterval(() => setSeconds(s => s + 1), 1000)
+    const iv = setInterval(() => {
+      const h = useGameStore.getState().heatLevel
+      const add = h === 'low' ? 0.2 : h === 'medium' ? 0.3 : 0.4
+      setSeconds(s => s + add)
+    }, 200)
     return () => clearInterval(iv)
   }, [fireOn, state])
 

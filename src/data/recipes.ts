@@ -8,7 +8,7 @@ export const recipes: Recipe[] = [
   {
     id: 1, name: 'Bechamel Sauce', level: 1, category: 'Sauce',
     image: '/assets/levels/level1/Sauces/Bechamel/bechamel.png',
-    minScore: 70, cookingDuration: 45,
+    minScore: 70, cookingDuration: 90,
     ingredients: ['Butter', 'Flour', 'Milk', 'Salt', 'Pepper'],
     tools: ['Saucepan', 'Whisk', 'Measuring cups'],
     steps: [
@@ -23,7 +23,7 @@ export const recipes: Recipe[] = [
   {
     id: 2, name: 'Espagnole Sauce', level: 1, category: 'Sauce',
     image: '/assets/levels/level1/Sauces/Espagnole/espagnole.png',
-    minScore: 70, cookingDuration: 45,
+    minScore: 70, cookingDuration: 90,
     ingredients: ['Beef stock', 'Butter', 'Carrots', 'Celery', 'Flour', 'Onion', 'Pepper', 'Salt', 'Tomato paste'],
     tools: ['Saucepan', 'Whisk', 'Knife', 'Cutting board'],
     steps: [
@@ -43,7 +43,7 @@ export const recipes: Recipe[] = [
   {
     id: 3, name: 'Tomato Sauce', level: 1, category: 'Sauce',
     image: '/assets/levels/level1/Sauces/Tomato/tomatosauce.jpg',
-    minScore: 70, cookingDuration: 45,
+    minScore: 70, cookingDuration: 90,
     ingredients: ['Garlic', 'Olive oil', 'Onion', 'Pepper', 'Salt', 'Tomatoes'],
     tools: ['Saucepan', 'Knife', 'Cutting board'],
     steps: [
@@ -64,7 +64,7 @@ export const recipes: Recipe[] = [
   {
     id: 4, name: 'Hollandaise Sauce', level: 1, category: 'Sauce',
     image: '/assets/levels/level1/Sauces/Hollandaise/hollandaise-sauce.jpg',
-    minScore: 70, cookingDuration: 45,
+    minScore: 70, cookingDuration: 90,
     ingredients: ['Butter', 'Egg yolks', 'Lemon juice', 'Salt'],
     tools: ['Double boiler', 'Whisk', 'Saucepan'],
     steps: [
@@ -79,7 +79,7 @@ export const recipes: Recipe[] = [
   {
     id: 5, name: 'Chicken Noodle Soup', level: 1, category: 'Mother Soup',
     image: '/assets/levels/level1/MotherSoup/Chicken Noodle Soup/chicken-noodle-soup.jpg',
-    minScore: 70, cookingDuration: 45,
+    minScore: 70, cookingDuration: 90,
     ingredients: ['Carrot', 'Celery', 'Chicken breast', 'Chicken broth', 'Cooking oil', 'Egg noodles', 'Garlic', 'Onion', 'Parsley', 'Pepper', 'Salt'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -102,7 +102,7 @@ export const recipes: Recipe[] = [
   {
     id: 6, name: 'Butternut Squash Soup', level: 1, category: 'Mother Soup',
     image: '/assets/levels/level1/MotherSoup/Butternut Squash Soup/butternut-squash-soup.png',
-    minScore: 70, cookingDuration: 45,
+    minScore: 70, cookingDuration: 90,
     ingredients: ['Butter', 'Butternut squash', 'Cream', 'Garlic', 'Onion', 'Pepper', 'Salt', 'Vegetable broth'],
     tools: ['Pot', 'Knife', 'Cutting board', 'Blender'],
     steps: [
@@ -122,7 +122,7 @@ export const recipes: Recipe[] = [
   {
     id: 7, name: 'Tomato Soup', level: 1, category: 'Mother Soup',
     image: '/assets/levels/level1/MotherSoup/Tomato Soup/tomatosauce.jpg',
-    minScore: 70, cookingDuration: 45,
+    minScore: 70, cookingDuration: 90,
     ingredients: ['Cream', 'Garlic', 'Onion', 'Pepper', 'Salt', 'Tomatoes'],
     tools: ['Pot', 'Knife', 'Cutting board', 'Blender'],
     steps: [
@@ -143,7 +143,7 @@ export const recipes: Recipe[] = [
   {
     id: 8, name: 'Corn Chowder', level: 1, category: 'Mother Soup',
     image: '/assets/levels/level1/MotherSoup/Corn Crowder/creamy-corn-.png',
-    minScore: 70, cookingDuration: 45,
+    minScore: 70, cookingDuration: 90,
     ingredients: ['Butter', 'Chicken broth', 'Corn kernels', 'Milk', 'Onion', 'Pepper', 'Potatoes', 'Salt'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -166,7 +166,7 @@ export const recipes: Recipe[] = [
   {
     id: 9, name: 'Chicken Adobo', level: 2, category: 'Filipino Basic',
     image: '/assets/levels/level2/Basic/ChickenAdobo/adobo.jpg',
-    minScore: 75, cookingDuration: 60,
+    minScore: 75, cookingDuration: 120,
     ingredients: ['Bay leaves', 'Chicken', 'Cooking oil', 'Garlic', 'Peppercorns', 'Soy sauce', 'Vinegar', 'Water'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -185,7 +185,7 @@ export const recipes: Recipe[] = [
   {
     id: 10, name: 'Pork Sinigang', level: 2, category: 'Filipino Basic',
     image: '/assets/levels/level2/Basic/PorkSinigang/pork sinigang.jpg',
-    minScore: 75, cookingDuration: 60,
+    minScore: 75, cookingDuration: 120,
     ingredients: ['Kangkong', 'Onion', 'Pork belly', 'Radish', 'Sinigang mix', 'Sitaw', 'Tomato', 'Water'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -208,7 +208,7 @@ export const recipes: Recipe[] = [
   {
     id: 11, name: 'Pakbet', level: 2, category: 'Filipino Basic',
     image: '/assets/levels/level2/Basic/Pakbet/pakbet.jpg',
-    minScore: 75, cookingDuration: 60,
+    minScore: 75, cookingDuration: 120,
     ingredients: ['Ampalaya', 'Bagoong alamang', 'Cooking oil', 'Squash', 'Eggplant', 'Garlic', 'Onion', 'Sitaw', 'Tomato', 'Water'],
     tools: ['Wok', 'Knife', 'Cutting board'],
     steps: [
@@ -235,7 +235,7 @@ export const recipes: Recipe[] = [
   {
     id: 12, name: 'Beef Caldereta', level: 3, category: 'Intermediate',
     image: '/assets/levels/level3/Intermediate/BeefCaldereta/beefcaldereta.jpg',
-    minScore: 80, cookingDuration: 90,
+    minScore: 80, cookingDuration: 180,
     ingredients: ['Beef', 'Bell pepper', 'Carrots', 'Cooking oil', 'Garlic', 'Liver spread', 'Onion', 'Pepper', 'Potatoes', 'Salt', 'Tomato sauce', 'Water'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -259,7 +259,7 @@ export const recipes: Recipe[] = [
   {
     id: 13, name: 'Fish Escabeche', level: 3, category: 'Intermediate',
     image: '/assets/levels/level3/Intermediate/FishEscabeche/fishescabeche.jpg',
-    minScore: 80, cookingDuration: 90,
+    minScore: 80, cookingDuration: 180,
     ingredients: ['Bell pepper', 'Carrot', 'Cooking oil', 'Cornstarch', 'Tilapia', 'Onion', 'Pepper', 'Salt', 'Vinegar', 'Water'],
     tools: ['Pan', 'Knife', 'Cutting board', 'Saucepan'],
     steps: [
@@ -281,7 +281,7 @@ export const recipes: Recipe[] = [
   {
     id: 14, name: 'Bulalo', level: 3, category: 'Intermediate',
     image: '/assets/levels/level3/Intermediate/Bulalo/bulalo.jpg',
-    minScore: 80, cookingDuration: 90,
+    minScore: 80, cookingDuration: 180,
     ingredients: ['Beef shank', 'Cabbage', 'Corn cobs', 'Onion', 'Pepper', 'Potatoes', 'Salt', 'Water'],
     tools: ['Large pot', 'Knife', 'Cutting board'],
     steps: [
@@ -302,7 +302,7 @@ export const recipes: Recipe[] = [
   {
     id: 15, name: 'Kare-Kare', level: 3, category: 'Intermediate',
     image: '/assets/levels/level3/Intermediate/kare-kare/karekare.jpg',
-    minScore: 80, cookingDuration: 90,
+    minScore: 80, cookingDuration: 180,
     ingredients: ['Beef', 'Bok choy', 'Eggplant', 'Onion', 'Peanut butter', 'Salt', 'String beans', 'Water'],
     tools: ['Pot', 'Pan', 'Knife', 'Cutting board'],
     steps: [
@@ -327,7 +327,7 @@ export const recipes: Recipe[] = [
   {
     id: 16, name: 'Spaghetti', level: 4, category: 'Advanced',
     image: '/assets/levels/level4/Advance/pasta/spaghetti.jpg',
-    minScore: 85, cookingDuration: 120,
+    minScore: 85, cookingDuration: 240,
     ingredients: ['Pasta', 'Ground pork', 'Spag sauce', 'Onion', 'Garlic', 'Cooking oil', 'Cheese', 'Pepper', 'Salt', 'Water'],
     tools: ['Pot', 'Pan', 'Knife', 'Cutting board'],
     steps: [
@@ -347,7 +347,7 @@ export const recipes: Recipe[] = [
   {
     id: 17, name: 'Pork Afritada', level: 4, category: 'Advanced',
     image: '/assets/levels/level4/Advance/PorkAfritada/porkafritada.jpg',
-    minScore: 85, cookingDuration: 120,
+    minScore: 85, cookingDuration: 240,
     ingredients: ['Pork', 'Tomato sauce', 'Potatoes', 'Carrot', 'Bell pepper', 'Onion', 'Garlic', 'Cooking oil', 'Pepper', 'Salt', 'Water'],
     tools: ['Pot', 'Knife', 'Cutting board'],
     steps: [
@@ -370,7 +370,7 @@ export const recipes: Recipe[] = [
   {
     id: 18, name: 'Beef Morcon', level: 4, category: 'Advanced',
     image: '/assets/levels/level4/Advance/BeefMorcon/beefmorcon.png',
-    minScore: 85, cookingDuration: 120,
+    minScore: 85, cookingDuration: 240,
     ingredients: ['Beef', 'Hotdog', 'Carrot', 'Boiled egg', 'Soy sauce', 'Cooking oil', 'Pepper', 'Salt', 'Beef broth', 'Pickles relish'],
     tools: ['Pot', 'Knife', 'Cutting board', 'Twine'],
     steps: [
@@ -390,7 +390,7 @@ export const recipes: Recipe[] = [
   {
     id: 19, name: 'King Ranch Chicken', level: 4, category: 'Advanced',
     image: '/assets/levels/level4/Advance/KingRanchChicken/kingranch.jpg',
-    minScore: 85, cookingDuration: 120,
+    minScore: 85, cookingDuration: 240,
     ingredients: ['Chicken shredded', 'Corn tortillas', 'Shredded cheese', 'Bell pepper', 'Onion', 'Cream of mushroom soup', 'Chicken broth', 'Cooking oil', 'Tomato'],
     tools: ['Baking dish', 'Pan', 'Knife', 'Cutting board'],
     steps: [
