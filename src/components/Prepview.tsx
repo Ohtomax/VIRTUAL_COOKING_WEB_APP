@@ -25,7 +25,7 @@ export default function PrepView({ onClose }: Props) {
   const {
     collectedIngredients, slicedIngredients, sliceIngredient,
     washedIngredients, selectedKnifeId,
-    measuredIngredients, measureIngredient,
+    measuredIngredients, measureIngredient, selectedRecipe,
     detectUnsafeCutting, addStabilizedIngredient, stabilizedIngredients,
     setKnifeStability, setCutUniformity,
   } = useGameStore()
@@ -104,6 +104,11 @@ export default function PrepView({ onClose }: Props) {
     if (!getSlicesForIngredient(name)) {
       setWarn('🧪 This ingredient is not sliceable — use the Measure tab instead!')
       setTimeout(() => setWarn(''), 2000)
+      return
+    }
+    if (selectedRecipe && selectedRecipe.level <= 2 && !measuredIngredients.includes(name)) {
+      setWarn('🧪 Measure this ingredient first!')
+      setTimeout(() => setWarn(''), 1800)
       return
     }
     const ingObj = collectedIngredients.find(i => i.name === name)

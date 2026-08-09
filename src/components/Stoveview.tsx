@@ -5,7 +5,7 @@
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, Flame, CheckCircle2, Target } from 'lucide-react'
+import { ChevronLeft, Flame, CheckCircle2, Target, AlertTriangle } from 'lucide-react'
 import useGameStore from '../store/gameStore'
 import { toolCategories } from '../data/tools'
 import { getSlicesForIngredient } from '../data/sliceimages'
@@ -37,7 +37,7 @@ type CookState = 'idle' | 'cooking' | 'done' | 'burnt'
 
 export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: Props) {
   const {
-    collectedIngredients, slicedIngredients,
+    collectedIngredients, slicedIngredients, measuredIngredients,
     heatLevel, setHeatLevel, setBurnedFood, setCookingElapsedTime,
     startCooking, stopCooking, inventoryToolIds,
     setCookwareMatch, setFlameCentering, setIngredientDropScore,
@@ -66,6 +66,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
   const [state, setState]       = useState<CookState>('idle')
   const [notice, setNotice]     = useState('')
   const [sopTip, setSopTip]     = useState('')
+  const [warn, setWarn]         = useState('')
 
   // SOP 1: Cookware alignment feedback
   const [cookwareAligned, setCookwareAligned] = useState<boolean | null>(null)
@@ -139,6 +140,11 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
     if (inPot.includes(name)) { flash(`${ing.name} is already in the ${cookware.name}!`); return }
     if (getSlicesForIngredient(name) && !slicedIngredients.includes(name)) {
       flash(`✂ Slice the ${ing.name} at the Prep Table first!`); return
+    }
+    if (selectedRecipe && selectedRecipe.level <= 2 && !measuredIngredients.includes(name)) {
+      setWarn(`Measure the ${ing.name} at the Prep Table first!`)
+      setTimeout(() => setWarn(''), 1800)
+      return
     }
 
     // SOP 4: Check drop speed
@@ -249,6 +255,15 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
             exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.3 }}>
             <span className="sop-tip-icon">📋</span>
             <span className="sop-tip-text">{sopTip}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {warn && (
+          <motion.div className="prep-unsafe-banner" style={{ position: 'absolute', top: 130, left: 20, right: 20, zIndex: 40 }}
+            initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+            <AlertTriangle size={18} strokeWidth={2.5} /> {warn}
           </motion.div>
         )}
       </AnimatePresence>
