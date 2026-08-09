@@ -130,7 +130,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
   const dropIn = (name: string) => {
     if (state === 'done' || state === 'burnt') return
     // SOP 4 & code review fix: block drops while cooking
-    if (state === 'cooking') {
+    if (fireOn) {
       flash('Turn off the fire before adding more ingredients! 🔥')
       return
     }
@@ -423,17 +423,15 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
             <motion.button className={`gst-knob ${fireOn ? 'on' : ''}`}
               onClick={toggleFire} whileTap={{ scale: 0.88 }} disabled={inPot.length === 0}>
               <Flame size={22} strokeWidth={2} />
-              <span>{fireOn ? 'Fire ON' : inPot.length === 0 ? 'Add food first' : 'Ignite'}</span>
+              <span>{fireOn ? 'Fire OFF' : inPot.length === 0 ? 'Add food first' : 'Ignite'}</span>
             </motion.button>
 
-            {fireOn && (
-              <div className="gst-heat-mini">
-                {(['low', 'medium', 'high'] as HeatLevel[]).map(h => (
-                  <button key={h} className={`gst-heat-chip ${heatLevel === h ? 'active' : ''}`}
-                    onClick={() => setHeatLevel(h)}>{h}</button>
-                ))}
-              </div>
-            )}
+            <div className="gst-heat-mini">
+              {(['low', 'medium', 'high'] as HeatLevel[]).map(h => (
+                <button key={h} className={`gst-heat-chip ${heatLevel === h ? 'active' : ''}`}
+                  onClick={() => setHeatLevel(h)}>{h}</button>
+              ))}
+            </div>
 
             {state === 'done' && (
               <motion.button className="g-btn g-btn--gold" style={{ padding: '12px 26px', fontSize: 16 }}

@@ -3778,11 +3778,11 @@
 
 /* Individual Cookware Sizes — Adjust these to change their sizes when placed on the stove */
 .gst-pot--pot { width: 210px; left: 55%; top: 43%; }
-.gst-pot--saucepot { width: 190px; left: 55%; top: 43%; }
-.gst-pot--pastapot { width: 230px; left: 55%; top: 43%; }
-.gst-pot--brazier { width: 240px; left: 55%; top: 43%; }
-.gst-pot--fryer { width: 210px; left: 55%; top: 43%; }
-.gst-pot--maincpot { width: 210px; left: 55%; top: 43%; }
+.gst-pot--saucepot { width: 190px; left: 56%; top: 48%; }
+.gst-pot--pastapot { width: 230px; left: 55%; top: 42%; }
+.gst-pot--brazier { width: 240px; left: 54.5%; top: 55%; }
+.gst-pot--fryer { width: 210px; left: 55.45%; top: 43%; }
+.gst-pot--maincpot { width: 210px; left: 55.3%; top: 48%; }
 
 .gst-pot--frypan { width: 210px; left: 55%; top: 43%; }
 .gst-pot--pan { width: 210px; left: 55%; top: 43%; } /* Fallback pan ID */
