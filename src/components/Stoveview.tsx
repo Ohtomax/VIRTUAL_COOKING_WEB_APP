@@ -147,6 +147,20 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
       return
     }
 
+    // SOP: Enforce strict chronological drop order for Levels 1 and 2
+    if (selectedRecipe && selectedRecipe.level <= 2 && selectedRecipe.chronologicalIngredients) {
+      const expectedList = selectedRecipe.chronologicalIngredients;
+      const validDropsCount = inPot.filter(item => expectedList.includes(item)).length;
+      
+      if (validDropsCount < expectedList.length) {
+        const expectedNext = expectedList[validDropsCount];
+        if (name !== expectedNext) {
+          flash(`⚠ SOP: Ingredients must be added in chronological order! Expected: ${expectedNext}`);
+          return;
+        }
+      }
+    }
+
     // SOP 4: Check drop speed
     const now = Date.now()
     totalDropCount.current += 1

@@ -70,6 +70,8 @@ export interface InventoryItem {
 export interface Recipe {
   id: number; name: string; level: number; category: string
   image: string; ingredients: string[]; tools: string[]; steps: string[]
+  narrativeIngredients?: string[]; narrativeTools?: string[]; narrativeSteps?: string[]
+  chronologicalIngredients?: string[]
   minScore?: number
   // per-ingredient cut instructions
   cutInstructions?: Record<string, { technique: CuttingTechnique; size: string; description: string }>

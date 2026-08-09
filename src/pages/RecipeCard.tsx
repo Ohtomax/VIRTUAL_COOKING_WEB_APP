@@ -137,7 +137,7 @@ export default function RecipeCard({ setScreen, isPopup, onClose }: RecipeCardPr
                   ) : (
                     <span className="rc-chip-dot" />
                   )}
-                  <span>{ing}</span>
+                  <span>{selectedRecipe.narrativeIngredients?.[i] || ing}</span>
                 </motion.div>
               )
             })}
@@ -165,7 +165,7 @@ export default function RecipeCard({ setScreen, isPopup, onClose }: RecipeCardPr
                   ) : (
                     <span className="rc-chip-dot" />
                   )}
-                  <span>{tool}</span>
+                  <span>{selectedRecipe.narrativeTools?.[i] || tool}</span>
                 </motion.div>
               )
             })}
@@ -179,7 +179,7 @@ export default function RecipeCard({ setScreen, isPopup, onClose }: RecipeCardPr
             <span>Cooking Steps</span>
           </div>
           <div className="rc-steps">
-            {selectedRecipe.steps.map((step, i) => (
+            {(selectedRecipe.narrativeSteps || selectedRecipe.steps).map((step, i) => (
               <motion.div key={i} className="rc-step-row"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
