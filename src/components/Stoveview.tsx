@@ -300,13 +300,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
 
       {/* Burner zone: fire + cookware + contents */}
       <div className="gst-burner-zone">
-        {/* SOP 1: Burner size ring indicator */}
-        {!cookware && selectedRecipe && RECIPE_COOKWARE[selectedRecipe.id] && (
-          <motion.div className={`sop-burner-ring sop-burner-ring--${RECIPE_COOKWARE[selectedRecipe.id].burnerSize}`}
-            initial={{ opacity: 0 }} animate={{ opacity: 0.5 }}>
-            <span>{RECIPE_COOKWARE[selectedRecipe.id].burnerSize} burner</span>
-          </motion.div>
-        )}
+        {/* SOP 1: Burner ring indicator has been removed */}
 
         <AnimatePresence>
           {fireOn && state !== 'burnt' && (

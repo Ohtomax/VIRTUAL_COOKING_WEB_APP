@@ -22,11 +22,11 @@ export const KITCHEN_SOPS: SOP[] = [
   {
     id: 'sop1-cookware-alignment',
     title: 'Cookware & Stove Alignment',
-    description: 'Select pots and pans that properly match the diameter of the stove burner.',
+    description: 'Select the correct pots and pans for the recipe.',
     rules: [
       {
         id: 'sop1-match-size',
-        ruleText: 'Select pots and pans that properly match the diameter of the stove burner.',
+        ruleText: 'Select the correct pots and pans for the recipe.',
         stationTarget: 'stove',
         scoringCategory: 'cooking',
       },
@@ -38,7 +38,7 @@ export const KITCHEN_SOPS: SOP[] = [
       },
     ],
     tips: [
-      'Match your cookware size to the burner for even heat! 🔥',
+      'Select the right cookware for the dish! 🍳',
       'A centered pot prevents heat loss and cooks food evenly.',
       'Too large a pan wastes energy; too small risks uneven cooking.',
     ],
@@ -172,29 +172,29 @@ export const getWashDuration = (ingredientId: string): number => {
  * Recommended cookware for each recipe.
  * If a recipe doesn't have an entry, any cookware is accepted.
  */
-export const RECIPE_COOKWARE: Record<number, { cookware: 'pot' | 'pan' | 'wok'; burnerSize: 'small' | 'medium' | 'large' }> = {
+export const RECIPE_COOKWARE: Record<number, { cookware: 'pot' | 'pan' | 'wok' }> = {
   // Level 1 — Sauces (small to medium saucepans)
-  1:  { cookware: 'pot', burnerSize: 'medium' },   // Bechamel
-  2:  { cookware: 'pot', burnerSize: 'medium' },   // Espagnole
-  3:  { cookware: 'pot', burnerSize: 'medium' },   // Tomato Sauce
-  4:  { cookware: 'pot', burnerSize: 'small' },    // Hollandaise
+  1:  { cookware: 'pan' },   // Bechamel
+  2:  { cookware: 'pan' },   // Espagnole
+  3:  { cookware: 'pan' },   // Tomato Sauce
+  4:  { cookware: 'pan' },    // Hollandaise
   // Level 1 — Soups (larger pots)
-  5:  { cookware: 'pot', burnerSize: 'large' },    // Chicken Noodle
-  6:  { cookware: 'pot', burnerSize: 'large' },    // Butternut Squash
-  7:  { cookware: 'pot', burnerSize: 'large' },    // Tomato Soup
-  8:  { cookware: 'pot', burnerSize: 'large' },    // Corn Chowder
+  5:  { cookware: 'pot' },    // Chicken Noodle
+  6:  { cookware: 'pot' },    // Butternut Squash
+  7:  { cookware: 'pot' },    // Tomato Soup
+  8:  { cookware: 'pot' },    // Corn Chowder
   // Level 2 — Filipino Basic
-  9:  { cookware: 'pot', burnerSize: 'large' },    // Chicken Adobo
-  10: { cookware: 'pot', burnerSize: 'large' },    // Pork Sinigang
-  11: { cookware: 'wok', burnerSize: 'large' },    // Pakbet
+  9:  { cookware: 'pot' },    // Chicken Adobo
+  10: { cookware: 'pot' },    // Pork Sinigang
+  11: { cookware: 'wok' },    // Pakbet
   // Level 3 — Intermediate
-  12: { cookware: 'pot', burnerSize: 'large' },    // Beef Caldereta
-  13: { cookware: 'pan', burnerSize: 'medium' },   // Fish Escabeche
-  14: { cookware: 'pot', burnerSize: 'large' },    // Bulalo
-  15: { cookware: 'pot', burnerSize: 'large' },    // Kare-Kare
+  12: { cookware: 'pot' },    // Beef Caldereta
+  13: { cookware: 'pan' },   // Fish Escabeche
+  14: { cookware: 'pot' },    // Bulalo
+  15: { cookware: 'pot' },    // Kare-Kare
   // Level 4 — Advanced
-  16: { cookware: 'pot', burnerSize: 'large' },    // Spaghetti
-  17: { cookware: 'pot', burnerSize: 'large' },    // Pork Afritada
-  18: { cookware: 'pot', burnerSize: 'large' },    // Beef Morcon
-  19: { cookware: 'pan', burnerSize: 'large' },    // King Ranch Chicken
+  16: { cookware: 'pot' },    // Spaghetti
+  17: { cookware: 'pot' },    // Pork Afritada
+  18: { cookware: 'pot' },    // Beef Morcon
+  19: { cookware: 'pan' },    // King Ranch Chicken
 }
