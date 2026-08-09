@@ -602,7 +602,7 @@ const useGameStore = create<GameStore>()(
               if (!newUnlocked.includes(next.id)) newUnlocked.push(next.id)
             } else {
               // Category done — unlock next category or next level
-              const allCats = [...new Set(recipes.filter((r) => r.level === recipe.level).map((r) => r.category))].sort()
+              const allCats = [...new Set(recipes.filter((r) => r.level === recipe.level).map((r) => r.category))]
               const catIdx = allCats.indexOf(recipe.category)
               if (catIdx === allCats.length - 1) {
                 const nextLevelRecipes = recipes.filter((r) => r.level === recipe.level + 1).sort((a, b) => a.id - b.id)
