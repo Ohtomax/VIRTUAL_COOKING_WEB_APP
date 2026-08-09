@@ -5283,8 +5283,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  left: 68%;
-  top: 70%;
+  left: 60%;
+  top: 65%;
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
