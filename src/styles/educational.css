@@ -3784,13 +3784,13 @@
 .gst-pot--fryer { width: 210px; left: 55.45%; top: 43%; }
 .gst-pot--maincpot { width: 210px; left: 55.3%; top: 48%; }
 
-.gst-pot--frypan { width: 210px; left: 55%; top: 43%; }
+.gst-pot--frypan { width: 320px; left: 53%; top: 51.8%; }
 .gst-pot--pan { width: 210px; left: 55%; top: 43%; } /* Fallback pan ID */
-.gst-pot--wok { width: 250px; left: 55%; top: 43%; }
-.gst-pot--saute { width: 220px; left: 55%; top: 43%; }
-.gst-pot--castiron { width: 200px; left: 55%; top: 43%; }
-.gst-pot--paella { width: 260px; left: 55%; top: 43%; }
-.gst-pot--roasting { width: 280px; left: 55%; top: 43%; }
+.gst-pot--wok { width: 260px; left: 55%; top: 54%; }
+.gst-pot--saute { width: 300px; left: 53.5%; top: 51.5%; }
+.gst-pot--castiron { width: 300px; left: 53.7%; top: 52%; }
+.gst-pot--paella { width: 260px; left: 54%; top: 54%; }
+.gst-pot--roasting { width: 280px; left: 53%; top: 53%; }
 .gst-pot--saucepan { width: 300px; left: 55%; top: 53%; }
 
 

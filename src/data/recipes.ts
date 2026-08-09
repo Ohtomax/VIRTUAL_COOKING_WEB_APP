@@ -493,7 +493,14 @@ export const recipes: Recipe[] = [
       "Pot",
       "Knife",
       "Cutting board",
-      "Blender"
+      "Blender",
+      "Frying Pan",
+      "Wok Pan",
+      "Saute Pan",
+      "Cast Iron Skillet",
+      "Paella Pan",
+      "Roasting Pan",
+      "Sauce Pan"
     ],
     "steps": [
       "Sauté onion and garlic in butter",
