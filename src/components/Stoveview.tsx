@@ -319,7 +319,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
 
         <AnimatePresence>
           {cookware && (
-            <motion.div key={cookware.id} className={`gst-pot gst-pot--${state}`}
+            <motion.div key={cookware.id} className={`gst-pot gst-pot--${state} gst-pot--${cookware.id}`}
               initial={{ y: -60, opacity: 0, scale: 0.7 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: -40, opacity: 0 }}
