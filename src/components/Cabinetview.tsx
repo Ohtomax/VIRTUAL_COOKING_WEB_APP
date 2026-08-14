@@ -29,15 +29,7 @@ export default function CabinetView({ onClose }: Props) {
 
   const checkIsNeeded = (tool: ToolType) => {
     if (!selectedRecipe) return false
-
-    if (selectedRecipe.level <= 2) {
-      if (tool.category === 'measuring') return true;
-    }
-
-    return selectedRecipe.tools.some(t => {
-      const n = t.toLowerCase()
-      return tool.name.toLowerCase() === n || tool.id === n || tool.name.toLowerCase().includes(n)
-    })
+    return selectedRecipe.tools.includes(tool.id)
   }
 
   const tapTool = (tool: ToolType) => {

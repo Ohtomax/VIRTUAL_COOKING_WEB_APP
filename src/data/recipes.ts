@@ -24,9 +24,11 @@ export const recipes: Recipe[] = [
       "Pepper"
     ],
     "tools": [
-      "Saucepan",
-      "Whisk",
-      "Measuring cups"
+      "saucepan",
+      "whisk",
+      "mcup",
+      "mspoon",
+      "spoon"
     ],
     "steps": [
       "Melt butter in saucepan over medium heat",
@@ -86,10 +88,13 @@ export const recipes: Recipe[] = [
       "Beef stock"
     ],
     "tools": [
-      "Saucepan",
-      "Whisk",
-      "Knife",
-      "Cutting board"
+      "saucepan",
+      "whisk",
+      "spoon",
+      "mcup",
+      "mspoon",
+      "chefs",
+      "cboard"
     ],
     "steps": [
       "Prepare mirepoix (diced carrots, onions, celery)",
@@ -165,9 +170,11 @@ export const recipes: Recipe[] = [
       "Pepper"
     ],
     "tools": [
-      "Saucepan",
-      "Knife",
-      "Cutting board"
+      "saucepan",
+      "chefs",
+      "cboard",
+      "spoon",
+      "mspoon"
     ],
     "steps": [
       "Heat olive oil in saucepan",
@@ -242,9 +249,9 @@ export const recipes: Recipe[] = [
       "Salt"
     ],
     "tools": [
-      "Double boiler",
-      "Whisk",
-      "Saucepan"
+      "saucepan",
+      "whisk",
+      "mspoon"
     ],
     "steps": [
       "Clarify butter and keep warm",
@@ -309,9 +316,13 @@ export const recipes: Recipe[] = [
       "Pepper"
     ],
     "tools": [
-      "Pot",
-      "Knife",
-      "Cutting board"
+      "cboard",
+      "chefs",
+      "mcup",
+      "mspoon",
+      "pot",
+      "spoon",
+      "ladle"
     ],
     "steps": [
       "Cut chicken into pieces and season",
@@ -408,10 +419,11 @@ export const recipes: Recipe[] = [
       "Pepper"
     ],
     "tools": [
-      "Pot",
-      "Knife",
-      "Cutting board",
-      "Blender"
+      "cboard",
+      "chefs",
+      "pot",
+      "spoon",
+      "ladle"
     ],
     "steps": [
       "Peel and cube butternut squash",
@@ -490,17 +502,11 @@ export const recipes: Recipe[] = [
       "Pepper"
     ],
     "tools": [
-      "Pot",
-      "Knife",
-      "Cutting board",
-      "Blender",
-      "Frying Pan",
-      "Wok Pan",
-      "Saute Pan",
-      "Cast Iron Skillet",
-      "Paella Pan",
-      "Roasting Pan",
-      "Sauce Pan"
+      "cboard",
+      "chefs",
+      "pot",
+      "spoon",
+      "ladle"
     ],
     "steps": [
       "Sauté onion and garlic in butter",
@@ -587,9 +593,12 @@ export const recipes: Recipe[] = [
       "Pepper"
     ],
     "tools": [
-      "Pot",
-      "Knife",
-      "Cutting board"
+      "cboard",
+      "chefs",
+      "mcup",
+      "pot",
+      "spoon",
+      "ladle"
     ],
     "steps": [
       "Sauté onion in butter",
@@ -671,9 +680,12 @@ export const recipes: Recipe[] = [
       "Peppercorns"
     ],
     "tools": [
-      "Pot",
-      "Knife",
-      "Cutting board"
+      "cboard",
+      "chefs",
+      "mcup",
+      "mspoon",
+      "pot",
+      "spoon"
     ],
     "steps": [
       "Cut chicken into serving pieces",
@@ -751,9 +763,12 @@ export const recipes: Recipe[] = [
       "Kangkong"
     ],
     "tools": [
-      "Pot",
-      "Knife",
-      "Cutting board"
+      "cboard",
+      "chefs",
+      "pot",
+      "mcup",
+      "spoon",
+      "ladle"
     ],
     "steps": [
       "Boil pork in water until tender",
@@ -856,9 +871,12 @@ export const recipes: Recipe[] = [
       "Water"
     ],
     "tools": [
-      "Wok",
-      "Knife",
-      "Cutting board"
+      "cboard",
+      "chefs",
+      "mcup",
+      "mspoon",
+      "wok",
+      "spoon"
     ],
     "steps": [
       "Sauté garlic and onion in oil",
@@ -960,9 +978,13 @@ export const recipes: Recipe[] = [
       "Water"
     ],
     "tools": [
-      "Pot",
-      "Knife",
-      "Cutting board"
+      "cboard",
+      "chefs",
+      "mcup",
+      "mspoon",
+      "pot",
+      "spoon",
+      "ladle"
     ],
     "steps": [
       "Cut beef into cubes",
@@ -1061,10 +1083,12 @@ export const recipes: Recipe[] = [
       "Water"
     ],
     "tools": [
-      "Pan",
-      "Knife",
-      "Cutting board",
-      "Saucepan"
+      "cboard",
+      "chefs",
+      "frypan",
+      "saucepan",
+      "spoon",
+      "tongs"
     ],
     "steps": [
       "Clean and score the fish",
@@ -1151,9 +1175,11 @@ export const recipes: Recipe[] = [
       "Water"
     ],
     "tools": [
-      "Large pot",
-      "Knife",
-      "Cutting board"
+      "cboard",
+      "chefs",
+      "pot",
+      "ladle",
+      "mcup"
     ],
     "steps": [
       "Boil beef shank in water with onion",
@@ -1231,10 +1257,12 @@ export const recipes: Recipe[] = [
       "Water"
     ],
     "tools": [
-      "Pot",
-      "Pan",
-      "Knife",
-      "Cutting board"
+      "cboard",
+      "chefs",
+      "pot",
+      "spoon",
+      "mcup",
+      "ladle"
     ],
     "steps": [
       "Boil beef until tender",
@@ -1317,10 +1345,13 @@ export const recipes: Recipe[] = [
       "Water"
     ],
     "tools": [
-      "Pot",
-      "Pan",
-      "Knife",
-      "Cutting board"
+      "pot",
+      "frypan",
+      "spoon",
+      "cboard",
+      "chefs",
+      "mcup",
+      "mspoon"
     ],
     "steps": [
       "Cook pasta according to package directions",
@@ -1397,9 +1428,11 @@ export const recipes: Recipe[] = [
       "Water"
     ],
     "tools": [
-      "Pot",
-      "Knife",
-      "Cutting board"
+      "cboard",
+      "chefs",
+      "pot",
+      "spoon",
+      "mcup"
     ],
     "steps": [
       "Cut pork into cubes",
@@ -1495,10 +1528,10 @@ export const recipes: Recipe[] = [
       "Pickles relish"
     ],
     "tools": [
-      "Pot",
-      "Knife",
-      "Cutting board",
-      "Twine"
+      "cboard",
+      "chefs",
+      "pot",
+      "spoon"
     ],
     "steps": [
       "Pound beef until thin",
@@ -1574,10 +1607,10 @@ export const recipes: Recipe[] = [
       "Tomato"
     ],
     "tools": [
-      "Baking dish",
-      "Pan",
-      "Knife",
-      "Cutting board"
+      "cboard",
+      "chefs",
+      "frypan",
+      "spoon"
     ],
     "steps": [
       "Cook and shred chicken",

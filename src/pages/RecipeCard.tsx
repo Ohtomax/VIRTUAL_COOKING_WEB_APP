@@ -121,23 +121,27 @@ export default function RecipeCard({ setScreen, isPopup, onClose }: RecipeCardPr
           <div className="rc-block-header">
             <ListChecks />
             <span>Ingredients</span>
-            <span className="rc-block-count">{selectedRecipe.ingredients.length} Items</span>
+            <span className="rc-block-count">{(selectedRecipe.narrativeIngredients || selectedRecipe.ingredients).length} Items</span>
           </div>
           <div className="rc-chips">
-            {selectedRecipe.ingredients.map((ing, i) => {
-              const resolved = resolveIngredientByName(ing)
+            {(selectedRecipe.narrativeIngredients || selectedRecipe.ingredients).map((narrativeIng, i) => {
+              // Match internal ingredient for resolving the image
+              const internalIng = selectedRecipe.ingredients.find(ing => 
+                narrativeIng.toLowerCase().includes(ing.toLowerCase())
+              ) || narrativeIng
+              const resolved = resolveIngredientByName(internalIng)
               return (
                 <motion.div key={i} className="rc-chip"
                   initial={{ opacity: 0, scale: 0.85 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.03 }}>
                   {resolved?.image ? (
-                    <img src={resolved.image} alt={ing} style={{ width: 26, height: 26, objectFit: 'contain', borderRadius: 4 }}
+                    <img src={resolved.image} alt={internalIng} style={{ width: 26, height: 26, objectFit: 'contain', borderRadius: 4 }}
                       onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                   ) : (
                     <span className="rc-chip-dot" />
                   )}
-                  <span>{selectedRecipe.narrativeIngredients?.[i] || ing}</span>
+                  <span>{narrativeIng}</span>
                 </motion.div>
               )
             })}
@@ -165,7 +169,7 @@ export default function RecipeCard({ setScreen, isPopup, onClose }: RecipeCardPr
                   ) : (
                     <span className="rc-chip-dot" />
                   )}
-                  <span>{selectedRecipe.narrativeTools?.[i] || tool}</span>
+                  <span>{resolvedTool?.name || tool}</span>
                 </motion.div>
               )
             })}
