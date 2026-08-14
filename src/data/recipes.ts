@@ -42,7 +42,8 @@ export const recipes: Recipe[] = [
       "2 tbsp butter",
       "2 tbsp all-purpose flour",
       "2 cups milk",
-      "Salt and pepper to taste"
+      "Salt to taste",
+      "Pepper to taste"
     ],
     "narrativeTools": [
       "Saucepan",
@@ -204,10 +205,8 @@ export const recipes: Recipe[] = [
     },
     "narrativeIngredients": [
       "2 tbsp olive oil",
-      "1 onion",
-      "chopped",
-      "2 cloves garlic",
-      "minced",
+      "1 onion, chopped",
+      "2 cloves garlic, minced",
       "4 cups crushed tomatoes",
       "1 tsp salt",
       "½ tsp pepper"
@@ -360,15 +359,12 @@ export const recipes: Recipe[] = [
       "500 g chicken breast or chicken thighs",
       "6 cups chicken broth",
       "1 cup egg noodles",
-      "1 carrot",
-      "sliced",
-      "1 celery stalk",
-      "chopped",
-      "1 onion",
-      "diced",
-      "2 cloves garlic",
-      "minced",
-      "Salt and pepper to taste",
+      "1 carrot, sliced",
+      "1 celery stalk, chopped",
+      "1 onion, diced",
+      "2 cloves garlic, minced",
+      "Salt to taste",
+      "Pepper to taste",
       "1 tbsp cooking oil",
       "Parsley (optional)"
     ],
@@ -447,16 +443,14 @@ export const recipes: Recipe[] = [
       }
     },
     "narrativeIngredients": [
-      "1 medium butternut squash",
-      "peeled and cubed",
-      "1 onion",
-      "chopped",
-      "2 cloves garlic",
-      "minced",
+      "1 medium butternut squash, peeled and cubed",
+      "1 onion, chopped",
+      "2 cloves garlic, minced",
       "4 cups vegetable broth",
       "1 tbsp butter",
       "½ cup cream (optional)",
-      "Salt and pepper to taste"
+      "Salt to taste",
+      "Pepper to taste"
     ],
     "narrativeTools": [
       "Vegetable peeler",
@@ -535,16 +529,14 @@ export const recipes: Recipe[] = [
       }
     },
     "narrativeIngredients": [
-      "6 ripe tomatoes",
-      "chopped",
-      "1 onion",
-      "diced",
-      "2 cloves garlic",
-      "minced",
+      "6 ripe tomatoes, chopped",
+      "1 onion, diced",
+      "2 cloves garlic, minced",
       "4 cups vegetable broth",
       "1 tbsp butter or olive oil",
       "½ cup cream (optional)",
-      "Salt and pepper to taste"
+      "Salt to taste",
+      "Pepper to taste"
     ],
     "narrativeTools": [
       "Cutting board",
@@ -622,14 +614,13 @@ export const recipes: Recipe[] = [
     },
     "narrativeIngredients": [
       "3 cups corn kernels",
-      "2 potatoes",
-      "diced",
-      "1 onion",
-      "chopped",
+      "2 potatoes, diced",
+      "1 onion, chopped",
       "2 cups milk",
       "2 cups chicken or vegetable broth",
       "2 tbsp butter",
-      "Salt and pepper to taste"
+      "Salt to taste",
+      "Pepper to taste"
     ],
     "narrativeTools": [
       "Cutting board",
@@ -815,10 +806,8 @@ export const recipes: Recipe[] = [
       "1 onion",
       "quartered",
       "1 cup kangkong (water spinach)",
-      "1 cup string beans",
-      "cut into pieces",
-      "1 radish",
-      "sliced"
+      "1 cup string beans, cut into pieces",
+      "1 radish, sliced"
     ],
     "narrativeTools": [
       "Cutting board",
@@ -921,18 +910,12 @@ export const recipes: Recipe[] = [
     "narrativeIngredients": [
       "1 cup squash",
       "cubed",
-      "1 eggplant",
-      "sliced",
-      "1 cup string beans",
-      "cut into pieces",
-      "1 cup bitter melon (ampalaya)",
-      "sliced",
-      "2 tomatoes",
-      "chopped",
-      "1 onion",
-      "chopped",
-      "2 cloves garlic",
-      "minced",
+      "1 eggplant, sliced",
+      "1 cup string beans, cut into pieces",
+      "1 cup bitter melon (ampalaya), sliced",
+      "2 tomatoes, chopped",
+      "1 onion, chopped",
+      "2 cloves garlic, minced",
       "2 tbsp bagoong alamang (shrimp paste)",
       "1 cup water",
       "1 tbsp cooking oil"
@@ -1024,23 +1007,20 @@ export const recipes: Recipe[] = [
       }
     },
     "narrativeIngredients": [
-      "1 kg beef",
-      "cut into cubes",
+      "1 kg beef, cut into cubes",
       "2 tbsp cooking oil",
-      "1 onion",
-      "chopped",
-      "4 cloves garlic",
-      "minced",
+      "1 onion, chopped",
+      "4 cloves garlic, minced",
       "2 cups tomato sauce",
       "2 cups water or beef broth",
       "2 potatoes",
       "cubed",
       "1 carrot",
       "cubed",
-      "1 red bell pepper",
-      "sliced",
+      "1 red bell pepper, sliced",
       "2 tbsp liver spread",
-      "Salt and pepper to taste"
+      "Salt to taste",
+      "Pepper to taste"
     ],
     "narrativeTools": [
       "Cutting board",
@@ -1125,17 +1105,16 @@ export const recipes: Recipe[] = [
       "1 whole fish (tilapia or lapu-lapu)",
       "cleaned",
       "2 tbsp cooking oil",
-      "1 onion",
-      "sliced",
+      "1 onion, sliced",
       "1 carrot",
       "sliced into strips",
-      "1 red bell pepper",
-      "sliced",
+      "1 red bell pepper, sliced",
       "½ cup vinegar",
       "¼ cup sugar",
       "1 cup water",
       "1 tbsp cornstarch (optional)",
-      "Salt and pepper to taste"
+      "Salt to taste",
+      "Pepper to taste"
     ],
     "narrativeTools": [
       "Cutting board",
@@ -1212,13 +1191,13 @@ export const recipes: Recipe[] = [
       "8 cups water",
       "1 onion",
       "quartered",
-      "2 corn cobs",
-      "cut into pieces",
+      "2 corn cobs, cut into pieces",
       "2 potatoes",
       "quartered",
       "1 small cabbage",
       "cut into wedges",
-      "Salt and pepper to taste"
+      "Salt to taste",
+      "Pepper to taste"
     ],
     "narrativeTools": [
       "Cutting board",
@@ -1295,13 +1274,10 @@ export const recipes: Recipe[] = [
       "6 cups water",
       "¼ cup ground roasted rice",
       "¼ cup peanut butter",
-      "1 eggplant",
-      "sliced",
-      "1 bundle string beans",
-      "cut into pieces",
+      "1 eggplant, sliced",
+      "1 bundle string beans, cut into pieces",
       "1 bunch pechay (bok choy)",
-      "1 onion",
-      "chopped",
+      "1 onion, chopped",
       "Salt to taste"
     ],
     "narrativeTools": [
@@ -1377,15 +1353,14 @@ export const recipes: Recipe[] = [
     "narrativeIngredients": [
       "500 g spaghetti noodles",
       "500 g ground pork or beef",
-      "1 onion",
-      "chopped",
-      "3 cloves garlic",
-      "minced",
+      "1 onion, chopped",
+      "3 cloves garlic, minced",
       "2 cups spaghetti sauce",
       "1 cup water",
       "2 tbsp cooking oil",
       "1 cup grated cheese",
-      "Salt and pepper to taste"
+      "Salt to taste",
+      "Pepper to taste"
     ],
     "narrativeTools": [
       "Large pot",
@@ -1471,22 +1446,19 @@ export const recipes: Recipe[] = [
       }
     },
     "narrativeIngredients": [
-      "1 kg pork",
-      "cut into cubes",
+      "1 kg pork, cut into cubes",
       "2 tbsp cooking oil",
-      "1 onion",
-      "chopped",
-      "4 cloves garlic",
-      "minced",
+      "1 onion, chopped",
+      "4 cloves garlic, minced",
       "2 cups tomato sauce",
       "2 cups water",
       "2 potatoes",
       "cubed",
       "1 carrot",
       "cubed",
-      "1 red bell pepper",
-      "sliced",
-      "Salt and pepper to taste"
+      "1 red bell pepper, sliced",
+      "Salt to taste",
+      "Pepper to taste"
     ],
     "narrativeTools": [
       "Cutting board",
@@ -1560,13 +1532,13 @@ export const recipes: Recipe[] = [
       "cut into strips",
       "2 hotdogs",
       "cut into strips",
-      "2 hard-boiled eggs",
-      "sliced",
+      "2 hard-boiled eggs, sliced",
       "½ cup pickle relish",
       "2 tbsp soy sauce",
       "2 tbsp cooking oil",
       "2 cups beef broth",
-      "Salt and pepper to taste"
+      "Salt to taste",
+      "Pepper to taste"
     ],
     "narrativeTools": [
       "Cutting board",
@@ -1641,16 +1613,13 @@ export const recipes: Recipe[] = [
     "narrativeIngredients": [
       "500 g cooked chicken",
       "shredded",
-      "1 onion",
-      "chopped",
-      "1 bell pepper",
-      "chopped",
+      "1 onion, chopped",
+      "1 bell pepper, chopped",
       "1 can cream of mushroom soup",
       "1 can diced tomatoes",
       "1 cup chicken broth",
       "2 cups shredded cheese",
-      "8 corn tortillas",
-      "cut into pieces",
+      "8 corn tortillas, cut into pieces",
       "1 tbsp cooking oil"
     ],
     "narrativeTools": [
