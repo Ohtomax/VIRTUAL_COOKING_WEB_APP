@@ -29,6 +29,11 @@ export default function CabinetView({ onClose }: Props) {
 
   const checkIsNeeded = (tool: ToolType) => {
     if (!selectedRecipe) return false
+
+    if (selectedRecipe.level <= 2) {
+      if (tool.category === 'measuring') return true;
+    }
+
     return selectedRecipe.tools.some(t => {
       const n = t.toLowerCase()
       return tool.name.toLowerCase() === n || tool.id === n || tool.name.toLowerCase().includes(n)
@@ -40,6 +45,28 @@ export default function CabinetView({ onClose }: Props) {
       if (!checkIsNeeded(tool)) {
         addFeedback(`You don't need the ${tool.name} for this recipe!`, 'error')
         return
+      }
+
+      if (tool.category === 'pot') {
+        const existingPots = inventoryToolIds.filter(id => {
+          const t = toolCategories.flatMap(c => c.types).find(x => x.id === id)
+          return t?.category === 'pot'
+        })
+        if (existingPots.length >= 1) {
+          addFeedback(`You can only select exactly one pot per recipe!`, 'error')
+          return
+        }
+      }
+
+      if (tool.category === 'pan') {
+        const existingPans = inventoryToolIds.filter(id => {
+          const t = toolCategories.flatMap(c => c.types).find(x => x.id === id)
+          return t?.category === 'pan'
+        })
+        if (existingPans.length >= 1) {
+          addFeedback(`You can only select exactly one pan per recipe!`, 'error')
+          return
+        }
       }
     }
 

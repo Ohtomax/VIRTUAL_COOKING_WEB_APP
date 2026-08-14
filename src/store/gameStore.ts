@@ -538,9 +538,8 @@ const useGameStore = create<GameStore>()(
           },
         ]
 
-        // If no washable ingredients, washing is 100% (full marks) and weight stays
-        // This keeps the formula stable regardless of ingredient composition
-        const total = accuracy * 0.25 + washing * 0.15 + cutting * 0.15 + measuring * 0.10 + cooking * 0.25 + timing * 0.10
+        // Revised weights: accuracy 15%, cutting 20%, measuring 15%, cooking 35%, timing 15%
+        const total = accuracy * 0.15 + cutting * 0.20 + measuring * 0.15 + cooking * 0.35 + timing * 0.15
         const rounded = Math.round(total)
 
         let starRating = 0

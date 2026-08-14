@@ -11,11 +11,10 @@ export const GAME_CONFIG = {
   shelfRows: 5,
   /** Score weights (must sum to 1.0) */
   scoreWeights: {
-    accuracy: 0.25,
-    washing: 0.15,
-    cutting: 0.15,
-    measuring: 0.10,
-    cooking: 0.25,
-    timing: 0.10,
+    accuracy: 0.15,
+    cutting: 0.20,
+    measuring: 0.15,
+    cooking: 0.35,
+    timing: 0.15,
   },
 } as const

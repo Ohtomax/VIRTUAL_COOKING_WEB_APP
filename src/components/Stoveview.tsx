@@ -54,9 +54,11 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
   const invPots  = inventoryToolIds
     .map(id => allTools.find(t => t.id === id && (t.category === 'pot' || t.category === 'pan')))
     .filter(Boolean)
-  const cookwareOptions = invPots.length
+  
+  const isLevel1Or2 = selectedRecipe && selectedRecipe.level <= 2;
+  const cookwareOptions = isLevel1Or2
     ? invPots.map(t => ({ id: t!.id, name: t!.name, img: t!.image, type: t!.category as 'pot' | 'pan' | 'wok' }))
-    : FALLBACK_POTS
+    : (invPots.length ? invPots.map(t => ({ id: t!.id, name: t!.name, img: t!.image, type: t!.category as 'pot' | 'pan' | 'wok' })) : FALLBACK_POTS)
 
   const [cookware, setCookware] = useState<typeof cookwareOptions[0] | null>(null)
   const [inPot, setInPot]       = useState<string[]>([])
@@ -129,11 +131,6 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
   // SOP 4: Careful ingredient dropping
   const dropIn = (name: string) => {
     if (state === 'done' || state === 'burnt') return
-    // SOP 4 & code review fix: block drops while cooking
-    if (fireOn) {
-      flash('Turn off the fire before adding more ingredients! 🔥')
-      return
-    }
     const ing = collectedIngredients.find(i => i.name === name)
     if (!ing) return
     if (!cookware) { flash('Pick a cookware first! 🍳'); return }
@@ -409,14 +406,14 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
           <div className="gst-pick-row">
             <span className="gst-pick-label">Pick cookware{selectedRecipe && RECIPE_COOKWARE[selectedRecipe.id]
               ? ` (recommended: ${RECIPE_COOKWARE[selectedRecipe.id].cookware})` : ''}:</span>
-            {cookwareOptions.map(c => (
+            {cookwareOptions.length > 0 ? cookwareOptions.map(c => (
               <motion.button key={c.id} className="gst-pick-btn"
                 onClick={() => selectCookware(c)} whileTap={{ scale: 0.9 }}>
                 <img src={c.img} alt={c.name}
                   onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                 <span>{c.name}</span>
               </motion.button>
-            ))}
+            )) : <span className="gst-pick-btn" style={{opacity: 0.7}}>No cookware selected from cabinet!</span>}
           </div>
         ) : (
           <div className="gst-cook-row">
