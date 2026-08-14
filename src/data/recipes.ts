@@ -71,7 +71,7 @@ export const recipes: Recipe[] = [
     "ingredients": [
       "Beef stock",
       "Butter",
-      "Carrots",
+      "Carrot",
       "Celery",
       "Flour",
       "Onion",
@@ -81,7 +81,7 @@ export const recipes: Recipe[] = [
     ],
     "chronologicalIngredients": [
       "Butter",
-      "Carrots",
+      "Carrot",
       "Onion",
       "Celery",
       "Flour",
@@ -106,7 +106,7 @@ export const recipes: Recipe[] = [
       "Strain and serve"
     ],
     "cutInstructions": {
-      "Carrots": {
+      "Carrot": {
         "technique": "dice",
         "size": "standard",
         "description": "dice cut"
@@ -160,13 +160,13 @@ export const recipes: Recipe[] = [
       "Onion",
       "Pepper",
       "Salt",
-      "Tomatoes"
+      "Tomato"
     ],
     "chronologicalIngredients": [
       "Olive oil",
       "Onion",
       "Garlic",
-      "Tomatoes",
+      "Tomato",
       "Salt",
       "Pepper"
     ],
@@ -334,7 +334,7 @@ export const recipes: Recipe[] = [
       "Serve hot"
     ],
     "cutInstructions": {
-      "Carrots": {
+      "Carrot": {
         "technique": "slice",
         "size": "standard",
         "description": "slice cut"
@@ -485,12 +485,12 @@ export const recipes: Recipe[] = [
       "Onion",
       "Pepper",
       "Salt",
-      "Tomatoes"
+      "Tomato"
     ],
     "chronologicalIngredients": [
       "Onion",
       "Garlic",
-      "Tomatoes",
+      "Tomato",
       "Cream",
       "Salt",
       "Pepper"
@@ -949,7 +949,7 @@ export const recipes: Recipe[] = [
     "ingredients": [
       "Beef",
       "Bell pepper",
-      "Carrots",
+      "Carrot",
       "Cooking oil",
       "Garlic",
       "Liver spread",
@@ -1496,7 +1496,7 @@ export const recipes: Recipe[] = [
       "Cooking oil",
       "Pepper",
       "Salt",
-      "Beef broth",
+      "Beef stock",
       "Pickles relish"
     ],
     "tools": [
@@ -1573,7 +1573,7 @@ export const recipes: Recipe[] = [
       "Shredded cheese",
       "Bell pepper",
       "Onion",
-      "Cream of mushroom soup",
+      "Cream of mushroom",
       "Chicken broth",
       "Cooking oil",
       "Tomato"
