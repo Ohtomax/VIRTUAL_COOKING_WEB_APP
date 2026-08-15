@@ -85,127 +85,155 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
     ? toolCategories[0].types.find(k => k.id === selectedKnifeId) : null
 
   // ── Full-screen station views — all unlocked ──
-  if (active === 'freezer') return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="freezer" title="❄️ Freezer" />
-  if (active === 'fridge')  return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="fridge" title="🧊 Refrigerator" />
-  if (active === 'shelf')   return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="shelf" title="🥫 Pantry Shelf" />
-  if (active === 'cabinet') return <CabinetView onClose={() => setActive(null)} />
-  if (active === 'prep')    return <PrepView onClose={() => setActive(null)} />
-  if (active === 'sink')    return <SinkView onClose={() => setActive(null)} />
-  if (active === 'stove')   return <StoveView onClose={() => setActive(null)} onFinishCooking={onFinish} selectedRecipe={selectedRecipe} />
+  const getActiveView = () => {
+    if (active === 'freezer') return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="freezer" title="❄️ Freezer" />
+    if (active === 'fridge')  return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="fridge" title="🧊 Refrigerator" />
+    if (active === 'shelf')   return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="shelf" title="🥫 Pantry Shelf" />
+    if (active === 'cabinet') return <CabinetView onClose={() => setActive(null)} />
+    if (active === 'prep')    return <PrepView onClose={() => setActive(null)} />
+    if (active === 'sink')    return <SinkView onClose={() => setActive(null)} />
+    if (active === 'stove')   return <StoveView onClose={() => setActive(null)} onFinishCooking={onFinish} selectedRecipe={selectedRecipe} />
+    return null;
+  }
+
+  const ActiveView = getActiveView();
 
   return (
-    <div className="ek-root">
-      <div className="ek-bg" style={{ backgroundImage: "url('/assets/kitchen/kitchen-main.jpg')" }}>
-        <div className="ek-bg-scrim" />
-      </div>
-
-      {/* Navbar */}
-      <div className="ek-navbar">
-        <button className="g-back-btn" onClick={onBack}>
-          <ChevronLeft size={20} strokeWidth={2.5} /><span>Back</span>
-        </button>
-        <div className="ek-nav-title">{selectedRecipe?.name ?? 'Kitchen'}</div>
-        <button className="g-btn g-btn--gold" style={{ padding: '6px 14px', fontSize: 13, marginRight: 16, minWidth: 80 }} onClick={() => setShowRecipeModal(true)}>
-          Recipe
-        </button>
-      </div>
-
-      {/* Step strip — hidden in challenge mode */}
-      {!isChallengeMode && <div className="ek-steps-strip">
-        {STEPS.map((s, i) => (
-          <div key={s.key} className="ek-step-item">
-            <div className={`ek-step-bubble ${stepDone[s.key] ? 'done' : kitchenStep === s.key ? 'active' : 'idle'}`}>
-              {stepDone[s.key] ? <CheckCircle2 size={11} strokeWidth={3} /> : <span>{i + 1}</span>}
-            </div>
-            <span className={`ek-step-label ${kitchenStep === s.key ? 'active' : stepDone[s.key] ? 'done' : ''}`}>
-              {s.label}
-            </span>
-            {i < STEPS.length - 1 && <div className={`ek-step-line ${stepDone[s.key] ? 'done' : ''}`} />}
+    <>
+      {ActiveView ? ActiveView : (
+        <div className="ek-root">
+          <div className="ek-bg" style={{ backgroundImage: "url('/assets/kitchen/kitchen-main.jpg')" }}>
+            <div className="ek-bg-scrim" />
           </div>
-        ))}
-      </div>}
 
-      {/* Inventory Panel (slide-in from right) */}
-      <InventoryPanel />
+          {/* Navbar */}
+          <div className="ek-navbar">
+            <button className="g-back-btn" onClick={onBack}>
+              <ChevronLeft size={20} strokeWidth={2.5} /><span>Back</span>
+            </button>
+            <div className="ek-nav-title">{selectedRecipe?.name ?? 'Kitchen'}</div>
+          </div>
 
-      {/* Station buttons — ALL UNLOCKED */}
-      <div className="ek-stations">
-        <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
-          style={{ left: '2%', top: '16%' }} onClick={() => setActive('freezer')}>
-          <div className="ek-stn-icon"><Snowflake size={28} strokeWidth={1.5} /></div>
-          <span>Freezer</span>
-        </motion.button>
+          {/* Step strip — hidden in challenge mode */}
+          {!isChallengeMode && <div className="ek-steps-strip">
+            {STEPS.map((s, i) => (
+              <div key={s.key} className="ek-step-item">
+                <div className={`ek-step-bubble ${stepDone[s.key] ? 'done' : kitchenStep === s.key ? 'active' : 'idle'}`}>
+                  {stepDone[s.key] ? <CheckCircle2 size={11} strokeWidth={3} /> : <span>{i + 1}</span>}
+                </div>
+                <span className={`ek-step-label ${kitchenStep === s.key ? 'active' : stepDone[s.key] ? 'done' : ''}`}>
+                  {s.label}
+                </span>
+                {i < STEPS.length - 1 && <div className={`ek-step-line ${stepDone[s.key] ? 'done' : ''}`} />}
+              </div>
+            ))}
+          </div>}
 
-        <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
-          style={{ left: '2%', top: '44%' }} onClick={() => setActive('fridge')}>
-          <div className="ek-stn-icon"><Refrigerator size={28} strokeWidth={1.5} /></div>
-          <span>Refrigerator</span>
-        </motion.button>
+          {/* Inventory Panel (slide-in from right) */}
+          <InventoryPanel />
 
-        <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
-          style={{ right: '16%', top: '10%' }} onClick={() => setActive('shelf')}>
-          <div className="ek-stn-icon"><Package size={28} strokeWidth={1.5} /></div>
-          <span>Pantry Shelf</span>
-        </motion.button>
+          {/* Station buttons — ALL UNLOCKED */}
+          <div className="ek-stations">
+            <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
+              style={{ left: '2%', top: '16%' }} onClick={() => setActive('freezer')}>
+              <div className="ek-stn-icon"><Snowflake size={28} strokeWidth={1.5} /></div>
+              <span>Freezer</span>
+            </motion.button>
 
-        <motion.button className={`ek-stn-btn ${inventoryToolIds.length > 0 ? 'ek-stn-btn--done' : ''}`}
-          style={{ left: '26%', top: '8%' }} onClick={() => setActive('cabinet')}>
-          <div className="ek-stn-icon"><GalleryVerticalEnd size={28} strokeWidth={1.5} /></div>
-          <span>Cabinet</span>
-          {inventoryToolIds.length > 0 && <span className="ek-stn-badge">{inventoryToolIds.length}</span>}
-        </motion.button>
+            <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
+              style={{ left: '2%', top: '44%' }} onClick={() => setActive('fridge')}>
+              <div className="ek-stn-icon"><Refrigerator size={28} strokeWidth={1.5} /></div>
+              <span>Refrigerator</span>
+            </motion.button>
 
-        <motion.button className={`ek-stn-btn ${allSliced ? 'ek-stn-btn--done' : kitchenStep==='slicing'||kitchenStep==='measuring' ? 'ek-stn-btn--cta' : ''}`}
-          style={{ left: '26%', bottom: '22%' }} onClick={() => setActive('prep')}>
-          <div className="ek-stn-icon"><Scissors size={28} strokeWidth={1.5} /></div>
-          <span>Prep Table</span>
-          {allSliced && <CheckCircle2 size={15} className="ek-stn-check" />}
-        </motion.button>
+            <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
+              style={{ right: '16%', top: '10%' }} onClick={() => setActive('shelf')}>
+              <div className="ek-stn-icon"><Package size={28} strokeWidth={1.5} /></div>
+              <span>Pantry Shelf</span>
+            </motion.button>
 
-        <motion.button className={`ek-stn-btn ${allWashed ? 'ek-stn-btn--done' : kitchenStep==='washing' ? 'ek-stn-btn--cta' : ''}`}
-          style={{ right: '2%', top: '24%' }} onClick={() => setActive('sink')}>
-          <div className="ek-stn-icon"><Droplets size={28} strokeWidth={1.5} /></div>
-          <span>Sink</span>
-          {allWashed && <CheckCircle2 size={15} className="ek-stn-check" />}
-        </motion.button>
+            <motion.button className={`ek-stn-btn ${inventoryToolIds.length > 0 ? 'ek-stn-btn--done' : ''}`}
+              style={{ left: '26%', top: '8%' }} onClick={() => setActive('cabinet')}>
+              <div className="ek-stn-icon"><GalleryVerticalEnd size={28} strokeWidth={1.5} /></div>
+              <span>Cabinet</span>
+              {inventoryToolIds.length > 0 && <span className="ek-stn-badge">{inventoryToolIds.length}</span>}
+            </motion.button>
 
-        <motion.button className={`ek-stn-btn ${kitchenStep === 'cooking' ? 'ek-stn-btn--cta' : ''}`}
-          style={{ left: '50%', top: '58%', transform: 'translateX(-50%)' }}
-          onClick={() => setActive('stove')}>
-          <div className="ek-stn-icon"><Flame size={28} strokeWidth={1.5} /></div>
-          <span>Stove</span>
-        </motion.button>
-      </div>
+            <motion.button className={`ek-stn-btn ${allSliced ? 'ek-stn-btn--done' : kitchenStep==='slicing'||kitchenStep==='measuring' ? 'ek-stn-btn--cta' : ''}`}
+              style={{ left: '26%', bottom: '22%' }} onClick={() => setActive('prep')}>
+              <div className="ek-stn-icon"><Scissors size={28} strokeWidth={1.5} /></div>
+              <span>Prep Table</span>
+              {allSliced && <CheckCircle2 size={15} className="ek-stn-check" />}
+            </motion.button>
 
-      {/* Action bar */}
-      <div className="ek-action-bar">
-        <p className="ek-action-hint">{hint[kitchenStep]}</p>
-        <motion.button
-          className={`g-btn ${stepDone[kitchenStep] ? 'g-btn--gold' : 'g-btn--dim'}`}
-          onClick={advance} whileTap={stepDone[kitchenStep] ? { scale: 0.96 } : {}}>
-          {stepDone[kitchenStep]
-            ? <><span>Continue</span><ChevronRight size={18} strokeWidth={2.5} /></>
-            : 'Complete this step first'}
-        </motion.button>
-      </div>
+            <motion.button className={`ek-stn-btn ${allWashed ? 'ek-stn-btn--done' : kitchenStep==='washing' ? 'ek-stn-btn--cta' : ''}`}
+              style={{ right: '2%', top: '24%' }} onClick={() => setActive('sink')}>
+              <div className="ek-stn-icon"><Droplets size={28} strokeWidth={1.5} /></div>
+              <span>Sink</span>
+              {allWashed && <CheckCircle2 size={15} className="ek-stn-check" />}
+            </motion.button>
 
-      {/* Toast */}
-      <AnimatePresence>
-        {currentFeedback && (
-          <motion.div className={`ek-toast ek-toast--${currentFeedback.type}`}
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }}>
-            {currentFeedback.message}
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <motion.button className={`ek-stn-btn ${kitchenStep === 'cooking' ? 'ek-stn-btn--cta' : ''}`}
+              style={{ left: '50%', top: '58%', transform: 'translateX(-50%)' }}
+              onClick={() => setActive('stove')}>
+              <div className="ek-stn-icon"><Flame size={28} strokeWidth={1.5} /></div>
+              <span>Stove</span>
+            </motion.button>
+          </div>
 
+          {/* Action bar */}
+          <div className="ek-action-bar">
+            <p className="ek-action-hint">{hint[kitchenStep]}</p>
+            <motion.button
+              className={`g-btn ${stepDone[kitchenStep] ? 'g-btn--gold' : 'g-btn--dim'}`}
+              onClick={advance} whileTap={stepDone[kitchenStep] ? { scale: 0.96 } : {}}>
+              {stepDone[kitchenStep]
+                ? <><span>Continue</span><ChevronRight size={18} strokeWidth={2.5} /></>
+                : 'Complete this step first'}
+            </motion.button>
+          </div>
+
+          {/* Toast */}
+          <AnimatePresence>
+            {currentFeedback && (
+              <motion.div className={`ek-toast ek-toast--${currentFeedback.type}`}
+                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }}>
+                {currentFeedback.message}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* FLOATING RECIPE BUTTON */}
+      <button 
+        className="g-btn g-btn--gold" 
+        style={{ 
+          position: 'fixed', 
+          top: 870, 
+          right: 16, 
+          zIndex: 9998, 
+          padding: '8px 16px', 
+          fontSize: 14, 
+          minWidth: 80, 
+          boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+          borderRadius: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px'
+        }} 
+        onClick={() => setShowRecipeModal(true)}>
+        📖 Recipe Card
+      </button>
+
+      {/* RECIPE MODAL */}
       {showRecipeModal && selectedRecipe && (
-        <div className="cab-detail-overlay" onClick={() => setShowRecipeModal(false)} style={{ zIndex: 100 }}>
+        <div className="cab-detail-overlay" onClick={() => setShowRecipeModal(false)} style={{ zIndex: 9999 }}>
           <div className="cab-detail-panel" onClick={e => e.stopPropagation()} style={{ width: '90%', maxWidth: 700, maxHeight: '90vh', overflowY: 'auto', padding: 0, borderRadius: 24 }}>
             <RecipeCard setScreen={() => {}} isPopup={true} onClose={() => setShowRecipeModal(false)} />
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }

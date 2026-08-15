@@ -40,11 +40,11 @@ export default function ResultsScreen({ setScreen }: SetScreenProps) {
     : []
 
   const rows = [
-    { label: 'Ingredient Accuracy', w: '15%', val: scores.accuracy, show: true },
-    { label: 'Cutting Technique',   w: '20%', val: scores.cutting,  show: true },
-    { label: 'Measuring Accuracy',  w: '15%', val: scores.measuring, show: true },
-    { label: 'Cooking Accuracy',    w: '35%', val: scores.cooking,  show: true },
-    { label: 'Time Management',     w: '15%', val: scores.timing,   show: true },
+    { label: 'Ingredient Accuracy', w: '15%', val: scores.accuracy * 0.15, show: true },
+    { label: 'Cutting Technique',   w: '20%', val: scores.cutting * 0.20,  show: true },
+    { label: 'Measuring Accuracy',  w: '15%', val: scores.measuring * 0.15, show: true },
+    { label: 'Cooking Accuracy',    w: '35%', val: scores.cooking * 0.35,  show: true },
+    { label: 'Time Management',     w: '15%', val: scores.timing * 0.15,   show: true },
   ].filter(r => r.show)
 
   const printReport = () => {
