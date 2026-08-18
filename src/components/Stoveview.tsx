@@ -168,7 +168,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
     recordLastDropTimestamp(now)
 
     if (hopTimer.current) clearTimeout(hopTimer.current)
-    const isSeasoning = ['salt', 'pepper', 'peppercorns'].includes(name.toLowerCase())
+    const isSeasoning = ['salt', 'pepper', 'peppercorns', 'sinigang mix'].includes(name.toLowerCase())
     setHopping({ img: ing.image, key: Date.now(), type: isSeasoning ? 'shake' : 'hop' })
     hopTimer.current = setTimeout(() => {
       setHopping(null)
@@ -339,7 +339,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
                 onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
 
               <div className="gst-pot-contents">
-                {inPot.filter(n => !['salt', 'pepper', 'peppercorns'].includes(n.toLowerCase())).slice(0, 5).map((name, i) => {
+                {inPot.filter(n => !['salt', 'pepper', 'peppercorns', 'sinigang mix'].includes(n.toLowerCase())).slice(0, 5).map((name, i) => {
                   const ing = collectedIngredients.find(x => x.name === name)
                   return ing ? (
                     <motion.img key={name} src={ing.image}
