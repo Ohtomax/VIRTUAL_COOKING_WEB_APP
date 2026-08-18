@@ -1373,7 +1373,7 @@ export const recipes: Recipe[] = [
       "Serving bowl"
     ],
     "narrativeSteps": [
-      "Prepare the ingredients. Chop the onion, mince the garlic, and measure all ingredients. Fill a large pot with water and bring it to a boil.",
+      "Prepare the ingredients. Measure all ingredients, then chop the onion and mince the garlic. Fill a large pot with water and bring it to a boil.",
       "Cook the pasta. Add the spaghetti noodles to the boiling water and cook according to package directions. Drain using a colander and set aside.",
       "Sauté the aromatics. Heat oil in a frying pan. Sauté the garlic and onion until fragrant and soft.",
       "Cook the meat. Add the ground meat and cook until browned.",

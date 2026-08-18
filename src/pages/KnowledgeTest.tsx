@@ -20,7 +20,7 @@ const QUESTIONS: Question[] = [
   { q: 'Which pan is best for stir-frying?', opts: ['Sauce pan', 'Roasting pan', 'Wok', 'Paella pan'], answer: 2 },
   { q: 'What does "simmer" mean?', opts: ['Boil rapidly', 'Cook just below boiling point', 'Fry in oil', 'Bake in oven'], answer: 1 },
   { q: 'Why should you curl your fingers when cutting?', opts: ['Looks professional', 'Keeps food steady', 'Prevents cutting your fingertips', 'Makes cuts faster'], answer: 2 },
-  { q: 'What is the correct order of cooking preparation?', opts: ['Cook → Wash → Slice', 'Slice → Cook → Wash', 'Wash → Slice/Measure → Cook', 'Measure → Wash → Cook'], answer: 2 },
+  { q: 'What is the correct order of cooking preparation?', opts: ['Cook → Wash → Slice', 'Slice → Cook → Wash', 'Wash → Measure → Slice → Cook', 'Measure → Wash → Cook'], answer: 2 },
 ]
 
 interface Props extends SetScreenProps { mode: 'pre' | 'post' }
