@@ -342,9 +342,10 @@
    ═══════════════════════════════════════════ */
 .ek-toast {
   position: absolute;
-  bottom: 100px;
+  bottom: 200px;
   left: 50%;
   transform: translateX(-50%);
+
   z-index: 500;
   padding: 10px 20px;
   border-radius: var(--ios-radius-pill);

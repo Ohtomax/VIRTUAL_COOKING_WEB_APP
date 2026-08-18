@@ -1860,8 +1860,8 @@
 /* Toast */
 .ek-toast {
   position: absolute;
-  bottom: 108px;
-  left: 50%;
+  bottom: 200px;
+  left: 38.55%;
   transform: translateX(-50%);
   z-index: 500;
   padding: 14px 28px;
@@ -3897,6 +3897,37 @@
   align-items: center;
   gap: 8px;
   padding: 0 16px;
+}
+
+.gst-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.gst-tab-btn {
+  padding: 8px 24px;
+  border-radius: var(--r-pill);
+  background: rgba(20, 13, 4, 0.6);
+  border: 2px solid rgba(245, 166, 35, 0.3);
+  color: rgba(255, 233, 201, 0.6);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gst-tab-btn:hover {
+  background: rgba(20, 13, 4, 0.8);
+  border-color: rgba(245, 166, 35, 0.5);
+  color: rgba(255, 233, 201, 0.9);
+}
+
+.gst-tab-btn.active {
+  background: rgba(20, 13, 4, 0.95);
+  border-color: rgba(245, 166, 35, 0.9);
+  color: #ffe9c9;
+  box-shadow: 0 2px 8px rgba(245, 166, 35, 0.3);
 }
 
 .gst-pick-row {

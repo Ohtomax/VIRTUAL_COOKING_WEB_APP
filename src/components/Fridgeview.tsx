@@ -125,7 +125,6 @@ export default function FridgeView({ onClose, selectedRecipe, station, title }: 
         {currentFeedback && (
           <motion.div
             className={`ek-toast ek-toast--${currentFeedback.type}`}
-            style={{ position: 'absolute', bottom: 126, left: '50%', transform: 'translateX(-50%)', zIndex: 60 }}
             initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 14 }}>
             {currentFeedback.message}
           </motion.div>
