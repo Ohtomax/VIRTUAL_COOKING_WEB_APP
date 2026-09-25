@@ -60,6 +60,11 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
   const sliceables   = collectedIngredients.filter(i => !!getSlicesForIngredient(i.name))
   const allSliced    = collected > 0 && sliceables.every(i => slicedIngredients.includes(i.name))
   const allMeasured  = measuredIngredients.length >= collected && collected > 0
+  
+  const reqTools = selectedRecipe?.tools || []
+  const allToolsCollected = reqTools.length > 0 
+    ? reqTools.every(t => inventoryToolIds.includes(t)) 
+    : inventoryToolIds.length > 0
 
   const stepDone: Record<KitchenStep, boolean> = {
     ingredients: allCollected, washing: allWashed,
@@ -155,18 +160,19 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
               <span>Pantry Shelf</span>
             </motion.button>
 
-            <motion.button className={`ek-stn-btn ${inventoryToolIds.length > 0 ? 'ek-stn-btn--done' : ''}`}
+            <motion.button className={`ek-stn-btn ${allToolsCollected ? 'ek-stn-btn--done' : ''}`}
               style={{ left: '26%', top: '8%' }} onClick={() => setActive('cabinet')}>
               <div className="ek-stn-icon"><GalleryVerticalEnd size={28} strokeWidth={1.5} /></div>
               <span>Cabinet</span>
               {inventoryToolIds.length > 0 && <span className="ek-stn-badge">{inventoryToolIds.length}</span>}
+              {allToolsCollected && <CheckCircle2 size={15} className="ek-stn-check" />}
             </motion.button>
 
-            <motion.button className={`ek-stn-btn ${allSliced ? 'ek-stn-btn--done' : kitchenStep==='slicing'||kitchenStep==='measuring' ? 'ek-stn-btn--cta' : ''}`}
+            <motion.button className={`ek-stn-btn ${allSliced && allMeasured ? 'ek-stn-btn--done' : kitchenStep==='slicing'||kitchenStep==='measuring' ? 'ek-stn-btn--cta' : ''}`}
               style={{ left: '26%', bottom: '22%' }} onClick={() => setActive('prep')}>
               <div className="ek-stn-icon"><Scissors size={28} strokeWidth={1.5} /></div>
               <span>Prep Table</span>
-              {allSliced && <CheckCircle2 size={15} className="ek-stn-check" />}
+              {allSliced && allMeasured && <CheckCircle2 size={15} className="ek-stn-check" />}
             </motion.button>
 
             <motion.button className={`ek-stn-btn ${allWashed ? 'ek-stn-btn--done' : kitchenStep==='washing' ? 'ek-stn-btn--cta' : ''}`}

@@ -13,6 +13,8 @@ import Tutorial from './pages/Tutorial'
 import Progress from './pages/Progress'
 import Settings from './pages/Settings'
 import MasterChefMode from './pages/MasterChefMode'
+import LoginScreen from './pages/LoginScreen'
+import { usePlayerContext } from './db/PlayerContext'
 import { useAudio } from './hooks/useAudio'
 import useGameStore from './store/gameStore'
 import type { ScreenName, AudioSettings } from './types'
@@ -24,6 +26,8 @@ import '../src/styles/educational.css'
 export default function App() {
   const [screen, setScreen] = useState<ScreenName>('main-menu')
   const [showSplash, setShowSplash] = useState(true)
+  const [showLogin, setShowLogin] = useState(true)
+  const { player, isReady } = usePlayerContext()
   const { selectedRecipe } = useGameStore()
   const [audioSettings, setAudioSettings] = useState<AudioSettings>({
     musicEnabled: true,
@@ -47,7 +51,8 @@ export default function App() {
   return (
     <div className="app-root">
       <AnimatePresence>
-        {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
+        {isReady && showLogin && <LoginScreen onDone={() => setShowLogin(false)} />}
+        {!showLogin && showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
       </AnimatePresence>
       <AnimatePresence mode="wait">
         <motion.div key={screen} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }} style={{ width: '100%', height: '100%' }}>

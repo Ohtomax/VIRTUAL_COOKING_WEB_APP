@@ -166,7 +166,7 @@ interface GameActions {
   clearFeedback: () => void
 
   // Reset
-  resetGame: () => void
+  resetGame: (keepRecipe?: boolean) => void
   resetAll: () => void
 }
 
@@ -491,9 +491,8 @@ const useGameStore = create<GameStore>()(
         // Only ingredients that actually needed to be cooked in the pot
         const totalCookReq = s.requiredIngredients.length
         if (totalCookReq > 0) {
-          const cookedNormalized = s.cookedIngredients.map(c => c.toLowerCase().trim())
           const cookedMatchCount = s.requiredIngredients.filter(req =>
-            cookedNormalized.includes(req.name.toLowerCase().trim())
+            s.cookedIngredients.some(c => matchesIngredient(c, req.name))
           ).length
 
           // Missing ingredients severely penalize the cooking score
@@ -572,8 +571,8 @@ const useGameStore = create<GameStore>()(
           },
         ]
 
-        // Revised weights: accuracy 15%, cutting 20%, measuring 15%, cooking 35%, timing 15%
-        const total = accuracy * 0.15 + cutting * 0.20 + measuring * 0.15 + cooking * 0.35 + timing * 0.15
+        // Revised weights: accuracy 10%, washing 10%, cutting 10%, measuring 10%, cooking 50%, timing 10%
+        const total = accuracy * 0.10 + washing * 0.10 + cutting * 0.10 + measuring * 0.10 + cooking * 0.50 + timing * 0.10
         const rounded = Math.round(total)
 
         let starRating = 0
@@ -755,7 +754,21 @@ const useGameStore = create<GameStore>()(
       clearFeedback: () => set({ currentFeedback: null }),
 
       // ---- Resets ----
-      resetGame: () => set(initialSessionState),
+      resetGame: (keepRecipe?: boolean) => {
+        const s = get()
+        if (keepRecipe && s.selectedRecipe) {
+          const r = s.selectedRecipe
+          const l = s.selectedLevel
+          set({
+            ...initialSessionState,
+            selectedRecipe: r,
+            selectedLevel: l,
+          })
+          get().initializeIngredients(r)
+        } else {
+          set(initialSessionState)
+        }
+      },
 
       resetAll: () =>
         set({

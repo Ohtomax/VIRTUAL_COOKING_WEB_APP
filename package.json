@@ -9,11 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/sql.js": "^1.4.11",
+    "dotenv": "^8.2.0",
     "framer-motion": "^12.40.0",
     "howler": "^2.2.4",
     "lucide-react": "^1.16.0",
+    "node-fetch": "^3.3.2",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "sql.js": "^1.14.2",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

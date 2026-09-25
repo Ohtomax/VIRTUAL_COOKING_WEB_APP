@@ -124,8 +124,7 @@ export default function CabinetView({ onClose }: Props) {
                     <img src={tool.image} alt={tool.name}
                       onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                     {req && !owned && <span className="gc-tool-need">!</span>}
-                    {knifed && <motion.span className="gc-star" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }}>⭐</motion.span>}
-                    {owned && !knifed && <span className="gc-owned">✓</span>}
+                    {owned && <span className="gc-owned">✓</span>}
                     <span className="gc-tool-label">{tool.name}</span>
                     {tool.canCut && <span className="gc-cut-tag">{tool.cutTechnique}</span>}
                   </motion.div>
@@ -139,7 +138,7 @@ export default function CabinetView({ onClose }: Props) {
 
       <p className="gs-hint" style={{ position: 'relative', zIndex: 10 }}>
         {category.id === 1
-          ? (selectedKnifeId ? '⭐ Knife equipped — ready to cut!' : 'Tap a knife to equip it for the Prep Table')
+          ? (selectedKnifeId ? '✓ Knife equipped — ready to cut!' : 'Tap a knife to equip it for the Prep Table')
           : 'Tap tools to add them to your kit'}
       </p>
 
@@ -192,7 +191,7 @@ export default function CabinetView({ onClose }: Props) {
               >
                 <img src={t.image} alt={t.name}
                   onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
-                {knifed && <span className="gtray-badge gtray-badge--sliced" style={{ background: 'var(--gold)', color: '#1a0800' }}>⭐</span>}
+                {knifed && <span className="gtray-badge gtray-badge--sliced" style={{ background: '#22c55e', color: '#fff' }}>✓</span>}
               </motion.button>
             )
           })}

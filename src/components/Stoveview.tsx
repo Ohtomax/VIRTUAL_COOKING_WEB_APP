@@ -7,6 +7,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, Flame, CheckCircle2, Target, AlertTriangle } from 'lucide-react'
 import useGameStore from '../store/gameStore'
+import { matchesIngredient } from '../data/ingredients'
 import { toolCategories } from '../data/tools'
 import { getSlicesForIngredient } from '../data/sliceimages'
 import { RECIPE_COOKWARE, getRandomTip } from '../data/sopData'
@@ -216,7 +217,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
   // SOP 4: Careful ingredient dropping
   const dropIn = (name: string) => {
     if (state === 'done' || state === 'burnt') return
-    const ing = collectedIngredients.find(i => i.name === name)
+    const ing = collectedIngredients.find(i => i.name === name || matchesIngredient(i.name, name))
     if (!ing) return
     if (!cookware) { flash('Pick a cookware first! 🍳'); return }
     if (inPot.includes(name) || pendingDrops.current.has(name)) { flash(`${ing.name} is already in the ${cookware.name}!`); return }
@@ -242,7 +243,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
           flash(`⚠ SOP: Use the ${requiredTool} first!`);
           return;
         }
-        if (name !== expectedNext) {
+        if (!matchesIngredient(name, expectedNext)) {
           recordChronologicalMistake();
           flash(`⚠ SOP: Ingredients must be added in chronological order! Expected: ${expectedNext}`);
           return;
@@ -305,7 +306,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
     if (!fireOn || state === 'burnt' || state === 'served' || state === 'served-burnt') return
     const iv = setInterval(() => {
       const h = useGameStore.getState().heatLevel
-      const add = h === 'low' ? 0.2 : h === 'medium' ? 0.3 : 0.4
+      const add = h === 'off' ? 0 : h === 'low' ? 0.2 : h === 'medium' ? 0.3 : 0.4
       setSeconds(s => s + add)
     }, 200)
     return () => clearInterval(iv)
@@ -317,8 +318,8 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
       setState('burnt'); setBurnedFood(true)
       setFireOn(false)
       // Show specific burning image if provided, otherwise keep current image (CSS will apply burnt filter)
-      if (stepImageSet?.burning) {
-        setCurrentStepImage(stepImageSet.burning)
+      if (stepImageSet?.burnt) {
+        setCurrentStepImage(stepImageSet.burnt)
       }
     } else if (seconds >= COOK_SECONDS && state === 'cooking') {
       setState('done')
@@ -456,7 +457,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
         {/* SOP 1: Burner ring indicator has been removed */}
 
         <AnimatePresence>
-          {fireOn && state === 'cooking' && (
+          {fireOn && heatLevel !== 'off' && state === 'cooking' && (
             <motion.img key="fire" src="/assets/kitchen/fire.png" className="gst-fire"
               initial={{ opacity: 0, scale: 0.6 }}
               animate={{ 
@@ -491,7 +492,7 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
                 />
               </AnimatePresence>
 
-              {fireOn && state === 'cooking' && [0, 1, 2].map(i => (
+              {fireOn && heatLevel !== 'off' && state === 'cooking' && [0, 1, 2].map(i => (
                 <motion.span key={i} className="gst-steam" style={{ left: `${28 + i * 20}%` }}
                   animate={{ y: [-8, -42], opacity: [0.7, 0] }}
                   transition={{ repeat: Infinity, duration: 1.3, delay: i * 0.35 }} />
@@ -632,8 +633,9 @@ export default function StoveView({ onClose, onFinishCooking, selectedRecipe }: 
             : !cookware ? 'Choose a pot or pan — it will land on the burner'
             : inPot.length === 0 ? '👇 Tap ingredients below to drop them in'
             : !fireOn && state !== 'done' ? (allInPot ? 'All in! Tap Ignite 🔥' : 'Add more, or tap Ignite 🔥')
-            : state === 'cooking' ? `Cooking… ${Math.max(0, COOK_SECONDS - seconds)}s remaining — don't let it burn!`
-            : state === 'done'    ? `✅ Ready! Tap Serve before it burns in ${Math.max(0, BURN_SECONDS - seconds)}s!`
+            : fireOn && heatLevel === 'off' ? 'Select a heat level to start cooking!'
+            : state === 'cooking' ? `Cooking… ${Math.max(0, COOK_SECONDS - Math.floor(seconds))}s remaining — don't let it burn!`
+            : state === 'done'    ? `✅ Ready! Tap Serve before it burns in ${Math.max(0, BURN_SECONDS - Math.floor(seconds))}s!`
             : state === 'served'  ? '🍽 Serving your delicious dish…'
             : state === 'burnt'   ? '💀 It burnt… tap Serve anyway or keep it as a lesson!'
             : state === 'served-burnt' ? '🍽 Serving your burnt dish…' : ''}

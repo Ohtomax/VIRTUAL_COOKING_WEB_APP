@@ -203,7 +203,7 @@ export default function ResultsScreen({ setScreen }: SetScreenProps) {
 
         <div className="rs-actions">
           {!passed && (
-            <button className="g-btn g-btn--ghost g-btn--full" onClick={() => { resetGame(); setScreen('kitchen') }}>
+            <button className="g-btn g-btn--ghost g-btn--full" onClick={() => { resetGame(true); setScreen('kitchen') }}>
               Retry Recipe
             </button>
           )}

@@ -8,8 +8,6 @@ dist
 .vite
 
 # Environment
-.env
-.env.local
 .env.*.local
 
 # IDE / Editor
@@ -32,3 +30,4 @@ yarn-error.log*
 # Capacitor (if you add mobile later)
 android
 ios
+config.bat
