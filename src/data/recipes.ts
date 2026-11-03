@@ -108,6 +108,8 @@ export const recipes: Recipe[] = [
       "Tomato paste",
       "Beef stock",
       "tool:whisk",
+      "Salt",
+      "Pepper",
       "tool:spoon",
       "tool:ladle"
     ],
@@ -200,6 +202,7 @@ export const recipes: Recipe[] = [
       "Garlic",
       "Tomato",
       "Salt",
+      "Pepper",
       "tool:whisk",
       "tool:spoon"
     ],
@@ -282,6 +285,7 @@ export const recipes: Recipe[] = [
       "Salt"
     ],
     "chronologicalSteps": [
+      "tool:bowl",
       "Egg yolks",
       "tool:whisk",
       "Butter",
@@ -291,7 +295,8 @@ export const recipes: Recipe[] = [
     "tools": [
       "saucepan",
       "whisk",
-      "mspoon"
+      "mspoon",
+      "bowl"
     ],
     "steps": [
       "Clarify butter and keep warm",
@@ -456,17 +461,16 @@ export const recipes: Recipe[] = [
       "Pepper"
     ],
     "chronologicalSteps": [
-        "Butter",
-        "Onion",
-        "Garlic",
-        "Butternut squash",
-        "Vegetable broth",
-        "tool:spoon",
-        "Cream",
-        "Salt",
-        "Pepper",
-        "tool:ladle"
-      ],
+      "Butter",
+      "Onion",
+      "Garlic",
+      "Butternut squash",
+      "Vegetable broth",
+      "Cream",
+      "Salt",
+      "Pepper",
+      "tool:ladle"
+    ],
     "tools": [
       "cboard",
       "chefs",
@@ -477,13 +481,12 @@ export const recipes: Recipe[] = [
       "ladle"
     ],
     "steps": [
-      "Peel and cube butternut squash",
       "Sauté onion and garlic in butter",
-      "Add squash and vegetable broth",
-      "Simmer until squash is tender (20–25 minutes)",
-      "Blend until smooth",
-      "Add cream and season",
-      "Serve warm"
+      "Add the cubed squash",
+      "Pour in the vegetable broth",
+      "Simmer until the squash is tender",
+      "Season with salt and pepper",
+      "Serve hot"
     ],
     "cutInstructions": {
       "Onion": {
@@ -517,13 +520,11 @@ export const recipes: Recipe[] = [
       "Ladle"
     ],
     "narrativeSteps": [
-      "Prepare the squash. Peel the butternut squash using a vegetable peeler. Cut it in half, remove the seeds, and cube the flesh.",
-      "Sauté aromatics. Melt butter in a large pot over medium heat. Add diced onions and minced garlic, stirring until softened.",
+      "Sauté the aromatics. Melt butter in a large pot over medium heat, then add the diced onions and minced garlic and stir until softened.",
       "Cook the squash. Add the cubed squash to the pot and stir for several minutes.",
-      "Add broth. Pour in the vegetable broth and bring the mixture to a boil.",
-      "Simmer until tender. Lower the heat and cook for 20–25 minutes until the squash becomes very soft.",
-      "Blend the soup. Using an immersion blender or regular blender, puree the soup until smooth and creamy.",
-      "Finish and serve. Return the soup to the pot if necessary. Stir in cream, season with salt and pepper, and serve hot."
+      "Add the broth. Pour in the vegetable broth until the squash is covered and bring it to a boil.",
+      "Simmer until tender. Lower the heat and simmer until the squash is very soft, then season with salt and pepper.",
+      "Finish and serve. Stir the soup through with the ladle, turn off the heat, and serve hot."
     ]
   },
   {
@@ -658,17 +659,16 @@ export const recipes: Recipe[] = [
       "Pepper"
     ],
     "chronologicalSteps": [
-        "Butter",
-        "Onion",
-        "Potatoes",
-        "Chicken broth",
-        "tool:spoon",
-        "Corn kernels",
-        "Milk",
-        "Salt",
-        "Pepper",
-        "tool:ladle"
-      ],
+      "Butter",
+      "Onion",
+      "Potatoes",
+      "Corn kernels",
+      "Chicken broth",
+      "Milk",
+      "Salt",
+      "Pepper",
+      "tool:ladle"
+    ],
     "tools": [
       "cboard",
       "chefs",
@@ -680,10 +680,10 @@ export const recipes: Recipe[] = [
     ],
     "steps": [
       "Sauté onion in butter",
-      "Add diced potatoes and chicken broth",
-      "Simmer until potatoes are tender",
-      "Add corn kernels and milk",
-      "Season with salt and pepper",
+      "Add diced potatoes and corn kernels",
+      "Pour in the broth",
+      "Simmer until the potatoes are tender",
+      "Add milk and season",
       "Serve hot"
     ],
     "cutInstructions": {
@@ -718,14 +718,12 @@ export const recipes: Recipe[] = [
       "Ladle"
     ],
     "narrativeSteps": [
-      "Prepare the ingredients. Peel and dice the potatoes. Chop the onion and measure the corn kernels.",
-      "Sauté the onion. Melt butter in a soup pot. Add the onion and cook until soft and translucent.",
-      "Add potatoes and corn. Stir in the diced potatoes and corn kernels.",
-      "Pour in the broth. Add the broth and bring the mixture to a boil.",
-      "Simmer until tender. Reduce heat and cook for 15–20 minutes until the potatoes become soft.",
-      "Create a creamy texture. Mash some of the potatoes using a potato masher while leaving some chunks intact.",
-      "Add milk and season. Pour in the milk and stir gently. Season with salt and pepper to taste.",
-      "Serve hot. Heat through without boiling, then ladle into serving bowls and serve immediately."
+      "Sauté the onion. Melt butter in a soup pot, then add the chopped onion and cook until soft and translucent.",
+      "Add the potatoes and corn. Stir in the diced potatoes and the corn kernels.",
+      "Pour in the broth. Add the broth until the vegetables are covered and bring it to a boil.",
+      "Simmer until tender. Lower the heat and cook until the potatoes are soft.",
+      "Add milk and season. Pour in the milk and stir gently, then season with salt and pepper to taste.",
+      "Serve hot. Heat through without boiling, then ladle into bowls and serve."
     ]
   },
   {
@@ -757,10 +755,10 @@ export const recipes: Recipe[] = [
       "Peppercorns"
     ],
     "chronologicalSteps": [
+      "Cooking oil",
       "Chicken",
       "Soy sauce",
       "Garlic",
-      "Cooking oil",
       "Water",
       "Vinegar",
       "Bay leaves",
@@ -776,13 +774,12 @@ export const recipes: Recipe[] = [
       "ladle"
     ],
     "steps": [
-      "Cut chicken into serving pieces",
-      "Combine chicken, soy sauce, vinegar, garlic, bay leaves, and pepper",
-      "Let marinate for 30 minutes",
-      "Add water and bring to boil",
-      "Simmer for 30–40 minutes until chicken is tender",
-      "Remove chicken and fry until golden brown",
-      "Reduce sauce and pour over chicken"
+      "Marinate the chicken in soy sauce and garlic (prep)",
+      "Brown the marinated chicken in oil",
+      "Add the marinade, water, vinegar, bay leaves and peppercorns",
+      "Simmer until the chicken is tender",
+      "Reduce the sauce",
+      "Serve hot"
     ],
     "cutInstructions": {
       "Garlic": {
@@ -811,13 +808,13 @@ export const recipes: Recipe[] = [
       "Serving bowl"
     ],
     "narrativeSteps": [
-      "Prepare the ingredients. Wash the chicken thoroughly and drain well. Crush the garlic and measure all ingredients using measuring cups and spoons.",
-      "Marinate the chicken. Place the chicken in a mixing bowl. Add soy sauce and garlic, then mix well. Let it marinate for at least 30 minutes.",
-      "Brown the chicken. Heat cooking oil in a pot over medium heat. Add the marinated chicken and cook until lightly browned on all sides.",
-      "Add the seasonings. Pour the remaining marinade into the pot. Add water, vinegar, bay leaves, and peppercorns.",
-      "Simmer the adobo. Bring the mixture to a boil. Lower the heat and simmer for 30–40 minutes until the chicken becomes tender.",
-      "Reduce the sauce. Allow the sauce to reduce slightly until it reaches the desired consistency.",
-      "Serve. Transfer the Chicken Adobo to a serving bowl and serve hot with steamed rice."
+      "Prepare the ingredients. Wash the chicken thoroughly and drain it well, crush the garlic, and measure everything out. (Preparation area)",
+      "Marinate the chicken. Place the chicken in a mixing bowl, add the soy sauce and garlic, mix well, and leave it to marinate. (Preparation area)",
+      "Brown the chicken. Heat cooking oil in a pot over medium heat, then add the marinated chicken and cook until lightly browned on all sides.",
+      "Add the seasonings. Pour in the remaining marinade, then add the water, vinegar, bay leaves and peppercorns.",
+      "Simmer the adobo. Bring it to a boil, then lower the heat and simmer until the chicken is tender.",
+      "Reduce the sauce. Let the sauce reduce slightly until it reaches the consistency you want.",
+      "Serve. Transfer the chicken adobo to a serving bowl and serve hot with steamed rice."
     ]
   },
   {
@@ -964,8 +961,15 @@ export const recipes: Recipe[] = [
     ],
     "chronologicalSteps": [
       "Cooking oil",
+      "Onion",
       "Garlic",
-      "Onion"
+      "Tomato",
+      "Bagoong alamang",
+      "Water",
+      "Squash",
+      "Sitaw",
+      "Eggplant",
+      "Ampalaya"
     ],
     "tools": [
       "cboard",
@@ -976,12 +980,11 @@ export const recipes: Recipe[] = [
       "spoon"
     ],
     "steps": [
-      "Sauté garlic and onion in oil",
-      "Add tomato and cook until soft",
-      "Add squash, then eggplant and ampalaya",
-      "Add sitaw and water",
-      "Add bagoong alamang",
-      "Stir-fry until vegetables are cooked but still crisp"
+      "Sauté garlic, onion and tomatoes",
+      "Add the bagoong alamang",
+      "Add squash, string beans, eggplant and bitter melon",
+      "Cook until the vegetables are tender",
+      "Serve hot"
     ],
     "cutInstructions": {
       "Tomato": {
@@ -1036,13 +1039,11 @@ export const recipes: Recipe[] = [
       "Serving bowl"
     ],
     "narrativeSteps": [
-      "Prepare the vegetables. Wash all vegetables thoroughly. Slice the eggplant and bitter melon, cube the squash, and cut the string beans into manageable pieces.",
-      "Sauté the aromatics. Heat cooking oil in a pot or wok over medium heat. Sauté the garlic, onion, and tomatoes until softened.",
-      "Add the shrimp paste. Stir in the bagoong alamang and cook for about one minute to blend the flavors.",
-      "Add the vegetables. Place the squash, string beans, eggplant, and bitter melon into the pot.",
-      "Add water and cook. Pour in the water and cover the pot. Simmer for 10–15 minutes until the vegetables are tender.",
-      "Mix gently. Stir carefully to avoid breaking the vegetables while ensuring the flavors are evenly distributed.",
-      "Serve. Transfer the Pakbet to a serving bowl and serve hot as a main dish or side dish with rice."
+      "Sauté the aromatics. Heat cooking oil in a pot over medium heat, then add the onion, the garlic and the tomatoes.",
+      "Add the shrimp paste. Stir in the bagoong alamang and cook briefly with the aromatics.",
+      "Add the vegetables. Add the squash first, then the string beans, the eggplant and finally the bitter melon.",
+      "Cook until tender. Cover and let the vegetables steam until tender but not mushy.",
+      "Serve hot."
     ]
   },
   {
@@ -1189,27 +1190,24 @@ export const recipes: Recipe[] = [
       "tongs"
     ],
     "chronologicalSteps": [
-        "Cooking oil",
-        "Tilapia",
-        "tool:tongs",
-        "Onion",
-        "Carrot",
-        "Bell pepper",
-        "tool:spoon",
-        "Vinegar",
-        "Water",
-        "Cornstarch",
-        "Salt",
-        "Pepper"
-      ],
+      "Cooking oil",
+      "Tilapia",
+      "Vinegar",
+      "Water",
+      "Cornstarch",
+      "Onion",
+      "Carrot",
+      "Bell pepper",
+      "Salt",
+      "Pepper"
+    ],
     "steps": [
-      "Clean and score the fish",
-      "Fry fish until golden brown and set aside",
-      "Sauté garlic, onion, and ginger",
-      "Add vegetables and stir-fry",
-      "Add vinegar, sugar, and water",
-      "Thicken with cornstarch slurry",
-      "Pour sauce over fried fish"
+      "Fry the fish until golden brown",
+      "Prepare the vinegar sauce",
+      "Thicken the sauce",
+      "Add onion, carrot and bell pepper",
+      "Return the fish to the pan",
+      "Serve"
     ],
     "cutInstructions": {
       "Onion": {
@@ -1256,13 +1254,12 @@ export const recipes: Recipe[] = [
       "Serving platter"
     ],
     "narrativeSteps": [
-      "Prepare the fish. Clean and wash the fish thoroughly. Pat dry and season with salt and pepper.",
-      "Fry the fish. Heat oil in a frying pan and fry the fish until golden brown on both sides. Remove and place on a serving platter.",
-      "Prepare the sauce. In a saucepan, combine vinegar, sugar, and water. Bring the mixture to a boil.",
-      "Add vegetables. Add the onion, carrot, and bell pepper. Simmer until the vegetables are slightly tender.",
-      "Thicken the sauce. If desired, dissolve cornstarch in a small amount of water and stir into the sauce until slightly thickened.",
-      "Pour over the fish. Carefully pour the sweet and sour sauce over the fried fish.",
-      "Serve. Serve the Fish Escabeche while warm with steamed rice."
+      "Fry the fish. Heat oil in a frying pan and fry the fish until golden brown on both sides, then set it aside.",
+      "Prepare the sauce. Combine the vinegar and water in the pan and bring the mixture to a boil.",
+      "Thicken the sauce. Stir in the cornstarch and cook until the sauce thickens.",
+      "Add the vegetables. Add the sliced onion, the carrot and the bell pepper, and simmer until slightly tender.",
+      "Combine the fish and sauce. Return the fried fish to the pan and spoon the sauce over it.",
+      "Serve."
     ]
   },
   {
@@ -1475,7 +1472,10 @@ export const recipes: Recipe[] = [
       "Garlic",
       "Onion",
       "Ground pork",
-      "Spaghetti sauce"
+      "Spaghetti sauce",
+      "Salt",
+      "Pepper",
+      "Cheese"
     ],
     "steps": [
       "Cook pasta according to package directions",
@@ -1670,27 +1670,27 @@ export const recipes: Recipe[] = [
       "mallet"
     ],
     "chronologicalSteps": [
-        "Beef",
-        "tool:mallet",
-        "Hotdog",
-        "Carrot",
-        "Boiled egg",
-        "Cooking oil",
-        "Soy sauce",
-        "Beef stock",
-        "Pickles relish",
-        "Salt",
-        "Pepper",
-        "tool:spoon"
-      ],
+      "Beef",
+      "tool:mallet",
+      "Carrot",
+      "Hotdog",
+      "Pickles relish",
+      "Boiled egg",
+      "Cooking oil",
+      "Soy sauce",
+      "Beef stock",
+      "Salt",
+      "Pepper",
+      "tool:spoon"
+    ],
     "steps": [
-      "Pound beef until thin",
-      "Place hotdog, carrot, egg on beef",
-      "Roll beef and tie with twine",
-      "Sear beef roll on all sides",
-      "Add soy sauce, beef broth, and water",
-      "Simmer beef roll until tender",
-      "Slice and serve with sauce"
+      "Pound the beef flat (prep)",
+      "Lay in the filling and roll it (prep)",
+      "Brown the beef roll in oil",
+      "Add soy sauce and beef broth",
+      "Simmer until tender",
+      "Remove the twine and slice",
+      "Serve"
     ],
     "cutInstructions": {
       "Carrot": {
@@ -1726,13 +1726,13 @@ export const recipes: Recipe[] = [
       "Serving platter"
     ],
     "narrativeSteps": [
-      "Prepare the beef. Lay the beef flat on a cutting board and pound it using a meat mallet until evenly thin.",
-      "Add the filling. Arrange the carrot strips, hotdogs, sliced eggs, and pickle relish in the center of the beef.",
-      "Roll and secure. Carefully roll the beef into a log shape and tie it securely with kitchen twine.",
-      "Brown the beef roll. Heat oil in a pan and brown all sides of the beef roll.",
-      "Simmer the morcon. Add soy sauce and beef broth. Cover and simmer for 1½–2 hours until tender.",
-      "Slice the morcon. Remove the twine and allow the meat to rest before slicing.",
-      "Serve. Arrange the slices on a serving platter and spoon some sauce over the top before serving."
+      "Prepare the beef. Lay the beef flat on a cutting board and pound it with a meat mallet until evenly thin. (Preparation area)",
+      "Add the filling. Arrange the carrot strips, hotdogs, sliced eggs and pickle relish down the centre of the beef. (Preparation area)",
+      "Roll and secure. Roll the beef into a log and tighten it so it holds its shape. (Preparation area)",
+      "Brown the beef roll. Heat oil in a pan and brown the roll on all sides.",
+      "Simmer the morcon. Add the soy sauce and beef broth, cover, and simmer until tender.",
+      "Slice the morcon. Remove the twine and let the meat rest before slicing.",
+      "Serve. Arrange the slices on a platter and spoon some sauce over the top."
     ]
   },
   {

@@ -51,6 +51,7 @@ export const toolCategories: ToolCategory[] = [
       { id:'spatula',   name:'Spatula',      image:'/assets/tools/spatula.png',       use:'Flipping and scraping',          bestFor:'Pancakes, burgers',        category:'utensil' },
       { id:'ladle',     name:'Ladle',        image:'/assets/tools/ladle.png',         use:'Serving soups and stews',        bestFor:'Soups, sauces',            category:'utensil' },
       { id:'whisk',     name:'Whisk',        image:'/assets/tools/whisk.png',         use:'Mixing and aerating',            bestFor:'Eggs, batters',            category:'utensil' },
+      { id:'bowl',      name:'Mixing Bowl',  image:'/assets/tools/bowl.png',          use:'Holding and mixing ingredients', bestFor:'Egg yolks, marinades',   category:'utensil' },
       { id:'tongs',     name:'Tongs',        image:'/assets/tools/tongs.png',         use:'Gripping and turning food',      bestFor:'Grilling, serving',        category:'utensil' },
       { id:'spoon',     name:'Cooking Spoon',image:'/assets/kitchen/spoon.png',       use:'Stirring and serving',           bestFor:'Soups, sauces',            category:'utensil' },
       { id:'cboard',    name:'Chopping Board',image:'/assets/kitchen/chopping-board.png',use:'Safe cutting surface',        bestFor:'All cutting tasks',        category:'utensil' },
