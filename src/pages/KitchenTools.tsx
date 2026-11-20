@@ -1,17 +1,21 @@
 import { useState } from 'react'
-import { ChevronLeft, ChevronRight, CheckCircle2, Utensils, PocketKnife, CookingPot, UtensilsCrossed, Ruler } from 'lucide-react'
+import { ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { toolCategories } from '../data/tools'
+import { useCarouselSlide } from '../hooks/useCarouselSlide'
+import ChefMascot from '../components/ui/ChefMascot'
+import GameIcon from '../components/ui/GameIcon'
+import { TOOL_CATEGORY_ICONS, GAME_ICONS } from '../data/gameIcons'
 import useGameStore from '../store/gameStore'
-import type { SetScreenProps, ToolCategory } from '../types'
-
-const catIcons = [PocketKnife, CookingPot, UtensilsCrossed, Utensils, Ruler]
-
+import type { SetScreenProps, ToolCategory } from '../constant/interface'
 export default function KitchenTools({ setScreen }: SetScreenProps) {
   const [selected, setSelected] = useState<ToolCategory | null>(null)
   const [carouselIndex, setCarouselIndex] = useState(0)
   const [typeIndex, setTypeIndex] = useState(0)
   const { toolsViewed, markToolViewed, isAllToolsViewed } = useGameStore()
+  // Must match the card max-width in app.css (.kt-carousel-card / .kt-type-carousel-card).
+  const cats  = useCarouselSlide(840)
+  const types = useCarouselSlide(840)
   const allViewed = isAllToolsViewed()
   const total     = toolCategories.length
 
@@ -28,6 +32,7 @@ export default function KitchenTools({ setScreen }: SetScreenProps) {
 
   return (
     <div className="g-page">
+      <ChefMascot size={124} corner="bottom-left" />
       <div className="g-navbar">
         <button className="g-back-btn" onClick={() => selected ? setSelected(null) : setScreen('main-menu')}>
           <ChevronLeft size={20} strokeWidth={2.5} />
@@ -36,18 +41,18 @@ export default function KitchenTools({ setScreen }: SetScreenProps) {
         <span className="g-navbar-title">{selected ? selected.name : 'Kitchen Tools'}</span>
       </div>
 
-      <div className="g-page-body g-page-body--no-sheet">
+      <div className="g-page-body g-page-body--no-sheet g-page-body--wide">
         {!selected ? (
           <>
             <div className="kt-banner">
               <div className="kt-banner-row">
-                <div className="kt-banner-icon"><Utensils size={30} strokeWidth={1.8} /></div>
+                <div className="kt-banner-icon"><GameIcon name="utensils" size={34} /></div>
                 <div>
                   <div className="kt-banner-label">Categories Explored</div>
                   <div className="kt-banner-count">
                     {toolsViewed.length}<span className="kt-banner-count-total"> / {total}</span>
                   </div>
-                  <div className="kt-banner-sub">View all to unlock cooking levels</div>
+                  <div className="kt-banner-sub">Know your tools before you cook</div>
                 </div>
               </div>
               <div className="kt-banner-progress">
@@ -70,9 +75,8 @@ export default function KitchenTools({ setScreen }: SetScreenProps) {
                 <ChevronLeft size={34} strokeWidth={2.5} />
               </button>
 
-              <div className="kt-carousel-viewport">
+              <div className="kt-carousel-viewport" ref={cats.ref}>
                 {toolCategories.map((cat, i) => {
-                  const CatIcon = catIcons[i] ?? Utensils
                   const viewed  = toolsViewed.includes(cat.id)
                   const offset  = i - carouselIndex
                   if (Math.abs(offset) > 1) return null
@@ -82,7 +86,7 @@ export default function KitchenTools({ setScreen }: SetScreenProps) {
                       className={`kt-card kt-carousel-card ${viewed ? 'viewed' : ''} ${offset === 0 ? 'kt-carousel-card--active' : 'kt-carousel-card--peek'}`}
                       onClick={() => offset === 0 ? openCategory(cat) : setCarouselIndex(i)}
                       animate={{
-                        x: offset * 480,
+                        x: offset * cats.slide,
                         scale: offset === 0 ? 1 : 0.82,
                         opacity: offset === 0 ? 1 : 0.45,
                         zIndex: offset === 0 ? 10 : 1,
@@ -91,7 +95,7 @@ export default function KitchenTools({ setScreen }: SetScreenProps) {
                       transition={{ type: 'spring', damping: 24, stiffness: 220 }}
                       whileHover={offset === 0 ? { scale: 1.03 } : {}}
                       whileTap={{ scale: offset === 0 ? 0.97 : 0.82 }}>
-                      <div className="kt-card-icon"><CatIcon size={42} strokeWidth={1.6} /></div>
+                      <div className="kt-card-icon"><GameIcon src={TOOL_CATEGORY_ICONS[cat.id] ?? GAME_ICONS.utensils} size={64} /></div>
                       <div className="kt-card-name">{cat.name}</div>
                       <div className="kt-card-desc">{cat.description}</div>
                       {viewed && (
@@ -126,7 +130,7 @@ export default function KitchenTools({ setScreen }: SetScreenProps) {
 
             <div className="kt-footer">
               <p className={`kt-footer-hint ${allViewed ? 'ready' : ''}`}>
-                {allViewed ? '✓ All tools explored — you can now cook!' : 'Explore all 5 categories to continue'}
+                {allViewed ? 'Tools learned — the kitchen is open' : 'Walk the five racks to continue'}
               </p>
               <button
                 className="kt-btn-minimal"
@@ -149,7 +153,7 @@ export default function KitchenTools({ setScreen }: SetScreenProps) {
                 <ChevronLeft size={34} strokeWidth={2.5} />
               </button>
 
-              <div className="kt-type-carousel-viewport">
+              <div className="kt-type-carousel-viewport" ref={types.ref}>
                 {selected.types.map((t, i) => {
                   const offset = i - typeIndex
                   if (Math.abs(offset) > 1) return null
@@ -159,7 +163,7 @@ export default function KitchenTools({ setScreen }: SetScreenProps) {
                       className={`kt-type-card kt-type-carousel-card ${offset === 0 ? 'kt-type-carousel-card--active' : 'kt-type-carousel-card--peek'}`}
                       onClick={() => offset !== 0 && setTypeIndex(i)}
                       animate={{
-                        x: offset * 480,
+                        x: offset * types.slide,
                         scale: offset === 0 ? 1 : 0.82,
                         opacity: offset === 0 ? 1 : 0.45,
                         zIndex: offset === 0 ? 10 : 1,
@@ -174,7 +178,7 @@ export default function KitchenTools({ setScreen }: SetScreenProps) {
                         <span className="kt-type-label">How to use</span>{t.use}
                         <span className="kt-type-label">Best for</span>{t.bestFor}
                         <span className="kt-type-label">Tip</span>
-                        Keep your {t.name.toLowerCase()} clean and sharp for best results.
+                        Wipe it down after every use — a dull, dirty tool is a slow one.
                       </div>
                     </motion.div>
                   )

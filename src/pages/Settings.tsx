@@ -1,10 +1,7 @@
 import { ChevronLeft, Volume2, Music, Trash2 } from 'lucide-react'
 import useGameStore from '../store/gameStore'
-import type { SetScreenProps, AudioSettings } from '../types'
-
-interface Props extends SetScreenProps { audioSettings: AudioSettings; setAudioSettings: (s: AudioSettings) => void }
-
-export default function Settings({ setScreen, audioSettings, setAudioSettings }: Props) {
+import type { AudioSettings, SettingsProps } from '../constant/interface'
+export default function Settings({ setScreen, audioSettings, setAudioSettings }: SettingsProps) {
   const { resetAll } = useGameStore()
   const upd = (patch: Partial<AudioSettings>) => {
     const next = { ...audioSettings, ...patch }

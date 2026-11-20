@@ -2,8 +2,7 @@ import { ChevronLeft, Trophy, Lock, Clock, Target, Zap, Flame } from 'lucide-rea
 import { motion } from 'framer-motion'
 import useGameStore from '../store/gameStore'
 import { recipes } from '../data/recipes'
-import type { SetScreenProps } from '../types'
-
+import type { SetScreenProps } from '../constant/interface'
 export default function MasterChefMode({ setScreen }: SetScreenProps) {
   const { levelProgress, setSelectedRecipe, resetGame } = useGameStore()
   const allDone = [1,2,3,4].every(id => levelProgress[id]?.completed)

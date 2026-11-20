@@ -1,10 +1,12 @@
 /**
+import type { SliceMap } from '../constant/types'
  * sliceImages — maps ingredient name keywords to their available slice-type images.
  * Regenerated from the latest slices asset drop.
  * Non-sliceable ingredients simply have no entry here → they are measure-only.
  */
 
-export type SliceMap = Record<string, string>
+
+import type { SliceMap } from '../constant/types'
 
 export const SLICE_IMAGES: Record<string, SliceMap> = {
   'bell pepper': {

@@ -2,8 +2,7 @@ import { ChevronLeft, Trophy } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { levels, recipes } from '../data/recipes'
 import useGameStore from '../store/gameStore'
-import type { SetScreenProps } from '../types'
-
+import type { SetScreenProps } from '../constant/interface'
 export default function Progress({ setScreen }: SetScreenProps) {
   const { recipeMastery, levelProgress, playerProfile, toolsViewed } = useGameStore()
   const completedLevels = Object.values(levelProgress).filter(l => l.completed).length

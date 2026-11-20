@@ -8,15 +8,15 @@ import { ChevronLeft, Search, X } from 'lucide-react'
 import { getIngredientsByStation, matchesIngredient } from '../data/ingredients'
 import useGameStore from '../store/gameStore'
 import GameTray from './ui/GameTray.tsx'
-import type { Recipe, Ingredient, StationName } from '../types'
+import type { StationName } from '../constant/types'
+import type { Ingredient } from '../constant/interface'
 import GameTooltip from './ui/GameTooltip.tsx'
-
-interface Props { onClose: () => void; selectedRecipe: Recipe | null; station: StationName; title: string }
+import type { FridgeViewProps } from '../constant/interface'
 
 /** Shelf rows mapped over fridge-bg.jpg open-fridge zones */
 const SHELF_TOPS = ['16%', '30%', '44%', '58%', '74%']
 
-export default function FridgeView({ onClose, selectedRecipe, station, title }: Props) {
+export default function FridgeView({ onClose, selectedRecipe, station, title }: FridgeViewProps) {
   const { selectIngredient, collectedIngredients, requiredIngredients, currentFeedback, clearFeedback } = useGameStore()
   const [search, setSearch] = useState('')
   const [flying, setFlying] = useState<Ingredient | null>(null)

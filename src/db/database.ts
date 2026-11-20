@@ -17,6 +17,8 @@
  */
 
 import type { Database, SqlJsStatic } from 'sql.js'
+import type { DbRow } from '../constant/types'
+import type { PlayerRow } from '../constant/interface'
 
 // sql.js is CJS. Vite wraps it so the callable factory lands on
 // mod.default.default (double-nested) or mod.default, depending on
@@ -145,12 +147,54 @@ export async function initDB(): Promise<Database> {
   return db
 }
 
+/**
+ * Base64-encode the DB bytes.
+ * `String.fromCharCode(...bytes)` spreads the whole array as function arguments,
+ * which throws "Maximum call stack size exceeded" once the database grows past
+ * roughly 64 KB (the events/analytics tables grow without bound). Encode in
+ * fixed-size chunks instead so this stays safe at any size.
+ */
+function toBase64(bytes: Uint8Array): string {
+  const CHUNK = 0x8000
+  let binary = ''
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK))
+  }
+  return btoa(binary)
+}
+
 /** Serialize the DB to localStorage so it survives page refreshes */
 export function persist(): void {
   if (!db) return
-  const bytes = db.export()
-  const b64   = btoa(String.fromCharCode(...bytes))
-  localStorage.setItem(STORAGE_KEY, b64)
+  if (persistTimer !== null) { clearTimeout(persistTimer); persistTimer = null }
+  try {
+    localStorage.setItem(STORAGE_KEY, toBase64(db.export()))
+  } catch (e) {
+    // Quota exceeded or serialization failure — never let a save crash the game.
+    console.warn('[db] persist failed:', e)
+  }
+}
+
+let persistTimer: ReturnType<typeof setTimeout> | null = null
+
+/**
+ * Coalesce rapid writes into a single save.
+ * Every write used to trigger a full export + base64 + localStorage write, and the
+ * store→DB sync issues dozens of writes per state change, so cooking could stall
+ * the main thread. Batch them and flush shortly after the burst.
+ */
+export function schedulePersist(delay = 400): void {
+  if (!db) return
+  if (persistTimer !== null) clearTimeout(persistTimer)
+  persistTimer = setTimeout(() => { persistTimer = null; persist() }, delay)
+}
+
+// Make sure nothing in flight is lost when the tab goes away.
+if (typeof window !== 'undefined') {
+  window.addEventListener('pagehide', () => persist())
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') persist()
+  })
 }
 
 /** Export the raw SQLite bytes (for "download backup" feature) */
@@ -166,41 +210,29 @@ export function getDB(): Database {
 }
 
 // ── Low-level helpers ─────────────────────────────────────────────
-type Row = Record<string, string | number | null>
 
-export function query(sql: string, params: (string | number | null)[] = []): Row[] {
+export function query(sql: string, params: (string | number | null)[] = []): DbRow[] {
   const d = getDB()
   const stmt = d.prepare(sql)
   stmt.bind(params)
-  const rows: Row[] = []
-  while (stmt.step()) rows.push(stmt.getAsObject() as Row)
+  const rows: DbRow[] = []
+  while (stmt.step()) rows.push(stmt.getAsObject() as DbRow)
   stmt.free()
   return rows
 }
 
 export function run(sql: string, params: (string | number | null)[] = []): void {
   getDB().run(sql, params)
-  persist()
+  schedulePersist()
 }
 
 export function runMany(statements: { sql: string; params?: (string | number | null)[] }[]): void {
   const d = getDB()
   for (const s of statements) d.run(s.sql, s.params ?? [])
-  persist()
+  schedulePersist()
 }
 
 // ── Player API ────────────────────────────────────────────────────
-export interface PlayerRow {
-  id: number
-  username: string
-  display_name: string
-  created_at: string
-  last_seen: string
-  total_score: number
-  recipes_done: number
-  current_level: number
-  badges: string[]
-}
 
 export function upsertPlayer(username: string, displayName: string): PlayerRow {
   run(

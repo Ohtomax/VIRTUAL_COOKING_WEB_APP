@@ -2,21 +2,8 @@
  * sopData.ts — Kitchen Standard Operating Procedures
  * Each SOP maps to a game station and affects scoring through compliance tracking.
  */
+import type { SOP } from '../constant/interface'
 
-export interface SOPRule {
-  id: string
-  ruleText: string
-  stationTarget: 'stove' | 'prep' | 'sink'
-  scoringCategory: 'cooking' | 'cutting' | 'washing'
-}
-
-export interface SOP {
-  id: string
-  title: string
-  description: string
-  rules: SOPRule[]
-  tips: string[]
-}
 
 export const KITCHEN_SOPS: SOP[] = [
   {

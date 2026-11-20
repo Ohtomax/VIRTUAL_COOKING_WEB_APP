@@ -13,10 +13,10 @@ import { isWashable } from '../data/ingredients'
 import { getWashDuration, INGREDIENT_WASH_SIZE, getRandomTip } from '../data/sopData'
 import GameTray from './ui/GameTray'
 import GameTooltip from './ui/GameTooltip'
+import type { SinkViewProps } from '../constant/interface'
 
-interface Props { onClose: () => void }
 
-export default function SinkView({ onClose }: Props) {
+export default function SinkView({ onClose }: SinkViewProps) {
   const {
     collectedIngredients, washedIngredients, washIngredient,
     setWashThoroughness,
@@ -110,7 +110,7 @@ export default function SinkView({ onClose }: Props) {
         <button className="g-back-btn" onClick={onClose}>
           <ChevronLeft size={20} strokeWidth={2.5} /><span>Kitchen</span>
         </button>
-        <div className="sv-navbar-title">🚰 Sink</div>
+        <div className="sv-navbar-title">Sink</div>
         <div className="sv-counter">{washedIngredients.length}/{washables.length}</div>
       </div>
 
@@ -178,7 +178,7 @@ export default function SinkView({ onClose }: Props) {
               key={washPhase}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}>
-              {washPhase === 'immerse' ? '💧 Immersing' : '🫧 Rinsing'}
+              {washPhase === 'immerse' ? 'Immersing' : 'Rinsing'}
             </motion.span>
 
             {/* Bubbles */}
@@ -203,10 +203,10 @@ export default function SinkView({ onClose }: Props) {
 
       <div className="gs-hint">
         {notice ? notice
-          : !waterOn ? '👆 Tap the faucet to turn on the water'
-          : allWashed ? '✅ Everything is clean! Head back to the kitchen.'
+          : !waterOn ? 'Tap the faucet to turn on the water'
+          : allWashed ? 'Everything is clean — head back to the kitchen'
           : inBasin ? `${washPhase === 'immerse' ? 'Immersing' : 'Rinsing'} ${inBasin.name}…`
-          : '👇 Tap an ingredient below to wash it'}
+          : 'Tap an ingredient below to wash it'}
       </div>
 
       <GameTooltip id="sink" text="SOP: Fully immerse vegetables in water. Larger veggies need extra scrubbing!" />

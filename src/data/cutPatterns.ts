@@ -1,14 +1,5 @@
-import type { CuttingTechnique } from '../types'
-
-export interface CutPattern {
-  label: string
-  description: string
-  tip: string
-  color: string
-  linesNeeded: number   // tap count to complete
-  icon: string          // emoji shorthand for the selector
-}
-
+import type { CuttingTechnique } from '../constant/types'
+import type { CutPattern } from '../constant/interface'
 export const CUT_PATTERNS: Partial<Record<CuttingTechnique, CutPattern>> = {
   chopping: {
     label: 'Chopping',

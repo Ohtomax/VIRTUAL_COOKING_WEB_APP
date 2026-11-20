@@ -1,22 +1,23 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Refrigerator, GalleryVerticalEnd, Scissors, Droplets, Flame, ChevronLeft, CheckCircle2, ChevronRight, Snowflake, Package, Microwave } from 'lucide-react'
+import { Mascot } from 'page-mascot'
+import { ChevronLeft, CheckCircle2, ChevronRight } from 'lucide-react'
 import FridgeView    from '../components/Fridgeview'
 import CabinetView   from '../components/Cabinetview'
 import PrepView      from '../components/Prepview'
 import SinkView      from '../components/Sinkview'
 import StoveView     from '../components/Stoveview'
 import MicrowaveView from '../components/Microwaveview'
-import RecipeCard    from './RecipeCard'
 import InventoryPanel from '../components/ui/InventoryPanel'
+import GameIcon from '../components/ui/GameIcon'
 import useGameStore  from '../store/gameStore'
 import { toolCategories } from '../data/tools'
-import { isWashable } from '../data/ingredients'
+import { isWashable, matchesIngredient } from '../data/ingredients'
 import { getSlicesForIngredient } from '../data/sliceimages'
+import type { KitchenStation, KitchenStep } from '../constant/types'
+import type { EducationalKitchenProps } from '../constant/interface'
+import type { StationName } from '../constant/types'
 
-interface Props { onBack: () => void; onFinish: () => void }
-type Station     = 'freezer' | 'fridge' | 'shelf' | 'cabinet' | 'prep' | 'sink' | 'stove' | 'microwave' | null
-type KitchenStep = 'ingredients' | 'washing' | 'slicing' | 'measuring' | 'cooking'
 
 const STEPS: { key: KitchenStep; label: string }[] = [
   { key: 'ingredients', label: 'Collect' },
@@ -26,10 +27,9 @@ const STEPS: { key: KitchenStep; label: string }[] = [
   { key: 'cooking',     label: 'Cook'    },
 ]
 
-export default function EducationalKitchen({ onBack, onFinish }: Props) {
-  const [active, setActive]    = useState<Station>(null)
+export default function EducationalKitchen({ onBack, onFinish }: EducationalKitchenProps) {
+  const [active, setActive]    = useState<KitchenStation>(null)
   const [kitchenStep, setStep] = useState<KitchenStep>('ingredients')
-  const [showRecipeModal, setShowRecipeModal] = useState(false)
 
   const {
     selectedRecipe, initializeIngredients, requiredIngredients,
@@ -55,12 +55,33 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
   const collected    = collectedIngredients.length
   const allCollected = collected >= req && req > 0
   const washables    = collectedIngredients.filter(isWashable)
-  const allWashed    = washables.length === 0 ? collected > 0
-    : washables.every(i => washedIngredients.includes(i.name))
   const sliceables   = collectedIngredients.filter(i => !!getSlicesForIngredient(i.name))
-  const allSliced    = collected > 0 && sliceables.every(i => slicedIngredients.includes(i.name))
-  const allMeasured  = measuredIngredients.length >= collected && collected > 0
+  // A station only reads "done" AFTER every ingredient has been gathered.
+  // This prevents the Sink/Prep from falsely showing a checkmark before use
+  // (and the flip-flop where the check appears, then disappears on the next pick).
+  const allWashed    = allCollected && washables.every(i => washedIngredients.includes(i.name))
+  const allSliced    = allCollected && sliceables.every(i => slicedIngredients.includes(i.name))
+  const allMeasured  = allCollected && collectedIngredients.every(i => measuredIngredients.includes(i.name))
   
+  /**
+   * Whether every ingredient this recipe needs FROM THIS LOCATION has been
+   * collected. The three location buttons all shared one global "everything
+   * collected" flag, so finishing the pantry lit up the freezer and fridge
+   * too, and finishing the fridge lit up nothing until the very last item.
+   * Each location now answers for itself.
+   */
+  const stationDone = (station: StationName) => {
+    const needed = requiredIngredients.filter(r => r.location === station)
+    if (needed.length === 0) return false
+    return needed.every(r =>
+      collectedIngredients.some(c => c.name === r.name || matchesIngredient(c.name, r.name)),
+    )
+  }
+
+  /** Still has something to fetch — used to point the player at it. */
+  const stationPending = (station: StationName) =>
+    requiredIngredients.some(r => r.location === station) && !stationDone(station)
+
   const reqTools = selectedRecipe?.tools || []
   const allToolsCollected = reqTools.length > 0 
     ? reqTools.every(t => inventoryToolIds.includes(t)) 
@@ -80,10 +101,10 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
   }
 
   const hint: Record<KitchenStep, string> = {
-    ingredients: allCollected ? '✓ All collected!' : `Gather Ingredients — ${collected}/${req}`,
-    washing:     allWashed    ? '✓ All washed!'   : `Open Sink — ${washedIngredients.length}/${washables.length} need washing`,
-    slicing:     allSliced    ? '✓ All sliced!'   : `Open Prep Table — ${slicedIngredients.length}/${sliceables.length} need slicing`,
-    measuring:   allMeasured  ? '✓ All measured!' : `Open Prep Table — ${measuredIngredients.length}/${collected} measured`,
+    ingredients: allCollected ? 'All collected' : `Gather Ingredients — ${collected}/${req}`,
+    washing:     allWashed    ? 'All washed'   : `Open Sink — ${washedIngredients.length}/${washables.length} need washing`,
+    slicing:     allSliced    ? 'All sliced'   : `Open Prep Table — ${slicedIngredients.length}/${sliceables.length} need slicing`,
+    measuring:   allMeasured  ? 'All measured' : `Open Prep Table — ${measuredIngredients.length}/${collected} measured`,
     cooking:     'Open the Stove to cook!',
   }
 
@@ -92,9 +113,9 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
 
   // ── Full-screen station views — all unlocked ──
   const getActiveView = () => {
-    if (active === 'freezer') return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="freezer" title="❄️ Freezer" />
-    if (active === 'fridge')  return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="fridge" title="🧊 Refrigerator" />
-    if (active === 'shelf')   return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="shelf" title="🥫 Pantry Shelf" />
+    if (active === 'freezer') return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="freezer" title="Freezer" />
+    if (active === 'fridge')  return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="fridge" title="Refrigerator" />
+    if (active === 'shelf')   return <FridgeView onClose={() => setActive(null)} selectedRecipe={selectedRecipe} station="shelf" title="Pantry Shelf" />
     if (active === 'cabinet') return <CabinetView onClose={() => setActive(null)} />
     if (active === 'prep')    return <PrepView onClose={() => setActive(null)} />
     if (active === 'sink')    return <SinkView onClose={() => setActive(null)} />
@@ -110,8 +131,19 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
     <>
       {ActiveView ? ActiveView : (
         <div className="ek-root">
-          <div className="ek-bg" style={{ backgroundImage: "url('/assets/kitchen/kitchen-main.jpg')" }}>
-            <div className="ek-bg-scrim" />
+          {/* Blurred fill behind the scene. On a screen wider or taller than the
+              kitchen's own 16:10 it covers the leftover space, so the scene can
+              stay locked to its aspect without leaving bars. */}
+          <div className="ek-backdrop" style={{ backgroundImage: "url('/assets/kitchen/kitchen-main.jpg')" }} />
+
+          {/* The scene is aspect-locked, so the station buttons — which are
+              positioned in percentages — always land on the same spots of the
+              artwork, at any screen size. */}
+          <div className="ek-scene">
+            <div className="ek-bg" style={{ backgroundImage: "url('/assets/kitchen/kitchen-main.jpg')" }}>
+              <div className="ek-bg-scrim" />
+            </div>
+            <div className="ek-light" />
           </div>
 
           {/* Navbar */}
@@ -122,47 +154,32 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
             <div className="ek-nav-title">{selectedRecipe?.name ?? 'Kitchen'}</div>
           </div>
 
-          {/* Step strip — hidden in challenge mode */}
-          {!isChallengeMode && <div className="ek-steps-strip">
-            {STEPS.map((s, i) => (
-              <div key={s.key} className="ek-step-item">
-                <div className={`ek-step-bubble ${stepDone[s.key] ? 'done' : kitchenStep === s.key ? 'active' : 'idle'}`}>
-                  {stepDone[s.key] ? <CheckCircle2 size={11} strokeWidth={3} /> : <span>{i + 1}</span>}
-                </div>
-                <span className={`ek-step-label ${kitchenStep === s.key ? 'active' : stepDone[s.key] ? 'done' : ''}`}>
-                  {s.label}
-                </span>
-                {i < STEPS.length - 1 && <div className={`ek-step-line ${stepDone[s.key] ? 'done' : ''}`} />}
-              </div>
-            ))}
-          </div>}
-
-          {/* Inventory Panel (slide-in from right) */}
+          {/* Inventory Panel (slide-in from right) — its dock also holds the recipe card */}
           <InventoryPanel />
 
           {/* Station buttons — ALL UNLOCKED */}
           <div className="ek-stations">
-            <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
+            <motion.button className={`ek-stn-btn ${stationDone('freezer') ? 'ek-stn-btn--done' : kitchenStep==='ingredients' && stationPending('freezer') ? 'ek-stn-btn--cta' : ''}`}
               style={{ left: '2%', top: '16%' }} onClick={() => setActive('freezer')}>
-              <div className="ek-stn-icon"><Snowflake size={28} strokeWidth={1.5} /></div>
+              <div className="ek-stn-icon"><GameIcon name="freezer" size={38} /></div>
               <span>Freezer</span>
             </motion.button>
 
-            <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
+            <motion.button className={`ek-stn-btn ${stationDone('fridge') ? 'ek-stn-btn--done' : kitchenStep==='ingredients' && stationPending('fridge') ? 'ek-stn-btn--cta' : ''}`}
               style={{ left: '2%', top: '44%' }} onClick={() => setActive('fridge')}>
-              <div className="ek-stn-icon"><Refrigerator size={28} strokeWidth={1.5} /></div>
+              <div className="ek-stn-icon"><GameIcon name="refrigerator" size={38} /></div>
               <span>Refrigerator</span>
             </motion.button>
 
-            <motion.button className={`ek-stn-btn ${allCollected ? 'ek-stn-btn--done' : kitchenStep==='ingredients' ? 'ek-stn-btn--cta' : ''}`}
+            <motion.button className={`ek-stn-btn ${stationDone('shelf') ? 'ek-stn-btn--done' : kitchenStep==='ingredients' && stationPending('shelf') ? 'ek-stn-btn--cta' : ''}`}
               style={{ right: '16%', top: '10%' }} onClick={() => setActive('shelf')}>
-              <div className="ek-stn-icon"><Package size={28} strokeWidth={1.5} /></div>
+              <div className="ek-stn-icon"><GameIcon name="pantry" size={38} /></div>
               <span>Pantry Shelf</span>
             </motion.button>
 
             <motion.button className={`ek-stn-btn ${allToolsCollected ? 'ek-stn-btn--done' : ''}`}
               style={{ left: '26%', top: '8%' }} onClick={() => setActive('cabinet')}>
-              <div className="ek-stn-icon"><GalleryVerticalEnd size={28} strokeWidth={1.5} /></div>
+              <div className="ek-stn-icon"><GameIcon name="cabinet" size={38} /></div>
               <span>Cabinet</span>
               {inventoryToolIds.length > 0 && <span className="ek-stn-badge">{inventoryToolIds.length}</span>}
               {allToolsCollected && <CheckCircle2 size={15} className="ek-stn-check" />}
@@ -170,14 +187,14 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
 
             <motion.button className={`ek-stn-btn ${allSliced && allMeasured ? 'ek-stn-btn--done' : kitchenStep==='slicing'||kitchenStep==='measuring' ? 'ek-stn-btn--cta' : ''}`}
               style={{ left: '26%', bottom: '22%' }} onClick={() => setActive('prep')}>
-              <div className="ek-stn-icon"><Scissors size={28} strokeWidth={1.5} /></div>
+              <div className="ek-stn-icon"><GameIcon name="prep" size={38} /></div>
               <span>Prep Table</span>
               {allSliced && allMeasured && <CheckCircle2 size={15} className="ek-stn-check" />}
             </motion.button>
 
             <motion.button className={`ek-stn-btn ${allWashed ? 'ek-stn-btn--done' : kitchenStep==='washing' ? 'ek-stn-btn--cta' : ''}`}
               style={{ right: '2%', top: '24%' }} onClick={() => setActive('sink')}>
-              <div className="ek-stn-icon"><Droplets size={28} strokeWidth={1.5} /></div>
+              <div className="ek-stn-icon"><GameIcon name="sink" size={38} /></div>
               <span>Sink</span>
               {allWashed && <CheckCircle2 size={15} className="ek-stn-check" />}
             </motion.button>
@@ -185,24 +202,53 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
             <motion.button className={`ek-stn-btn ${kitchenStep === 'cooking' ? 'ek-stn-btn--cta' : ''}`}
               style={{ left: '50%', top: '58%', transform: 'translateX(-50%)' }}
               onClick={() => setActive('stove')}>
-              <div className="ek-stn-icon"><Flame size={28} strokeWidth={1.5} /></div>
+              <div className="ek-stn-icon"><GameIcon name="stove" size={38} /></div>
               <span>Stove</span>
             </motion.button>
 
-            {/* King Ranch Chicken only: Microwave / Oven button */}
+            {/* Oven — only recipes that bake show it (King Ranch Chicken).
+                It was labelled "Microwave" with a microwave icon even though
+                every image in the station is an oven. */}
             {isKingRanch && (
               <motion.button className={`ek-stn-btn ek-stn-btn--microwave ${kitchenStep === 'cooking' ? 'ek-stn-btn--cta' : ''}`}
                 style={{ right: '16%', top: '44%' }}
                 onClick={() => setActive('microwave')}>
-                <div className="ek-stn-icon"><Microwave size={28} strokeWidth={1.5} /></div>
-                <span>Microwave</span>
+                <div className="ek-stn-icon"><GameIcon name="oven" size={38} /></div>
+                <span>Oven</span>
               </motion.button>
             )}
+          </div>
+
+          {/* Chef mascot — sits directly above the step hint ("Gather Ingredients…"),
+              follows the cursor and reacts when poked (page-mascot). */}
+          <div className="ek-mascot" aria-hidden="false">
+            <Mascot
+              directions="/assets/mascot/chef-directions.webp"
+              reactions="/assets/mascot/chef-reactions.webp"
+              size={300}
+              label="Chef mascot"
+            />
           </div>
 
           {/* Action bar */}
           <div className="ek-action-bar">
             <p className="ek-action-hint">{hint[kitchenStep]}</p>
+
+            {/* Step strip — sits between the hint and the CTA so the whole
+                progression reads as one line along the bottom. */}
+            {!isChallengeMode && <div className="ek-steps-strip">
+              {STEPS.map((s, i) => (
+                <div key={s.key} className="ek-step-item">
+                  <div className={`ek-step-bubble ${stepDone[s.key] ? 'done' : kitchenStep === s.key ? 'active' : 'idle'}`}>
+                    {stepDone[s.key] ? <CheckCircle2 size={11} strokeWidth={3} /> : <span>{i + 1}</span>}
+                  </div>
+                  <span className={`ek-step-label ${kitchenStep === s.key ? 'active' : stepDone[s.key] ? 'done' : ''}`}>
+                    {s.label}
+                  </span>
+                  {i < STEPS.length - 1 && <div className={`ek-step-line ${stepDone[s.key] ? 'done' : ''}`} />}
+                </div>
+              ))}
+            </div>}
             <motion.button
               className={`g-btn ${stepDone[kitchenStep] ? 'g-btn--gold' : 'g-btn--dim'}`}
               onClick={advance} whileTap={stepDone[kitchenStep] ? { scale: 0.96 } : {}}>
@@ -221,36 +267,6 @@ export default function EducationalKitchen({ onBack, onFinish }: Props) {
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
-      )}
-
-      {/* FLOATING RECIPE BUTTON */}
-      <button 
-        className="g-btn g-btn--gold" 
-        style={{ 
-          position: 'fixed', 
-          top: 870, 
-          right: 16, 
-          zIndex: 9998, 
-          padding: '8px 16px', 
-          fontSize: 14, 
-          minWidth: 80, 
-          boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-          borderRadius: '24px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px'
-        }} 
-        onClick={() => setShowRecipeModal(true)}>
-        📖 Recipe Card
-      </button>
-
-      {/* RECIPE MODAL */}
-      {showRecipeModal && selectedRecipe && (
-        <div className="cab-detail-overlay" onClick={() => setShowRecipeModal(false)} style={{ zIndex: 9999 }}>
-          <div className="cab-detail-panel" onClick={e => e.stopPropagation()} style={{ width: '90%', maxWidth: 700, maxHeight: '90vh', overflowY: 'auto', padding: 0, borderRadius: 24 }}>
-            <RecipeCard setScreen={() => {}} isPopup={true} onClose={() => setShowRecipeModal(false)} />
-          </div>
         </div>
       )}
     </>

@@ -1,7 +1,6 @@
 import { ChevronLeft, Utensils, ShoppingBasket, Waves, Scissors, Scale, Flame, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
-import type { SetScreenProps } from '../types'
-
+import type { SetScreenProps } from '../constant/interface'
 const steps = [
   { Icon: Utensils,       title: 'Explore Tools',       desc: 'Learn all kitchen tools — knives, pans, utensils, and measuring tools. View every category to unlock cooking.' },
   { Icon: ShoppingBasket, title: 'Select a Recipe',      desc: 'Choose a level and recipe. Study the recipe card before entering the kitchen.' },

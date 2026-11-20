@@ -4,10 +4,8 @@
  */
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface Props { id: string; text: string; position?: 'top' | 'bottom' }
-
-export default function GameTooltip({ id, text, position = 'bottom' }: Props) {
+import type { GameTooltipProps } from '../../constant/interface'
+export default function GameTooltip({ id, text, position = 'bottom' }: GameTooltipProps) {
   const key = `tip-${id}`
   const [show, setShow] = useState(false)
 

@@ -4,21 +4,21 @@
  * (washed = blue ring, sliced = gold ring). Always visible in stations.
  */
 import { motion } from 'framer-motion'
+import { Scissors, Droplet } from 'lucide-react'
 import useGameStore from '../../store/gameStore'
 import { getSlicesForIngredient } from '../../data/sliceimages'
 import { isWashable } from '../../data/ingredients'
-
-interface Props {
-  highlight?: 'wash' | 'slice' | 'none'
-  onItemTap?: (name: string) => void
-}
-
-export default function GameTray({ highlight = 'none', onItemTap }: Props) {
+import RecipeCardSlot from './RecipeCardSlot'
+import type { GameTrayProps } from '../../constant/interface'
+export default function GameTray({ highlight = 'none', onItemTap }: GameTrayProps) {
   const { collectedIngredients, washedIngredients, slicedIngredients } = useGameStore()
 
   return (
     <div className="gtray">
       <div className="gtray-wood" />
+      {/* Pinned outside .gtray-items so it never scrolls out of reach when the
+          ingredient row overflows. */}
+      <RecipeCardSlot variant="tray" />
       <div className="gtray-items">
         {collectedIngredients.length === 0 && (
           <span className="gtray-empty">Collect ingredients from the fridge…</span>
@@ -43,8 +43,8 @@ export default function GameTray({ highlight = 'none', onItemTap }: Props) {
             >
               <img src={ing.image} alt={ing.name}
                 onError={e => { (e.target as HTMLImageElement).src = '/assets/ingredients/onion.png' }} />
-              {sliced && <span className="gtray-badge gtray-badge--sliced">✂</span>}
-              {washed && !sliced && <span className="gtray-badge gtray-badge--washed">💧</span>}
+              {sliced && <span className="gtray-badge gtray-badge--sliced"><Scissors size={12} strokeWidth={2.6} /></span>}
+              {washed && !sliced && <span className="gtray-badge gtray-badge--washed"><Droplet size={12} strokeWidth={2.6} /></span>}
             </motion.button>
           )
         })}

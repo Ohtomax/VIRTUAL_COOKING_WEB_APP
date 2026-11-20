@@ -5,22 +5,13 @@
 import { motion } from 'framer-motion'
 import { ChevronLeft } from 'lucide-react'
 import type { ReactNode } from 'react'
+import type { StationShellProps } from '../../constant/interface'
 
-interface Props {
-  bg: string
-  bgSize?: string
-  bgColor?: string
-  title: string
-  counter?: ReactNode
-  onClose: () => void
-  footer?: ReactNode
-  children: ReactNode
-}
 
 export default function StationShell({
   bg, bgSize = 'cover', bgColor = 'transparent',
   title, counter, onClose, footer, children,
-}: Props) {
+}: StationShellProps) {
   return (
     <motion.div
       className="sv-root"

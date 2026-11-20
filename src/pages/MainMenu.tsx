@@ -1,15 +1,17 @@
-import { ChefHat, BookOpen, BarChart3, Settings, Trophy, Lock, ChevronRight } from 'lucide-react'
+import { BookOpen, BarChart3, Settings, Trophy, Lock, ChevronRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import useGameStore from '../store/gameStore'
-import type { SetScreenProps } from '../types'
+import GameLogo from '../components/ui/GameLogo'
+import GameIcon from '../components/ui/GameIcon'
+import type { SetScreenProps } from '../constant/interface'
 const logo = '/assets/bg/upperlogo.png'
 
 const MENU_ITEMS = (allDone: boolean) => [
-  { icon: ChefHat,                 label: 'Start Game',    sub: 'Begin your cooking journey',      screen: 'kitchen-tools'    as const, primary: true,  locked: false     },
-  { icon: BookOpen,                label: 'Tutorial',      sub: 'Learn how to play',               screen: 'tutorial'         as const, primary: false, locked: false     },
-  { icon: BarChart3,               label: 'Progress',      sub: 'View your cooking history',        screen: 'progress'         as const, primary: false, locked: false     },
-  { icon: Settings,                label: 'Settings',      sub: 'Audio & preferences',             screen: 'settings'         as const, primary: false, locked: false     },
-  { icon: allDone ? Trophy : Lock, label: 'Challenge',     sub: allDone ? 'Final assessment' : 'Complete all levels first', screen: 'master-chef-mode' as const, primary: false, locked: !allDone },
+  { icon: null,  art: 'chefHat' as const, label: 'Start Game',    sub: 'Pick a dish and get on the line',      screen: 'kitchen-tools'    as const, primary: true,  locked: false     },
+  { icon: BookOpen,                label: 'Tutorial',      sub: 'How the kitchen works',               screen: 'tutorial'         as const, primary: false, locked: false     },
+  { icon: BarChart3,               label: 'Progress',      sub: 'Every dish you have plated',        screen: 'progress'         as const, primary: false, locked: false     },
+  { icon: Settings,                label: 'Settings',      sub: 'Sound and preferences',             screen: 'settings'         as const, primary: false, locked: false     },
+  { icon: allDone ? Trophy : Lock, label: 'Challenge',     sub: allDone ? 'Service, no recipe card' : 'Finish every level first', screen: 'master-chef-mode' as const, primary: false, locked: !allDone },
 ]
 
 export default function MainMenu({ setScreen }: SetScreenProps) {
@@ -22,10 +24,8 @@ export default function MainMenu({ setScreen }: SetScreenProps) {
       <div className="menu-scrim" />
 
       <div className="menu-inner">
-        {/* Logo */}
-        <motion.img src={logo} alt="Logo" className="menu-logo"
-          initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', damping: 18, stiffness: 200 }} />
+        {/* Logo — Terraria-style: never still, and it reacts to you. */}
+        <GameLogo src={logo} />
 
         <motion.h1 className="menu-title"
           initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
@@ -35,12 +35,12 @@ export default function MainMenu({ setScreen }: SetScreenProps) {
         <motion.p className="menu-tagline"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ delay: 0.18 }}>
-          Learn to cook. Master the kitchen.
+          Mise en place, then heat.
         </motion.p>
 
         {/* Menu buttons — compact sizing */}
         <div className="menu-list">
-          {items.map(({ icon: Icon, label, sub, screen, primary, locked }, i) => (
+          {items.map(({ icon: Icon, art, label, sub, screen, primary, locked }: any, i: number) => (
             <motion.button key={label}
               className={`menu-item ${primary ? 'menu-item--primary' : ''} ${locked ? 'menu-item--locked' : ''}`}
               onClick={() => !locked && setScreen(screen)}
@@ -48,7 +48,7 @@ export default function MainMenu({ setScreen }: SetScreenProps) {
               transition={{ delay: 0.22 + i * 0.06, type: 'spring', damping: 20 }}
               whileTap={!locked ? { scale: 0.97 } : {}}>
               <div className="menu-item-icon">
-                <Icon size={20} strokeWidth={2} />
+                {art ? <GameIcon name={art} size={26} /> : <Icon size={20} strokeWidth={2} />}
               </div>
               <div className="menu-item-text">
                 <span className="menu-item-title">{label}</span>

@@ -6,7 +6,8 @@
  */
 
 import { createContext, useContext, type ReactNode } from 'react'
-import { usePlayer, type PlayerSession } from './usePlayer'
+import { usePlayer } from './usePlayer'
+import type { PlayerSession } from '../constant/interface'
 
 const PlayerContext = createContext<PlayerSession | null>(null)
 

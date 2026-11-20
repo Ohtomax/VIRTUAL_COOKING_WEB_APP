@@ -2,7 +2,7 @@
    APP.CSS — All pages, bigger everything
    ════════════════════════════════════════════════ */
 
-.app-root { width:100%; height:100vh; overflow:hidden; background:var(--bg); }
+.app-root { width:100%; height:var(--stage-h); overflow:hidden; background:var(--bg); }
 
 /* ── Shared navbar ── */
 .g-navbar {
@@ -28,7 +28,7 @@
 /* ── Page shell ── */
 .g-page {
   width: 100%;
-  height: 100vh;
+  height: var(--stage-h);
   overflow-y: auto;
   padding-top: 68px;
   color: var(--text-1);
@@ -90,12 +90,12 @@
 /* ════════════════════════════════════════════════
    MAIN MENU
    ════════════════════════════════════════════════ */
-.main-menu { width:100%; height:100vh; background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center; position:relative; }
+.main-menu { width:100%; height:var(--stage-h); background-size:cover; background-position:center; display:flex; align-items:center; justify-content:center; position:relative; }
 .menu-scrim { position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.6) 0%,rgba(10,6,0,.88) 100%); }
 .menu-inner { position:relative; z-index:10; width:100%; max-width:440px; padding:0 28px; display:flex; flex-direction:column; align-items:center; }
 
 .menu-logo {
-  width: min(420px, 88vw);
+  width: min(420px, calc(var(--stage-w) * .88));
   height: auto;
   object-fit: contain;
   margin: 0 auto 18px;
@@ -273,7 +273,7 @@
 
 .kt-carousel-card {
   position: absolute;
-  width: 520px;
+  width: min(840px, calc(var(--stage-w) * .78));
   min-height: 440px;
   justify-content: center;
   cursor: pointer;
@@ -425,7 +425,7 @@
 
 .kt-type-carousel-card {
   position: absolute;
-  width: 520px;
+  width: min(840px, calc(var(--stage-w) * .78));
   min-height: 480px;
   cursor: pointer;
   text-align: center;
@@ -490,7 +490,7 @@
 
 .ls-carousel-card {
   position: absolute;
-  width: 600px;
+  width: min(940px, calc(var(--stage-w) * .80));
   cursor: pointer;
 }
 .ls-carousel-card--active {

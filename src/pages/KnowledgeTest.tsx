@@ -6,10 +6,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, CheckCircle2, XCircle } from 'lucide-react'
-import type { SetScreenProps } from '../types'
-
-interface Question { q: string; opts: string[]; answer: number }
-
+import type { KnowledgeTestProps, Question } from '../constant/interface'
 const QUESTIONS: Question[] = [
   { q: 'Which knife is best for slicing bread?', opts: ["Chef's knife", 'Bread knife', 'Paring knife', 'Cleaver'], answer: 1 },
   { q: 'What is the first thing you should do before cutting vegetables?', opts: ['Sharpen knife', 'Preheat oven', 'Wash them', 'Oil the board'], answer: 2 },
@@ -23,9 +20,7 @@ const QUESTIONS: Question[] = [
   { q: 'What is the correct order of cooking preparation?', opts: ['Cook → Wash → Slice', 'Slice → Cook → Wash', 'Wash → Measure → Slice → Cook', 'Measure → Wash → Cook'], answer: 2 },
 ]
 
-interface Props extends SetScreenProps { mode: 'pre' | 'post' }
-
-export default function KnowledgeTest({ setScreen, mode }: Props) {
+export default function KnowledgeTest({ setScreen, mode }: KnowledgeTestProps) {
   const [idx, setIdx]       = useState(0)
   const [answers, setAnswers] = useState<(number | null)[]>(new Array(QUESTIONS.length).fill(null))
   const [submitted, setSubmitted] = useState(false)

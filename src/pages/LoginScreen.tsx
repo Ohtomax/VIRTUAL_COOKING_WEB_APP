@@ -4,13 +4,14 @@
  */
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChefHat, UserPlus, LogIn, Loader2 } from 'lucide-react'
-import { getAllPlayers, type PlayerRow } from '../db/database'
+import { UserPlus, LogIn, Loader2 } from 'lucide-react'
+import GameIcon from '../components/ui/GameIcon'
+import { getAllPlayers } from '../db/database'
 import { usePlayerContext } from '../db/PlayerContext'
+import type { LoginScreenProps, PlayerRow } from '../constant/interface'
 
-interface Props { onDone: () => void }
 
-export default function LoginScreen({ onDone }: Props) {
+export default function LoginScreen({ onDone }: LoginScreenProps) {
   const { login, isReady } = usePlayerContext()
   const [existing, setExisting] = useState<PlayerRow[]>([])
   const [name, setName]         = useState('')
@@ -51,7 +52,7 @@ export default function LoginScreen({ onDone }: Props) {
 
         {/* Header */}
         <div className="login-header">
-          <div className="login-icon"><ChefHat size={38} strokeWidth={1.4} /></div>
+          <div className="login-icon"><GameIcon name="chefHat" size={46} /></div>
           <h1 className="login-title">Virtual Cooking Lab</h1>
           <p className="login-sub">Enter your name to save your progress locally.</p>
         </div>

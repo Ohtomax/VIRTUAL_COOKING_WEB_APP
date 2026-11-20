@@ -1,5 +1,5 @@
-import type { Ingredient, StationName } from '../types'
-
+import type { StationName } from '../constant/types'
+import type { Ingredient } from '../constant/interface'
 // ALL ingredients now live only in the fridge.
 // Cabinet is reserved for tools only.
 export const allIngredients: Ingredient[] = [

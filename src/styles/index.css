@@ -49,8 +49,20 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, #root { height: 100%; width: 100%; overflow: hidden; }
 
+/* Display face for titles/signage, body face for everything you have to read. */
+:root {
+  --font-display: 'Lilita One', 'Arial Black', sans-serif;
+  --font-body: 'Nunito', -apple-system, 'Segoe UI', Arial, sans-serif;
+
+  /* GameStage overrides these on the stage element with its real size. The
+     viewport-unit fallbacks keep anything rendered OUTSIDE the stage (the
+     rotate-to-landscape prompt) correct. */
+  --stage-w: 100vw;
+  --stage-h: 100vh;
+}
+
 body {
-  font-family: -apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;
+  font-family: var(--font-body);
   background: var(--bg); color: var(--text-1);
   -webkit-font-smoothing: antialiased;
   font-size: 16px; /* base bump */

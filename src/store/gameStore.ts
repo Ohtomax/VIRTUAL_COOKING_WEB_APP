@@ -2,175 +2,10 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { recipes } from '../data/recipes'
 import { findIngredientLocation, matchesIngredient, resolveIngredientByName } from '../data/ingredients'
-import type {
-  Recipe,
-  Level,
-  Ingredient,
-  RequiredIngredient,
-  Scores,
-  Grade,
-  HeatLevel,
-  CuttingTechnique,
-  StationName,
-  FeedbackType,
-  FeedbackMessage,
-  CurrentFeedback,
-  RecipeMasteryData,
-  LevelProgressData,
-  PlayerProfile,
-  GamePhase,
-  SOPComplianceEntry,
-  SOPResultSummary,
-} from '../types'
-
-// ==========================================
-// Store State Shape
-// ==========================================
-interface GameState {
-  // Navigation
-  currentPhase: GamePhase
-
-  // Selection
-  selectedLevel: Level | null
-  selectedRecipe: Recipe | null
-
-  // Ingredient Selection
-  collectedIngredients: Ingredient[]
-  selectedIngredients: Ingredient[]
-  requiredIngredients: RequiredIngredient[]
-  ingredientErrors: number
-
-  // Preparation
-  washedIngredients: string[]
-  slicedIngredients: string[]
-  measuredIngredients: string[]
-  washingProgress: Record<string, number>
-  cuttingProgress: Record<string, { technique: CuttingTechnique; progress: number }>
-  measuringProgress: Record<string, { amount: number; accuracy: number }>
-
-  // Cutting
-  cuttingTechnique: CuttingTechnique | null
-  unsafeCuttingDetected: boolean
-  safetyWarnings: number
-  expectedCutType: Record<string, CuttingTechnique>
-  actualCutType: Record<string, CuttingTechnique>
-
-  // Cooking
-  isChallengeMode: boolean
-  heatLevel: HeatLevel
-  cookingDuration: number
-  isCooking: boolean
-  burnedFood: boolean
-  undercookedFood: boolean
-  stirCount: number
-  requiredStirs: number
-  cookingElapsedTime: number
-  cookedIngredients: string[]
-  chronologicalOrderMistakes: number
-
-  // SOP Compliance
-  sopCompliance: Record<string, SOPComplianceEntry>
-  cookwareMatchScore: number
-  flameCenteringScore: number
-  knifeStabilityScore: number
-  cutUniformityScore: number
-  washThoroughnessScore: number
-  ingredientDropScore: number
-  sopResults: SOPResultSummary[]
-  lastDropTimestamp: number
-  flameCenteringChecks: number
-  flameCenteringResponses: number
-  stabilizedIngredients: string[]
-
-  // Scoring
-  scores: Scores
-  totalScore: number
-  starRating: number
-  grade: Grade | null
-
-  // Feedback
-  feedbackMessages: FeedbackMessage[]
-  currentFeedback: CurrentFeedback | null
-
-  // Progression (persisted)
-  recipeMastery: Record<number, RecipeMasteryData>
-  levelProgress: Record<number, LevelProgressData>
-  unlockedRecipes: number[]
-  unlockedLevels: number[]
-  playerProfile: PlayerProfile
-  toolsViewed: number[]
-  selectedKnifeId: string | null  // knife chosen from cabinet
-  inventoryToolIds: string[]       // all tools picked from cabinet
-}
-
-// ==========================================
-// Store Actions
-// ==========================================
-interface GameActions {
-  // Phase
-  setPhase: (phase: GamePhase) => void
-  setSelectedLevel: (level: Level | null) => void
-  setSelectedRecipe: (recipe: Recipe | null) => void
-
-  // Ingredients
-  initializeIngredients: (recipe: Recipe) => void
-  selectIngredient: (ingredient: Ingredient) => boolean
-
-  // Preparation
-  washIngredient: (name: string) => void
-  sliceIngredient: (name: string, technique: CuttingTechnique) => void
-  measureIngredient: (name: string, amount: number, accuracy: number) => void
-  detectUnsafeCutting: (unsafe: boolean) => void
-  setExpectedCutType: (ingredient: string, cut: CuttingTechnique) => void
-  setActualCutType: (ingredient: string, cut: CuttingTechnique) => void
-
-  // Cooking
-  setHeatLevel: (level: HeatLevel) => void
-  setCookingDuration: (duration: number) => void
-  startCooking: () => void
-  stopCooking: () => void
-  incrementStirCount: () => void
-  setBurnedFood: (burned: boolean) => void
-  setUndercookedFood: (undercooked: boolean) => void
-  setCookingElapsedTime: (time: number) => void
-  setCookedIngredients: (ingredients: string[]) => void
-  recordChronologicalMistake: () => void
-
-  // SOP Compliance
-  setCookwareMatch: (score: number) => void
-  setFlameCentering: (score: number) => void
-  setKnifeStability: (score: number) => void
-  setCutUniformity: (score: number) => void
-  setWashThoroughness: (score: number) => void
-  setIngredientDropScore: (score: number) => void
-  recordSopCompliance: (sopId: string, followed: boolean, details: string) => void
-  recordLastDropTimestamp: (ts: number) => void
-  recordFlameCenteringCheck: () => void
-  recordFlameCenteringResponse: () => void
-  addStabilizedIngredient: (name: string) => void
-
-  // Scoring
-  calculateScores: () => { totalScore: number; starRating: number; grade: Grade }
-
-  // Progression
-  saveRecipeProgress: (recipeId: number, score: number, stars: number) => void
-  saveLevelProgress: (levelId: number, score: number) => void
-  markToolViewed: (toolId: number) => void
-  isAllToolsViewed: () => boolean
-  setSelectedKnife: (id: string | null) => void
-  addInventoryTool: (id: string) => void
-  removeInventoryTool: (id: string) => void
-
-  // Feedback
-  addFeedback: (message: string, type: FeedbackType) => void
-  clearFeedback: () => void
-
-  // Reset
-  resetGame: (keepRecipe?: boolean) => void
-  resetAll: () => void
-}
-
-type GameStore = GameState & GameActions
+import type { CuttingTechnique, GameStore, Grade } from '../constant/types'
+import type { GameState, RecipeMasteryData, SOPResultSummary } from '../constant/interface'
+// The store shape itself now lives with the other interfaces, in
+// constant/interface (GameState, GameActions) and constant/types (GameStore).
 
 // ==========================================
 // Initial per-session state (not persisted)
@@ -254,6 +89,15 @@ const useGameStore = create<GameStore>()(
 
       // ---- Ingredients ----
       initializeIngredients: (recipe) => {
+        // Seed the "expected cut" for each ingredient the recipe says to cut,
+        // so Cutting Technique can actually be scored (otherwise it was always 100%).
+        const expectedCutType: Record<string, CuttingTechnique> = {}
+        if (recipe.cutInstructions) {
+          for (const [ingName, info] of Object.entries(recipe.cutInstructions)) {
+            const resolved = resolveIngredientByName(ingName)
+            expectedCutType[resolved?.name ?? ingName] = info.technique
+          }
+        }
         set({
           requiredIngredients: recipe.ingredients.map((name, i) => {
             const resolved = resolveIngredientByName(name)
@@ -274,6 +118,8 @@ const useGameStore = create<GameStore>()(
           measuredIngredients: [],
           cookedIngredients: [],
           chronologicalOrderMistakes: 0,
+          expectedCutType,
+          actualCutType: {},
         })
       },
 
@@ -357,13 +203,15 @@ const useGameStore = create<GameStore>()(
       },
 
       measureIngredient: (name, amount, accuracy) => {
-        set((s) => {
-          if (s.measuredIngredients.includes(name)) return s
-          return {
-            measuredIngredients: [...s.measuredIngredients, name],
-            measuringProgress: { ...s.measuringProgress, [name]: { amount, accuracy } },
-          }
-        })
+        // Re-measuring must OVERWRITE the previous value. Bailing out when the
+        // ingredient was already measured made the "tap to edit" flow a no-op:
+        // the modal closed and the old (possibly wrong) amount stayed on record.
+        set((s) => ({
+          measuredIngredients: s.measuredIngredients.includes(name)
+            ? s.measuredIngredients
+            : [...s.measuredIngredients, name],
+          measuringProgress: { ...s.measuringProgress, [name]: { amount, accuracy } },
+        }))
       },
 
       detectUnsafeCutting: (unsafe) => {
@@ -455,33 +303,49 @@ const useGameStore = create<GameStore>()(
           ? (washedCount / washableRequired.length) * 100
           : 100   // no washable ingredients → full marks
 
-        // ── Cutting technique: award points for EVERY sliced ingredient.
-        //    expectedCutType may be empty (no recipe hints), so any cut = 100.
-        //    If expected is set, compare to player's actual choice. ──
-        const slicedNames = s.slicedIngredients
-        let correctCuts = 0
-        let totalCuts = slicedNames.length   // one point per sliceable ingredient
-
-        if (totalCuts > 0) {
-          for (const name of slicedNames) {
+        // ── Cutting technique (STRICT): the denominator is every ingredient the
+        //    recipe REQUIRES to be cut (keys of expectedCutType). An ingredient that
+        //    should have been cut but wasn't scores 0; a wrong technique scores half.
+        //    This stops players from passing while leaving required ingredients unsliced. ──
+        const expectedCutNames = Object.keys(s.expectedCutType)
+        let cutting: number
+        if (expectedCutNames.length > 0) {
+          let cutPoints = 0
+          for (const name of expectedCutNames) {
             const expected = s.expectedCutType[name]
-            const actual   = s.actualCutType[name]
-            if (!expected || !actual) {
-              // No expected type set → award full credit for cutting it at all
-              correctCuts++
-            } else if (actual === expected) {
-              correctCuts++
-            }
-            // else wrong technique → 0 for this ingredient (but still made the cut, no penalty below 0)
+            // find the player's actual cut for this ingredient (name-tolerant)
+            const actualKey = Object.keys(s.actualCutType).find(
+              k => k === name || matchesIngredient(k, name),
+            )
+            const actual = actualKey ? s.actualCutType[actualKey] : undefined
+            if (!actual) cutPoints += 0           // required cut not performed
+            else if (actual === expected) cutPoints += 1
+            else cutPoints += 0.5                 // cut, but wrong technique
           }
+          cutting = (cutPoints / expectedCutNames.length) * 100
+        } else {
+          // Recipe has no required cuts — credit any cuts the player did make.
+          cutting = 100
         }
-        let cutting = totalCuts > 0 ? (correctCuts / totalCuts) * 100 : 100
 
-        // ── Measuring accuracy: average of all measured ingredient accuracies ──
-        const measureEntries = Object.values(s.measuringProgress) as { amount: number; accuracy: number }[]
-        const measuring = measureEntries.length > 0
-          ? measureEntries.reduce((sum, m) => sum + m.accuracy, 0) / measureEntries.length
-          : 100
+        // ── Measuring accuracy (STRICT where the game enforces measuring).
+        //    Levels 1–2 require measuring every ingredient before cooking, so un-measured
+        //    or inaccurate measurements are penalized (denominator = all required).
+        //    Higher levels that never engaged measuring are not punished for it. ──
+        const enforcesMeasuring = (s.selectedRecipe?.level ?? 1) <= 2
+        const anyMeasured = Object.keys(s.measuringProgress).length > 0
+        let measuring: number
+        if ((enforcesMeasuring || anyMeasured) && s.requiredIngredients.length > 0) {
+          let measureSum = 0
+          for (const req of s.requiredIngredients) {
+            const entry = s.measuringProgress[req.name]
+              ?? (Object.entries(s.measuringProgress).find(([k]) => matchesIngredient(k, req.name))?.[1])
+            measureSum += entry ? entry.accuracy : 0
+          }
+          measuring = measureSum / s.requiredIngredients.length
+        } else {
+          measuring = 100
+        }
 
         let cooking = 100
         if (s.burnedFood) cooking = 0
@@ -507,10 +371,16 @@ const useGameStore = create<GameStore>()(
           cooking = Math.max(0, cooking - orderPenalty)
         }
 
+        // Timing: how close the player's cook time was to the recipe's target.
+        // `s.cookingDuration` is never populated by any screen, so this always fell
+        // through to a free 100. Fall back to the recipe's own cookingDuration.
+        const targetDuration = s.cookingDuration > 0
+          ? s.cookingDuration
+          : (s.selectedRecipe?.cookingDuration ?? 0)
         let timing = 100
-        if (s.cookingDuration > 0) {
-          const diff = Math.abs(s.cookingElapsedTime - s.cookingDuration)
-          timing = Math.max(0, 100 - (diff / s.cookingDuration) * 100)
+        if (targetDuration > 0) {
+          const diff = Math.abs(s.cookingElapsedTime - targetDuration)
+          timing = Math.max(0, 100 - (diff / targetDuration) * 100)
         }
 
         // ── SOP Compliance multipliers (0.8× to 1.0×) ──
@@ -571,8 +441,9 @@ const useGameStore = create<GameStore>()(
           },
         ]
 
-        // Revised weights: accuracy 10%, washing 10%, cutting 10%, measuring 10%, cooking 50%, timing 10%
-        const total = accuracy * 0.10 + washing * 0.10 + cutting * 0.10 + measuring * 0.10 + cooking * 0.50 + timing * 0.10
+        // Weights (must match the rows shown in ResultsScreen):
+        // accuracy 15%, washing 10%, cutting 20%, measuring 15%, cooking 30%, timing 10%
+        const total = accuracy * 0.15 + washing * 0.10 + cutting * 0.20 + measuring * 0.15 + cooking * 0.30 + timing * 0.10
         const rounded = Math.round(total)
 
         let starRating = 0

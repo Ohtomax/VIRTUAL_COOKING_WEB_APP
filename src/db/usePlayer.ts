@@ -17,16 +17,10 @@ import {
   getUnlockedLevels, getUnlockedRecipes, getToolsViewed,
   upsertRecipeMastery, upsertLevelProgress, unlockLevel,
   unlockRecipe, markToolViewedDB, updatePlayerStats,
-  type PlayerRow,
 } from './database'
 import useGameStore from '../store/gameStore'
+import type { PlayerRow, PlayerSession } from '../constant/interface'
 
-export interface PlayerSession {
-  player: PlayerRow | null
-  isReady: boolean
-  login: (username: string, displayName?: string) => Promise<void>
-  logout: () => void
-}
 
 export function usePlayer(): PlayerSession {
   const [player, setPlayer] = useState<PlayerRow | null>(null)
@@ -81,8 +75,22 @@ export function usePlayer(): PlayerSession {
   useEffect(() => {
     if (!player) return
 
+    // The subscription fires on EVERY store change — collecting an ingredient,
+    // changing the heat, each drop timestamp. Re-writing every mastery/level/tool
+    // row each time meant dozens of DB writes per interaction. Only do the work
+    // when the data we actually persist has changed.
+    let lastSig = ''
+
     const unsub = useGameStore.subscribe(state => {
       if (!syncedRef.current) return
+
+      const sig = JSON.stringify([
+        state.recipeMastery, state.levelProgress,
+        state.unlockedLevels, state.unlockedRecipes,
+        state.toolsViewed, state.playerProfile,
+      ])
+      if (sig === lastSig) return
+      lastSig = sig
 
       // Sync recipe mastery
       for (const [idStr, m] of Object.entries(state.recipeMastery)) {

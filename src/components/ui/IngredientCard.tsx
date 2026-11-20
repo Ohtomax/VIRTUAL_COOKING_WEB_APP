@@ -5,21 +5,8 @@
  */
 import { motion } from 'framer-motion'
 import { CheckCircle2, X } from 'lucide-react'
-import type { Ingredient } from '../../types'
-
-type CardState = 'needed' | 'collected' | 'wrong' | 'done' | 'idle' | 'default' | 'active'
-
-interface Props {
-  ingredient: Ingredient
-  state?: CardState
-  statusLabel?: string
-  showQty?: boolean
-  delay?: number
-  onClick?: () => void
-  className?: string
-  size?: 'sm' | 'md' | 'lg'
-}
-
+import type { IngredientCardProps } from '../../constant/interface'
+import type { CardState } from '../../constant/types'
 const FALLBACK = '/assets/ingredients/onion.png'
 
 const sizeMap = {
@@ -31,7 +18,7 @@ const sizeMap = {
 export default function IngredientCard({
   ingredient, state = 'default', statusLabel, showQty = false,
   delay = 0, onClick, className = '', size = 'md',
-}: Props) {
+}: IngredientCardProps) {
   const { wrap, img } = sizeMap[size]
   const collected = state === 'collected' || state === 'done'
   const wrong = state === 'wrong'

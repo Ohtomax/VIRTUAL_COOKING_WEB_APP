@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react'
-import type { AudioSettings } from '../types'
-
+import type { AudioSettings } from '../constant/interface'
 export function useAudio(settings: AudioSettings): void {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
@@ -11,7 +10,8 @@ export function useAudio(settings: AudioSettings): void {
     }
 
     if (!audioRef.current) {
-      audioRef.current = new Audio('/assets/audio/background-music.mp3')
+      audioRef.current = new Audio('/assets/audio/GAME_MUSIC.mp3')
+      audioRef.current.preload = 'auto'
       audioRef.current.loop = true
     }
 

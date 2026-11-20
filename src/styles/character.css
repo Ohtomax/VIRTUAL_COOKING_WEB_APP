@@ -1,0 +1,1287 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   CHARACTER LAYER — the "stop looking generic" pass
+   ──────────────────────────────────────────────────────────────────────────
+   Four things were making the UI read as machine-made:
+     1. a system font doing the job of a game's display face
+     2. the same gold glow on every single element, so nothing had hierarchy
+     3. perfectly flat fills with no material to them
+     4. grids where every cell is identical
+   This layer fixes those. It loads after clay.css, so it also pulls back the
+   glow that layer applies uniformly.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Typography ──────────────────────────────────────────────────────
+   Display face for signage (titles, numbers, buttons, labels); body face for
+   anything the player actually has to read. */
+.menu-title,
+.g-navbar-title,
+.ls-page-title,
+.ls-card-title,
+.rc-dish-name,
+.rs-dish-name,
+.rs-score-num,
+.rs-score-grade,
+.mc-title,
+.login-title,
+.kt-banner-count,
+.kt-card-name,
+.kt-type-name,
+.ls-cat-name,
+.ls-recipe-name,
+.prog-rank-name,
+.prog-stat-val,
+.ek-nav-title,
+.sv-navbar-title,
+.menu-item-title,
+.g-btn,
+.ls-card-btn,
+.kt-btn-minimal,
+.rcs-tip strong,
+.hud-dock-label,
+.gst-state-badge,
+.ek-step-label {
+  font-family: var(--font-display);
+  letter-spacing: .4px;
+  font-weight: 400;
+}
+
+/* The display face has one weight, so bold declarations elsewhere would
+   synthesise an ugly faux-bold. */
+.menu-title,
+.ls-page-title,
+.g-navbar-title,
+.rs-score-num,
+.kt-banner-count {
+  font-weight: 400;
+}
+
+.menu-title,
+.ls-page-title {
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Section labels read as printed signage rather than as UI chrome. */
+.g-section-label,
+.ls-card-eyebrow,
+.kt-banner-label,
+.rc-section-num {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── 2. Pull the glow back ─────────────────────────────────────────────
+   A glow should mean "this is the thing to press". It was on every card,
+   pill, badge and icon, which made all of them equally loud. */
+.kt-card,
+.ls-card,
+.ls-cat-card,
+.ls-recipe-card,
+.inv-card,
+.rc-block,
+.rs-score-card,
+.prog-stat,
+.mc-feat,
+.settings-row,
+.tut-row,
+.rc-meta-pill,
+.rc-chip,
+.ls-badge,
+.kt-type-label,
+.g-section-label {
+  box-shadow: var(--clay-lift-sm), var(--clay-mould-sm);
+}
+
+/* Only the primary action on a screen glows. */
+.ek-stn-btn--cta .ek-stn-icon,
+.gst-knob.on,
+.menu-item--primary,
+.g-btn--gold {
+  /* keeps clay.css's gold treatment */
+}
+
+.ls-card:hover,
+.ls-carousel-card--active {
+  box-shadow: var(--clay-lift-lg), var(--clay-mould);
+}
+
+.ek-stn-btn--done .ek-stn-icon {
+  box-shadow: var(--clay-lift-sm), inset 0 3px 0 rgba(255, 255, 255, .3),
+    inset 0 -5px 10px rgba(8, 80, 34, .45);
+}
+
+/* ── 3. Material ───────────────────────────────────────────────────────
+   A fine grain over the whole app. Flat gradients are the giveaway of
+   something generated; real surfaces have tooth. */
+.app-root::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  opacity: .055;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Cards get a warm top-edge lip, like moulded clay catching the light,
+   rather than a uniform border. */
+.kt-card::after,
+.ls-card::after,
+.menu-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 232, 190, .07) 0%, transparent 38%);
+}
+
+/* `.ls-card` is deliberately left out: app.css already positions it, and
+   setting it here would override the carousel variants' `position: absolute`
+   (they share these classes), which collapses them into shrunken flex items. */
+.kt-card,
+.menu-item {
+  position: relative;
+}
+
+/* Re-assert the carousel positioning so the rule above can never take it. */
+.kt-carousel-card,
+.kt-type-carousel-card,
+.ls-carousel-card {
+  position: absolute;
+}
+
+/* The tool and level pages show one big card at a time, so they get a wider
+   measure than the default 820px reading column. */
+.g-page-body--wide {
+  max-width: 1240px;
+}
+
+/* ── 4. Break the grid ─────────────────────────────────────────────────
+   Every cell being identical is the fourth tell. Let the first tile of a
+   recipe grid run wide and give the rows an alternating lean. */
+.ls-recipe-grid > .ls-recipe-card:first-child {
+  grid-column: span 2;
+}
+
+.ls-recipe-grid > .ls-recipe-card:nth-child(4n + 3) {
+  transform: translateY(10px);
+}
+
+.ls-recipe-grid > .ls-recipe-card:nth-child(4n + 2) {
+  transform: translateY(-6px);
+}
+
+.ls-cat-list > .ls-cat-card:nth-child(odd) {
+  margin-right: 26px;
+}
+
+.ls-cat-list > .ls-cat-card:nth-child(even) {
+  margin-left: 26px;
+}
+
+@media (max-width: 720px) {
+
+  .ls-recipe-grid > .ls-recipe-card:first-child {
+    grid-column: span 1;
+  }
+
+  .ls-recipe-grid > .ls-recipe-card,
+  .ls-cat-list > .ls-cat-card {
+    transform: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* ── Terraria-style logo ───────────────────────────────────────────────── */
+.menu-logo-wrap {
+  display: block;
+  width: min(420px, calc(var(--stage-w) * .88));
+  margin: 0 auto 18px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menu-logo-tilt {
+  position: relative;
+  will-change: transform;
+}
+
+.menu-logo {
+  width: 100%;
+  margin: 0;
+  user-select: none;
+  filter: drop-shadow(0 6px 22px rgba(0, 0, 0, .6)) drop-shadow(0 2px 10px rgba(245, 166, 35, .3));
+}
+
+.menu-logo-squash {
+  position: relative;
+}
+
+/* A sheen that travels with the pointer. The gradient is masked by the logo
+   artwork (mask set inline, from the same src as the <img>) so only the sign
+   lights up — a plain blurred band lifted the whole rectangle around it. */
+.menu-logo-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(100deg,
+      transparent 38%,
+      rgba(255, 246, 220, .5) 50%,
+      transparent 62%);
+  background-size: 280% 100%;
+  background-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* ── Right-edge HUD dock (inventory + recipe, joined) ──────────────────── */
+.hud-dock {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 800;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--clay-r-sm) 0 0 var(--clay-r-sm);
+  background: var(--clay-surface-2);
+  box-shadow: -8px 0 22px rgba(0, 0, 0, .5), inset 0 3px 0 rgba(255, 234, 198, .13);
+}
+
+.hud-dock-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 13px 11px;
+  color: var(--gold);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  transition: background .15s;
+}
+
+.hud-dock-btn:hover {
+  background: rgba(245, 166, 35, .12);
+}
+
+/* Hairline between the two segments so they read as one control, split. */
+.hud-dock-btn + .rcs .hud-dock-btn,
+.hud-dock > .rcs .hud-dock-btn {
+  border-top: 1px solid rgba(245, 166, 35, .22);
+}
+
+.hud-dock-label {
+  font-size: 10px;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+}
+
+.hud-dock .inv-toggle-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 17px;
+  height: 17px;
+  font-size: 10px;
+}
+
+.hud-dock .rcs {
+  display: block;
+}
+
+.hud-dock .rcs-tip {
+  top: 50%;
+  right: calc(100% + 12px);
+  transform: translateY(calc(-50% + 6px));
+}
+
+.hud-dock .rcs:hover .rcs-tip {
+  transform: translateY(-50%);
+}
+
+/* ── Drawn icons in place of emoji ─────────────────────────────────────── */
+/* Badges hold an icon now, not a character, so centre the svg. */
+.gtray-badge svg,
+.inv-card-badge svg {
+  display: block;
+}
+
+.inv-card-status span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Chef mascot placement ─────────────────────────────────────────────── */
+.chef-mascot {
+  z-index: 60;
+  pointer-events: auto;
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, .55));
+}
+
+.chef-mascot--bottom-left,
+.chef-mascot--bottom-right {
+  position: fixed;
+  bottom: 18px;
+}
+
+.chef-mascot--bottom-left  { left: 18px; }
+.chef-mascot--bottom-right { right: 18px; }
+
+/* On narrow screens he would sit on top of the content, so shrink and tuck. */
+@media (max-width: 1100px) {
+
+  .chef-mascot--bottom-left,
+  .chef-mascot--bottom-right {
+    transform: scale(.72);
+  }
+
+  .chef-mascot--bottom-left  { transform-origin: bottom left; }
+  .chef-mascot--bottom-right { transform-origin: bottom right; }
+}
+
+@media (max-width: 760px) {
+
+  .chef-mascot--bottom-left,
+  .chef-mascot--bottom-right {
+    display: none;
+  }
+}
+
+/* ── Painted icon set (assets/icons) ───────────────────────────────────── */
+.game-icon {
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .45));
+}
+
+/* These icons are full-colour art, so the holders that used to tint a
+   monochrome glyph get a neutral light well instead of a gold wash —
+   otherwise the art fights the background. */
+.ek-stn-icon,
+.kt-card-icon,
+.kt-banner-icon,
+.login-icon,
+.ls-cat-icon,
+.menu-item--primary .menu-item-icon {
+  background: radial-gradient(circle at 34% 28%, #fdf4e2, #d9c7a8);
+  color: #3a2410;
+}
+
+.ek-stn-btn--cta .ek-stn-icon {
+  background: radial-gradient(circle at 34% 28%, #fff3d6, #f3cf86);
+  box-shadow: 0 0 22px rgba(245, 166, 35, .45), var(--clay-gold-mould);
+}
+
+.ek-stn-btn--done .ek-stn-icon {
+  background: radial-gradient(circle at 34% 28%, #e4fbe9, #a8dcb8);
+}
+
+/* The cabinet tabs held an emoji sized by font-size; now they hold art. */
+.cab-tab-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE STAGE
+   The game is laid out at one fixed size (1280x800) and scaled to fit the
+   screen, so a phone, a tablet and a monitor all show the same composition
+   instead of a reflowed one. The leftover space is letterboxed.
+   ══════════════════════════════════════════════════════════════════════════ */
+.game-viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* Anchored top-left and scaled from the same corner, so the stage's rendered
+   box lines up with the viewport exactly — there is no leftover space to
+   centre within any more. */
+.game-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* The app used to fill the window; inside the stage it fills the stage. */
+.game-stage .app-root {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The grain overlay is fixed to the viewport, which inside a transformed
+   ancestor means the stage — exactly what we want, but it must not scale
+   its texture, so keep it at the stage's own size. */
+.game-stage .app-root::after {
+  position: absolute;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ROTATE-TO-LANDSCAPE GATE
+   ══════════════════════════════════════════════════════════════════════════ */
+.rotate-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 32px 26px;
+  text-align: center;
+  /* Solid base under the gradient — the game must not show through. */
+  background-color: #0d0a05;
+  background-image: radial-gradient(circle at 50% 36%, #241a0a 0%, #0d0a05 70%);
+  color: var(--text-1);
+}
+
+.rotate-gate-phone {
+  width: 74px;
+  height: 128px;
+  border-radius: 14px;
+  border: 4px solid var(--gold);
+  padding: 7px 5px;
+  box-shadow: 0 0 26px rgba(245, 166, 35, .35);
+}
+
+.rotate-gate-phone-screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(160deg, rgba(245, 166, 35, .4), rgba(245, 166, 35, .1));
+}
+
+.rotate-gate-arrow {
+  color: var(--gold);
+  opacity: .9;
+}
+
+.rotate-gate-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 25px;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+
+.rotate-gate-text {
+  max-width: 300px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.rotate-gate-hat {
+  margin-top: 6px;
+  opacity: .9;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LIGHTING PASS
+   The background photography was sitting under heavy black scrims, which made
+   every screen read as murky. The scrims are now light enough to see the art,
+   and each surface gets a warm pool of light from above — the kitchen's own
+   overhead lamps — plus a soft vignette so the UI still has something to sit
+   against. Darkness is kept only where text actually needs the contrast: the
+   bottom bars.
+   ══════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Warm overhead pool, used across the screens. */
+  --light-pool: radial-gradient(ellipse 80% 58% at 50% 4%,
+      rgba(255, 206, 128, .30) 0%,
+      rgba(255, 184, 96, .13) 38%,
+      transparent 72%);
+  /* Keeps the edges settled without flattening the middle. */
+  --light-vignette: radial-gradient(ellipse 96% 86% at 50% 46%,
+      transparent 44%,
+      rgba(6, 4, 1, .46) 100%);
+}
+
+/* ── Lift the scrims ──────────────────────────────────────────────────── */
+.menu-scrim {
+  background:
+    var(--light-pool),
+    var(--light-vignette),
+    linear-gradient(180deg, rgba(0, 0, 0, .12) 0%, rgba(10, 6, 0, .30) 52%, rgba(10, 6, 0, .72) 100%);
+}
+
+.ek-bg-scrim {
+  background:
+    var(--light-pool),
+    var(--light-vignette),
+    linear-gradient(180deg, rgba(0, 0, 0, .10) 0%, transparent 46%, rgba(10, 6, 0, .56) 100%);
+}
+
+.sv-bg-scrim {
+  background:
+    var(--light-pool),
+    var(--light-vignette),
+    linear-gradient(180deg, rgba(0, 0, 0, .14) 0%, rgba(10, 6, 0, .62) 100%);
+}
+
+.gf-scrim {
+  background:
+    var(--light-pool),
+    var(--light-vignette),
+    linear-gradient(180deg, rgba(0, 0, 0, .12) 0%, rgba(10, 6, 0, .50) 100%);
+}
+
+.gf-scrim--light {
+  background:
+    var(--light-pool),
+    linear-gradient(180deg, transparent 0%, rgba(10, 6, 0, .40) 100%);
+}
+
+/* The art itself was shot dark; a touch of exposure and warmth brings the
+   kitchen up without washing out the UI layered on top. */
+.ek-bg,
+.sv-bg,
+.gf-bg,
+.main-menu {
+  filter: brightness(1.22) saturate(1.1) contrast(1.02);
+}
+
+/* The login card sits on a flat wash rather than a photo — give it the same
+   warm pool so it belongs with the rest. */
+.login-page {
+  background:
+    var(--light-pool),
+    radial-gradient(ellipse at 50% 35%, #3a2b12, #0d0a05);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   KITCHEN SCENE — aspect-locked
+   The station buttons are placed in percentages, so if their container is a
+   different shape from the artwork they drift off the counters they are
+   meant to sit on. Scene and stations therefore share one box locked to the
+   kitchen's 16:10, centred, and sized to fit inside the stage; the blurred
+   backdrop fills whatever is left so there is still no dead space.
+   ══════════════════════════════════════════════════════════════════════════ */
+.ek-scene,
+.ek-root .ek-stations {
+  position: absolute;
+  /* `inset: auto` must come FIRST — it is shorthand for all four offsets, so
+     after `top`/`left` it would wipe them and strand the box in the corner.
+     It is here to clear the `inset: 0` these rules inherit. */
+  inset: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Fits inside the stage rather than covering it. Covering would crop the
+     artwork vertically on a wide screen, and the stations ride in this same
+     box — at 16:9 that pushes the Cabinet up under the navbar, and on a
+     phone in landscape it takes the Prep Table off-screen entirely. The
+     margins are filled by `.ek-backdrop` instead. */
+  width: min(100%, calc(var(--stage-h) * 1.6));
+  aspect-ratio: 1280 / 800;
+  max-height: 100%;
+}
+
+.ek-scene {
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Stations keep their own stacking above the scene. */
+.ek-root .ek-stations {
+  z-index: 90;
+}
+
+/* Fills the space the aspect-locked scene cannot reach. `.ek-root` makes no
+   stacking context, so a negative z-index here would fall behind the app's
+   own background and vanish — it sits at 0, under the scene's 1. */
+.ek-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  /* Scaled up so the blur's soft edges never show at the borders. */
+  transform: scale(1.12);
+  filter: blur(26px) brightness(.62) saturate(1.05);
+}
+
+/* A warm key light over the scene, so the kitchen looks lit rather than flat. */
+.ek-light {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 26% 32% at 20% 2%, rgba(255, 207, 130, .26), transparent 70%),
+    radial-gradient(ellipse 26% 32% at 50% 0%, rgba(255, 214, 145, .22), transparent 70%),
+    radial-gradient(ellipse 26% 32% at 80% 2%, rgba(255, 207, 130, .26), transparent 70%);
+  mix-blend-mode: screen;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   STEP STRIP — now part of the bottom action bar
+   It used to float at the top of the kitchen. Sitting between the hint and
+   the CTA, the whole progression reads as one line: what to do, where you
+   are, what is next.
+   ══════════════════════════════════════════════════════════════════════════ */
+.ek-action-bar {
+  gap: 20px;
+}
+
+.ek-root .ek-steps-strip {
+  position: static;
+  transform: none;
+  flex: 0 1 auto;
+  margin: 0;
+  padding: 7px 16px;
+  background: rgba(0, 0, 0, .3);
+  border: none;
+  box-shadow: var(--clay-press);
+}
+
+.ek-action-hint {
+  flex: 0 1 auto;
+  min-width: 150px;
+}
+
+.ek-action-bar > .g-btn {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+/* No media query here on purpose: inside the scaled stage a media query would
+   test the real window, not the stage, and hide the labels on a 1024px pane
+   that actually has 1280 design px to lay out in. The stage guarantees at
+   least the design width, so the labels always fit. */
+.ek-root .ek-step-label {
+  display: inline;
+  font-size: 11px;
+}
+
+.ek-root .ek-step-item {
+  gap: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TOASTS — one minimal style, top centre
+   Transient messages used to appear in four different places (bottom of the
+   kitchen, under the stove navbar, floating over the prep table), each with
+   its own look. They now share one pill that drops in from the top centre,
+   so wherever you are, news arrives in the same spot.
+   ══════════════════════════════════════════════════════════════════════════ */
+.ek-toast,
+.prep-unsafe-banner,
+.gst-burn-warning,
+.sop-tip-banner {
+  position: absolute;
+  top: 74px;
+  /* Centred with auto margins rather than translateX(-50%): these are
+     framer-motion elements, and its inline transform for the entrance
+     animation would overwrite a transform set here. */
+  left: 0;
+  right: 0;
+  bottom: auto;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: max-content;
+  max-width: min(560px, calc(var(--stage-w) - 48px));
+  padding: 9px 18px;
+  border: none;
+  border-radius: var(--r-pill);
+  background: rgba(14, 9, 2, .92);
+  backdrop-filter: saturate(180%) blur(18px);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .5);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text-1);
+  text-align: center;
+  white-space: normal;
+  pointer-events: none;
+}
+
+/* A single accent bar on the left carries the severity, instead of flooding
+   the whole pill with colour. */
+.ek-toast::before,
+.prep-unsafe-banner::before,
+.gst-burn-warning::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 3px;
+  align-self: stretch;
+  border-radius: 2px;
+  background: var(--gold);
+}
+
+.ek-toast {
+  background: rgba(14, 9, 2, .92);
+  color: var(--text-1);
+}
+
+.ek-toast--success::before { background: var(--green); }
+.ek-toast--error::before   { background: var(--red); }
+.ek-toast--warning::before { background: var(--amber); }
+.ek-toast--info::before    { background: var(--blue); }
+
+.prep-unsafe-banner::before,
+.gst-burn-warning--soon::before { background: var(--amber); }
+.gst-burn-warning--burnt::before { background: var(--red); }
+
+.gst-burn-warning svg,
+.prep-unsafe-banner svg {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  color: var(--gold);
+}
+
+.gst-burn-warning--burnt svg { color: var(--red); }
+
+/* SOP tips are ambient advice rather than alerts — quieter, and below the
+   alert line so the two never collide. */
+.sop-tip-banner {
+  top: 118px;
+  padding: 7px 15px;
+  background: rgba(14, 9, 2, .8);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .4);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.sop-tip-icon {
+  flex: 0 0 auto;
+  opacity: .75;
+  font-size: 12px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RECIPE CARD — dish left, details right
+   The dish used to be a banner with the title laid over it, which made the
+   food small and the text hard to read. It now owns a column of its own, at
+   a size worth looking at, with everything you need to know beside it.
+   ══════════════════════════════════════════════════════════════════════════ */
+.rc-layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+}
+
+/* The dish stays in view while the details scroll past it. */
+.rc-visual {
+  position: sticky;
+  top: 24px;
+  padding: 26px;
+  border-radius: var(--clay-r-lg);
+  background: var(--clay-surface);
+  box-shadow: var(--clay-lift-lg), var(--clay-mould);
+}
+
+.rc-visual .rc-hero-bg-plate {
+  padding-bottom: 0;
+  aspect-ratio: 1 / 1;
+}
+
+.rc-visual .rc-hero-img {
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--clay-r);
+  filter: drop-shadow(0 18px 34px rgba(0, 0, 0, .6));
+}
+
+.rc-info {
+  min-width: 0;
+}
+
+/* The title sat on the photo before, so it carried a heavy shadow it no
+   longer needs. */
+.rc-info .rc-dish-name {
+  font-size: 40px;
+  line-height: 1.08;
+  margin: 10px 0 18px;
+  text-shadow: none;
+}
+
+.rc-info .rc-meta-pills {
+  margin-bottom: 4px;
+}
+
+.rc-info .rc-stats-strip {
+  margin: 0 0 20px;
+}
+
+.rc-info .rc-body {
+  padding: 0;
+  margin-top: 0;
+}
+
+/* The card is laid out against its OWN width, not the window's: in the popup
+   it lives inside a ~700px panel while the viewport is far wider, so a media
+   query would keep two columns and crush them. A container query measures the
+   panel itself and works in both places. */
+.rc-page {
+  container-type: inline-size;
+  container-name: rccard;
+}
+
+/* Below two columns, the dish goes back on top of the details. */
+@container rccard (max-width: 900px) {
+
+  .rc-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 18px 18px 0;
+  }
+
+  .rc-visual {
+    position: static;
+    max-width: 380px;
+    margin: 0 auto;
+    padding: 18px;
+  }
+
+  .rc-info .rc-dish-name {
+    font-size: 30px;
+    text-align: center;
+  }
+
+  .rc-info .rc-meta-pills {
+    justify-content: center;
+  }
+}
+
+/* The meta pills were translucent white, which worked over the dish photo.
+   Now that they sit on the dark panel they need their own surface. */
+.rc-info .rc-meta-pill {
+  background: var(--clay-surface-2);
+  border: none;
+  color: var(--text-1);
+  box-shadow: var(--clay-lift-sm), var(--clay-mould-sm);
+}
+
+.rc-info .rc-meta-pill svg {
+  color: var(--gold);
+}
+
+.rc-info .rc-meta-pill--gold {
+  background: linear-gradient(170deg, var(--gold-bright), var(--amber));
+  color: #1a0a00;
+  box-shadow: var(--clay-gold-lift), var(--clay-gold-mould);
+}
+
+.rc-info .rc-meta-pill--gold svg {
+  color: #1a0a00;
+}
+
+/* The one-time station tooltip was a boxed panel floating mid-screen. It is
+   a message like any other, so it joins the same top-centre stack — a third
+   line down, clear of the alert and tip lines. It stays clickable, since
+   tapping is how it is dismissed. */
+.game-tip {
+  position: absolute;
+  top: 160px;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 590;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: max-content;
+  max-width: min(520px, calc(var(--stage-w) - 48px));
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--r-pill);
+  background: rgba(14, 9, 2, .88);
+  backdrop-filter: saturate(180%) blur(18px);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .45);
+  text-align: center;
+  pointer-events: auto;
+}
+
+.game-tip--bottom,
+.game-tip--top {
+  bottom: auto;
+}
+
+.game-tip-text {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-2);
+}
+
+.game-tip-dismiss {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* Give the popup more room so the two-column layout has a chance before the
+   container query stacks it. */
+.rcs-panel {
+  width: min(1040px, calc(var(--stage-w) - 80px));
+  max-width: none;
+}
+
+/* ── The margins beside the scene should read as more kitchen, not as dead
+   space. A heavy blur made them look like grey bars, so the backdrop is now
+   only softened — enough to hide the seam, light enough to look like the
+   room carrying on — and its brightness is matched to the lit scene. ── */
+.ek-backdrop {
+  transform: scale(1.3);
+  filter: blur(9px) brightness(1.02) saturate(1.08);
+}
+
+/* Feathers the join so the eye does not catch a hard edge where the sharp
+   scene meets the softened continuation. */
+.ek-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  box-shadow: 0 0 34px 16px rgba(10, 6, 0, .34);
+}
+
+/* ── Step strip sits in the true middle of the bar ──────────────────────
+   Laid out in flow it lands left of centre, because the hint on its left is
+   wider than the button on its right. Centring it absolutely pins it to the
+   middle of the screen regardless of what flanks it. ── */
+.ek-action-bar {
+  position: absolute;
+  justify-content: space-between;
+}
+
+.ek-root .ek-steps-strip {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+}
+
+/* The flanking items must not sit under the centred strip. */
+.ek-action-hint {
+  flex: 0 1 auto;
+  max-width: 30%;
+}
+
+.ek-action-bar > .g-btn {
+  flex: 0 0 auto;
+  margin-left: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RECIPE CARD — three columns, only the steps scroll
+   The card used to scroll as one long page. Now the dish, the details and
+   the method each hold a column, the card fills the screen without moving,
+   and the steps — the only genuinely long list — scroll inside their own box.
+   ══════════════════════════════════════════════════════════════════════════ */
+.rc-page {
+  position: relative;
+  height: var(--stage-h);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.rc-page .rc-layout {
+  grid-template-columns:
+    minmax(260px, 340px)
+    minmax(0, 1.05fr)
+    minmax(0, 1fr);
+  gap: 22px;
+  flex: 1;
+  min-height: 0;
+  max-width: 1480px;
+  padding: 18px 24px;
+  align-items: stretch;
+}
+
+/* Each column manages its own overflow, so nothing pushes the card taller
+   than the screen. */
+.rc-visual,
+.rc-info,
+.rc-steps-col {
+  min-height: 0;
+}
+
+.rc-visual {
+  position: static;
+  align-self: start;
+}
+
+.rc-info {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+}
+
+/* The steps column is the one place a scrollbar belongs. */
+.rc-steps-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.rc-block--steps {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+}
+
+.rc-block--steps .rc-block-header {
+  flex: 0 0 auto;
+}
+
+.rc-block--steps .rc-steps {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* The bottom CTA is part of the column layout now, not a floating sheet. */
+.rc-page > .g-sheet {
+  position: static;
+  flex: 0 0 auto;
+}
+
+/* Narrow: back to a single scrolling column, the way it reads on a phone. */
+@container rccard (max-width: 1100px) {
+
+  .rc-page .rc-layout {
+    grid-template-columns: minmax(0, 1fr);
+    overflow-y: auto;
+  }
+
+  .rc-info,
+  .rc-block--steps .rc-steps {
+    overflow: visible;
+  }
+
+  .rc-block--steps {
+    flex: 0 0 auto;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SPLASH — the same logo as the main menu, with a loading bar beneath
+   ══════════════════════════════════════════════════════════════════════════ */
+.splash {
+  background-color: #0d0a05;
+  background-image:
+    var(--light-pool),
+    radial-gradient(ellipse at 50% 38%, #32250e, #0d0a05 70%);
+}
+
+.splash-inner {
+  gap: 26px;
+  width: min(520px, calc(var(--stage-w) - 48px));
+}
+
+/* The logo component is shared with the menu, so it brings its own sizing —
+   just let it breathe here. */
+.splash .menu-logo-wrap {
+  margin: 0 auto;
+  width: min(440px, calc(var(--stage-w) - 64px));
+}
+
+.splash-load {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.splash-bar-track {
+  width: min(300px, 70%);
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: rgba(0, 0, 0, .55);
+  box-shadow: var(--clay-press);
+  overflow: hidden;
+}
+
+.splash-bar-fill {
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: linear-gradient(90deg, var(--gold-bright), var(--amber));
+  box-shadow: 0 0 14px rgba(245, 166, 35, .55);
+}
+
+.splash-load-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.splash-spinner {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid rgba(245, 166, 35, .28);
+  border-top-color: var(--gold);
+  animation: splash-spin .75s linear infinite;
+}
+
+@keyframes splash-spin {
+  to { transform: rotate(360deg); }
+}
+
+.splash-load-text {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  color: var(--text-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-spinner { animation: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RECIPE CARD POPUP — identical to the page
+   The popup was capped at 1040px, which tripped the card's own container
+   query and stacked it into one scrolling column while the full page showed
+   three. Giving the panel the stage's proportions makes both render the
+   same layout.
+   ══════════════════════════════════════════════════════════════════════════ */
+.rcs-panel {
+  width: calc(var(--stage-w) - 56px);
+  height: calc(var(--stage-h) - 56px);
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+}
+
+/* Inside the panel the card fills the panel, not the stage. */
+.rcs-panel .rc-page {
+  height: 100%;
+}
+
+/* `.cab-detail-panel` centres its text for the cabinet's tool detail view.
+   The recipe card is not that — it should read exactly as it does on the
+   full page. */
+.rcs-panel {
+  text-align: left;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   WARNINGS — bigger and harder to miss (Comment 2.1, general #1)
+   The shared toast pill is deliberately quiet, which suits tips and progress
+   notices but made genuine warnings too easy to scroll past. Anything that
+   warns now gets a larger type size, a thicker accent, and a coloured wash,
+   while keeping the same shape and position as every other message.
+   ══════════════════════════════════════════════════════════════════════════ */
+.ek-toast--warning,
+.ek-toast--error,
+.prep-unsafe-banner,
+.gst-burn-warning {
+  padding: 13px 24px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  color: #fff6e6;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .55);
+}
+
+/* The accent bar grows with the type so it still reads as a bar, not a hair. */
+.ek-toast--warning::before,
+.ek-toast--error::before,
+.prep-unsafe-banner::before,
+.gst-burn-warning::before {
+  width: 5px;
+  border-radius: 3px;
+}
+
+.ek-toast--warning,
+.prep-unsafe-banner,
+.gst-burn-warning--soon {
+  background: linear-gradient(180deg, rgba(74, 44, 2, .96), rgba(32, 18, 1, .96));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .55), inset 0 0 0 1.5px rgba(245, 166, 35, .5);
+}
+
+.ek-toast--error,
+.gst-burn-warning--burnt {
+  background: linear-gradient(180deg, rgba(86, 20, 14, .96), rgba(38, 9, 6, .96));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .55), inset 0 0 0 1.5px rgba(255, 90, 70, .55);
+}
+
+.gst-burn-warning svg,
+.prep-unsafe-banner svg,
+.ek-toast--warning svg,
+.ek-toast--error svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* A burnt dish is the loudest thing the game says — let it pulse. */
+.gst-burn-warning--burnt {
+  animation: warn-pulse 1s ease-in-out infinite;
+}
+
+@keyframes warn-pulse {
+  0%, 100% { box-shadow: 0 12px 30px rgba(0, 0, 0, .55), inset 0 0 0 1.5px rgba(255, 90, 70, .55); }
+  50%      { box-shadow: 0 12px 34px rgba(120, 20, 10, .6), inset 0 0 0 2.5px rgba(255, 120, 95, .9); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gst-burn-warning--burnt { animation: none; }
+}
+
+/* Inline warning copy elsewhere in the game (level notices, unsafe-cut
+   callouts) gets the same lift so nothing is left whispering. */
+.ls-notice,
+.sop-stabilize-prompt {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ls-notice svg {
+  width: 22px;
+  height: 22px;
+}

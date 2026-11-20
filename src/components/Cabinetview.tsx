@@ -8,11 +8,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, X, Info } from 'lucide-react'
 import { toolCategories } from '../data/tools'
 import useGameStore from '../store/gameStore'
-import type { ToolType } from '../types'
-
-interface Props { onClose: () => void }
-
-export default function CabinetView({ onClose }: Props) {
+import GameIcon from './ui/GameIcon'
+import { TOOL_CATEGORY_ICONS } from '../data/gameIcons'
+import type { CabinetViewProps, ToolType } from '../constant/interface'
+export default function CabinetView({ onClose }: CabinetViewProps) {
   const { selectedKnifeId, inventoryToolIds, setSelectedKnife, addInventoryTool, removeInventoryTool, selectedRecipe, currentFeedback, addFeedback, clearFeedback } = useGameStore()
   const [activeCat, setActiveCat] = useState(0)
   const [detail, setDetail]       = useState<ToolType | null>(null)
@@ -85,7 +84,7 @@ export default function CabinetView({ onClose }: Props) {
         <button className="g-back-btn" onClick={onClose}>
           <ChevronLeft size={20} strokeWidth={2.5} /><span>Kitchen</span>
         </button>
-        <div className="sv-navbar-title">🗄️ Cabinet</div>
+        <div className="sv-navbar-title">Cabinet</div>
         <div className="sv-counter">{inventoryToolIds.length} in kit</div>
       </div>
 
@@ -93,7 +92,7 @@ export default function CabinetView({ onClose }: Props) {
       <div className="cab-tabs" style={{ position: 'relative', zIndex: 10 }}>
         {toolCategories.map((cat, i) => (
           <button key={cat.id} className={`cab-tab ${activeCat === i ? 'active' : ''}`} onClick={() => setActiveCat(i)}>
-            <span className="cab-tab-icon">{cat.icon}</span>
+            <span className="cab-tab-icon"><GameIcon src={TOOL_CATEGORY_ICONS[cat.id]} size={30} /></span>
             <span className="cab-tab-name">{cat.name}</span>
           </button>
         ))}
@@ -138,7 +137,7 @@ export default function CabinetView({ onClose }: Props) {
 
       <p className="gs-hint" style={{ position: 'relative', zIndex: 10 }}>
         {category.id === 1
-          ? (selectedKnifeId ? '✓ Knife equipped — ready to cut!' : 'Tap a knife to equip it for the Prep Table')
+          ? (selectedKnifeId ? 'Knife equipped — ready to cut' : 'Tap a knife to equip it for the Prep Table')
           : 'Tap tools to add them to your kit'}
       </p>
 

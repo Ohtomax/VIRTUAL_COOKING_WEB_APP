@@ -1,0 +1,410 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   SEMI-CLAYMORPHISM LAYER
+   ──────────────────────────────────────────────────────────────────────────
+   Imported LAST so it restyles the shared primitives every screen is built
+   from — buttons, cards, panels, bubbles, tray slots, modals — instead of
+   each page being rewritten.
+
+   "Semi" = the warm dark kitchen palette stays exactly as it is; what changes
+   is the *surface*: chunky radii, matte puffy fills, and the clay shadow pair
+   (a soft outer drop plus an inner top highlight and inner bottom shade) that
+   makes an element read as moulded rather than as flat glass. Pressing an
+   element inverts that pair so it squashes inward.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Outer lift — soft and wide, never a hard dark edge. */
+  --clay-lift: 0 12px 26px rgba(0, 0, 0, .45), 0 3px 8px rgba(0, 0, 0, .3);
+  --clay-lift-sm: 0 6px 14px rgba(0, 0, 0, .38), 0 2px 4px rgba(0, 0, 0, .26);
+  --clay-lift-lg: 0 22px 48px rgba(0, 0, 0, .55), 0 6px 14px rgba(0, 0, 0, .34);
+
+  /* Inner moulding — light from above, shade below. */
+  --clay-mould: inset 0 3px 0 rgba(255, 234, 198, .13), inset 0 -6px 12px rgba(0, 0, 0, .42);
+  --clay-mould-sm: inset 0 2px 0 rgba(255, 234, 198, .11), inset 0 -4px 8px rgba(0, 0, 0, .36);
+  /* Pressed-in: shade on top, light below. */
+  --clay-press: inset 0 4px 10px rgba(0, 0, 0, .5), inset 0 -2px 0 rgba(255, 234, 198, .1);
+
+  /* Gold clay — a brighter top lip and a warm inner shade. */
+  --clay-gold-mould: inset 0 4px 0 rgba(255, 255, 255, .42), inset 0 -7px 12px rgba(150, 68, 0, .45);
+  --clay-gold-lift: 0 12px 24px rgba(120, 58, 0, .45), 0 3px 8px rgba(0, 0, 0, .3);
+
+  /* Matte clay surfaces — a soft vertical gradient reads as moulded. */
+  --clay-surface: linear-gradient(170deg, #2b2110 0%, #1d1507 60%, #170f04 100%);
+  --clay-surface-2: linear-gradient(170deg, #3a2c15 0%, #281d0c 60%, #1f1507 100%);
+
+  /* Chunky radii. */
+  --clay-r: 26px;
+  --clay-r-sm: 18px;
+  --clay-r-lg: 34px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.g-btn {
+  border-radius: var(--r-pill);
+  transition: transform .14s cubic-bezier(.34, 1.56, .64, 1), box-shadow .14s ease, filter .14s ease;
+}
+
+.g-btn--gold {
+  background: linear-gradient(170deg, var(--gold-bright) 0%, var(--gold) 46%, var(--amber) 100%);
+  box-shadow: var(--clay-gold-lift), var(--clay-gold-mould);
+}
+
+.g-btn--gold:hover {
+  box-shadow: 0 16px 30px rgba(120, 58, 0, .5), 0 0 26px rgba(245, 166, 35, .3), var(--clay-gold-mould);
+  transform: translateY(-2px);
+}
+
+.g-btn--green {
+  background: linear-gradient(170deg, #5fe07f 0%, var(--green) 48%, #22964a 100%);
+  box-shadow: 0 12px 24px rgba(10, 90, 40, .45), 0 3px 8px rgba(0, 0, 0, .3),
+    inset 0 4px 0 rgba(255, 255, 255, .34), inset 0 -7px 12px rgba(8, 80, 34, .5);
+}
+
+.g-btn--ghost {
+  background: var(--clay-surface-2);
+  border: none;
+  box-shadow: var(--clay-lift), var(--clay-mould);
+}
+
+.g-btn--ghost:hover {
+  transform: translateY(-2px);
+}
+
+.g-btn--ghost:active {
+  background: var(--clay-surface);
+  box-shadow: var(--clay-press);
+}
+
+.g-btn--dim {
+  background: linear-gradient(170deg, #241b0d, #180f04);
+  box-shadow: var(--clay-lift-sm), var(--clay-press);
+}
+
+/* Every clay control squashes inward when pressed. */
+.g-btn:active,
+.ek-stn-btn:active,
+.gtray-slot:active,
+.gst-pick-btn:active,
+.rcs-btn:active {
+  transform: scale(.955);
+  box-shadow: var(--clay-lift-sm), var(--clay-press);
+}
+
+.g-back-btn {
+  border-radius: var(--r-pill);
+  background: var(--clay-surface-2);
+  border: none;
+  box-shadow: var(--clay-lift-sm), var(--clay-mould-sm);
+}
+
+/* ── Cards, panels, sheets ───────────────────────────────────────────── */
+.g-card,
+.kt-card,
+.ls-card,
+.ls-cat-card,
+.ls-recipe-card,
+.login-card,
+.rc-block,
+.rs-score-card,
+.prog-stat,
+.mc-feat,
+.settings-row,
+.tut-row,
+.inv-card {
+  border: none;
+  border-radius: var(--clay-r);
+  background: var(--clay-surface);
+  box-shadow: var(--clay-lift), var(--clay-mould);
+}
+
+.kt-card,
+.ls-card,
+.ls-cat-card,
+.ls-recipe-card {
+  transition: transform .16s cubic-bezier(.34, 1.56, .64, 1), box-shadow .16s ease;
+}
+
+.kt-card:hover,
+.ls-cat-card:hover,
+.ls-recipe-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--clay-lift-lg), var(--clay-mould);
+}
+
+.g-sheet,
+.ek-action-sheet {
+  border-top: none;
+  border-radius: var(--clay-r-lg) var(--clay-r-lg) 0 0;
+  background: var(--clay-surface-2);
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, .6), inset 0 3px 0 rgba(255, 234, 198, .14);
+}
+
+.g-navbar,
+.ek-navbar,
+.rc-navbar,
+.sv-navbar {
+  border-bottom: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .4), inset 0 -2px 0 rgba(255, 234, 198, .07);
+}
+
+/* ── Pills, chips, badges ───────────────────────────────────────────── */
+.rc-meta-pill,
+.rc-chip,
+.g-section-label,
+.ls-badge,
+.kt-type-label,
+.inv-tab,
+.gst-tab-btn,
+.gst-heat-chip,
+.sv-counter {
+  border: none;
+  border-radius: var(--r-pill);
+  background: var(--clay-surface-2);
+  box-shadow: var(--clay-lift-sm), var(--clay-mould-sm);
+}
+
+.inv-tab.active,
+.gst-tab-btn.active,
+.gst-heat-chip.active {
+  background: linear-gradient(170deg, var(--gold-bright), var(--amber));
+  color: #1a0a00;
+  box-shadow: var(--clay-gold-lift), var(--clay-gold-mould);
+}
+
+/* ── Kitchen stations ───────────────────────────────────────────────── */
+.ek-stn-btn {
+  border: none;
+  border-radius: var(--clay-r);
+  background: var(--clay-surface-2);
+  box-shadow: var(--clay-lift), var(--clay-mould);
+  transition: transform .16s cubic-bezier(.34, 1.56, .64, 1), box-shadow .16s ease;
+}
+
+.ek-stn-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: var(--clay-lift-lg), var(--clay-mould);
+}
+
+.ek-stn-icon {
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #46351a, #241a0a);
+  box-shadow: var(--clay-lift-sm), inset 0 3px 0 rgba(255, 234, 198, .16), inset 0 -5px 10px rgba(0, 0, 0, .45);
+}
+
+.ek-stn-btn--cta .ek-stn-icon {
+  background: radial-gradient(circle at 34% 28%, var(--gold-bright), var(--amber));
+  color: #2a1200;
+  box-shadow: 0 0 22px rgba(245, 166, 35, .4), var(--clay-gold-mould);
+}
+
+.ek-stn-btn--done .ek-stn-icon {
+  background: radial-gradient(circle at 34% 28%, #5fe07f, #22964a);
+  color: #06260f;
+  box-shadow: 0 0 20px rgba(52, 199, 89, .32), inset 0 3px 0 rgba(255, 255, 255, .3), inset 0 -5px 10px rgba(8, 80, 34, .45);
+}
+
+.ek-step-bubble {
+  border: none;
+  box-shadow: var(--clay-lift-sm), var(--clay-mould-sm);
+}
+
+.ek-step-bubble.active {
+  box-shadow: 0 0 18px rgba(245, 166, 35, .45), var(--clay-gold-mould);
+}
+
+.ek-action-bar {
+  border-top: none;
+  box-shadow: 0 -14px 34px rgba(0, 0, 0, .55), inset 0 3px 0 rgba(255, 234, 198, .1);
+}
+
+.ek-toast {
+  border-radius: var(--clay-r-sm);
+  border: none;
+  box-shadow: var(--clay-lift-lg), var(--clay-mould-sm);
+}
+
+/* ── Ingredient drawer ──────────────────────────────────────────────── */
+.gtray-wood {
+  border-top: none;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, .6), inset 0 4px 0 rgba(255, 210, 140, .22);
+}
+
+.gtray-slot,
+.rcs-btn--tray {
+  border: none;
+  box-shadow: var(--clay-lift), inset 0 3px 0 rgba(255, 255, 255, .5), inset 0 -6px 11px rgba(120, 82, 36, .34);
+  transition: transform .14s cubic-bezier(.34, 1.56, .64, 1), box-shadow .14s ease;
+}
+
+.gtray-slot:hover,
+.rcs-btn--tray:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--clay-lift-lg), inset 0 3px 0 rgba(255, 255, 255, .5), inset 0 -6px 11px rgba(120, 82, 36, .34);
+}
+
+.gtray-slot.washed {
+  box-shadow: 0 0 16px rgba(74, 168, 255, .4), var(--clay-lift), inset 0 3px 0 rgba(255, 255, 255, .5);
+}
+
+.gtray-slot.sliced {
+  box-shadow: 0 0 16px rgba(245, 166, 35, .45), var(--clay-lift), inset 0 3px 0 rgba(255, 255, 255, .5);
+}
+
+.gtray-badge,
+.ek-stn-badge,
+.inv-toggle-badge,
+.inv-card-badge {
+  border: none;
+  box-shadow: var(--clay-lift-sm), inset 0 2px 0 rgba(255, 255, 255, .4);
+}
+
+/* ── Inventory & tooltips ───────────────────────────────────────────── */
+.inv-toggle-tab,
+.rcs-btn--tab {
+  border: none;
+  border-radius: var(--clay-r-sm) 0 0 var(--clay-r-sm);
+  background: var(--clay-surface-2);
+  box-shadow: -8px 0 22px rgba(0, 0, 0, .5), inset 0 3px 0 rgba(255, 234, 198, .13);
+}
+
+.inv-panel {
+  border-left: none;
+  border-radius: var(--clay-r-lg) 0 0 var(--clay-r-lg);
+  background: var(--clay-surface);
+  box-shadow: -18px 0 46px rgba(0, 0, 0, .6), inset 0 3px 0 rgba(255, 234, 198, .12);
+}
+
+.rcs-tip,
+.game-tip,
+.sop-tip-banner {
+  border: none;
+  border-radius: var(--clay-r-sm);
+  background: var(--clay-surface-2);
+  box-shadow: var(--clay-lift-lg), var(--clay-mould-sm);
+}
+
+/* ── Stove & prep controls ──────────────────────────────────────────── */
+.gst-pick-btn,
+.gst-knob,
+.gm-tool,
+.gm-item,
+.gp-mode-tab,
+.gp-cut-bubble,
+.sop-stabilize-btn {
+  border: none;
+  border-radius: var(--clay-r-sm);
+  background: var(--clay-surface-2);
+  box-shadow: var(--clay-lift), var(--clay-mould);
+  transition: transform .14s cubic-bezier(.34, 1.56, .64, 1), box-shadow .14s ease;
+}
+
+.gst-pick-btn:hover,
+.gst-knob:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--clay-lift-lg), var(--clay-mould);
+}
+
+.gst-knob.on {
+  background: linear-gradient(170deg, #ff7a3c, #c43a06);
+  color: #fff;
+  box-shadow: 0 0 24px rgba(255, 110, 40, .45), inset 0 4px 0 rgba(255, 255, 255, .34), inset 0 -7px 12px rgba(130, 36, 0, .5);
+}
+
+/* ── Modals ─────────────────────────────────────────────────────────── */
+.cab-detail-panel,
+.rcs-panel,
+.gm-panel,
+.gm-modal {
+  border: none;
+  border-radius: var(--clay-r-lg);
+  background: var(--clay-surface);
+  box-shadow: var(--clay-lift-lg), inset 0 3px 0 rgba(255, 234, 198, .12);
+}
+
+/* ── Progress bars — recessed clay channels ─────────────────────────── */
+.g-bar-track,
+.prog-rank-bar,
+.kt-banner-progress {
+  border-radius: var(--r-pill);
+  box-shadow: var(--clay-press);
+}
+
+.g-bar-fill {
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .3);
+}
+
+/* ── Inputs ─────────────────────────────────────────────────────────── */
+.login-input,
+input[type='text'],
+input[type='number'] {
+  border: none;
+  border-radius: var(--clay-r-sm);
+  background: linear-gradient(170deg, #150e04, #1f1609);
+  box-shadow: var(--clay-press);
+}
+
+.login-input:focus,
+input[type='text']:focus,
+input[type='number']:focus {
+  outline: none;
+  box-shadow: var(--clay-press), 0 0 0 3px rgba(245, 166, 35, .3);
+}
+
+/* ── Menu ───────────────────────────────────────────────────────────── */
+.menu-item {
+  border: none;
+  border-radius: var(--clay-r);
+  background: var(--clay-surface);
+  box-shadow: var(--clay-lift), var(--clay-mould);
+  transition: transform .16s cubic-bezier(.34, 1.56, .64, 1), box-shadow .16s ease;
+}
+
+.menu-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--clay-lift-lg), var(--clay-mould);
+}
+
+.menu-item--primary {
+  background: linear-gradient(170deg, var(--gold-bright) 0%, var(--gold) 46%, var(--amber) 100%);
+  color: #1a0a00;
+  box-shadow: var(--clay-gold-lift), var(--clay-gold-mould);
+}
+
+.menu-item-icon {
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #46351a, #241a0a);
+  box-shadow: var(--clay-lift-sm), inset 0 3px 0 rgba(255, 234, 198, .16), inset 0 -5px 10px rgba(0, 0, 0, .45);
+}
+
+/* Clay is a soft, physical look — honour a reduced-motion preference by
+   dropping the springy lifts but keeping the surfaces. */
+@media (prefers-reduced-motion: reduce) {
+
+  .g-btn,
+  .ek-stn-btn,
+  .gtray-slot,
+  .menu-item,
+  .kt-card,
+  .ls-cat-card,
+  .ls-recipe-card,
+  .gst-pick-btn,
+  .gst-knob,
+  .rcs-btn--tray {
+    transition: none;
+  }
+
+  .g-btn--gold:hover,
+  .g-btn--ghost:hover,
+  .ek-stn-btn:hover,
+  .gtray-slot:hover,
+  .menu-item:hover,
+  .kt-card:hover,
+  .ls-cat-card:hover,
+  .ls-recipe-card:hover,
+  .gst-pick-btn:hover,
+  .gst-knob:hover,
+  .rcs-btn--tray:hover {
+    transform: none;
+  }
+}

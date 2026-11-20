@@ -8,13 +8,7 @@ import { ChevronLeft, ChevronRight, ListChecks, UtensilsCrossed, BookOpen, Award
 import useGameStore from '../store/gameStore'
 import { resolveIngredientByName } from '../data/ingredients'
 import { toolCategories } from '../data/tools'
-import type { SetScreenProps } from '../types'
-
-interface RecipeCardProps extends SetScreenProps {
-  isPopup?: boolean;
-  onClose?: () => void;
-}
-
+import type { RecipeCardProps } from '../constant/interface'
 function resolveToolByName(name: string) {
   const n = name.toLowerCase()
   for (const cat of toolCategories) {
@@ -46,7 +40,7 @@ export default function RecipeCard({ setScreen, isPopup, onClose }: RecipeCardPr
   }
 
   return (
-    <div className={isPopup ? "rc-page" : "g-page rc-page"} style={{ overflowY: 'auto', paddingBottom: isPopup ? 40 : 110, position: 'relative' }}>
+    <div className={isPopup ? 'rc-page' : 'g-page rc-page'}>
       {/* Top Navbar */}
       {!isPopup && (
       <div className="g-navbar">
@@ -64,22 +58,25 @@ export default function RecipeCard({ setScreen, isPopup, onClose }: RecipeCardPr
         </button>
       )}
 
-      {/* Hero Banner with Dish Image */}
-      <div className="rc-hero-wrap">
-        <div className="rc-hero-bg-plate">
-          <motion.img
-            src={selectedRecipe.image}
-            alt={selectedRecipe.name}
-            className="rc-hero-img"
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4 }}
-            onError={e => { (e.target as HTMLImageElement).src = '/assets/kitchen/table-bg.jpg' }}
-          />
+      {/* Two columns: the dish on the left, everything you need to know on
+          the right. The image is the thing worth seeing large, so it keeps
+          its own column rather than being a banner the text sits on top of. */}
+      <div className="rc-layout">
+        <div className="rc-visual">
+          <div className="rc-hero-bg-plate">
+            <motion.img
+              src={selectedRecipe.image}
+              alt={selectedRecipe.name}
+              className="rc-hero-img"
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+              onError={e => { (e.target as HTMLImageElement).src = '/assets/kitchen/table-bg.jpg' }}
+            />
+          </div>
         </div>
-        <div className="rc-hero-gradient" />
-        
-        <div className="rc-hero-content">
+
+        <div className="rc-info">
           <div className="rc-meta-pills">
             <span className="rc-meta-pill rc-meta-pill--gold">
               <Award size={14} /> Level {selectedRecipe.level}
@@ -91,31 +88,29 @@ export default function RecipeCard({ setScreen, isPopup, onClose }: RecipeCardPr
               <Target size={14} /> Min Score: {selectedRecipe.minScore ?? 70}%
             </span>
           </div>
-          <h1 className="rc-dish-name">{selectedRecipe.name}</h1>
-        </div>
-      </div>
 
-      {/* Stats Strip Overlap */}
-      <div className="rc-stats-strip" style={{ maxWidth: 640, margin: '-24px auto 0' }}>
-        <div className="rc-stat">
-          <span className="rc-stat-icon"><ListChecks /></span>
-          <span className="rc-stat-value">{selectedRecipe.ingredients.length}</span>
-          <span className="rc-stat-label">Ingredients</span>
-        </div>
-        <div className="rc-stat">
-          <span className="rc-stat-icon"><UtensilsCrossed /></span>
-          <span className="rc-stat-value">{selectedRecipe.tools.length}</span>
-          <span className="rc-stat-label">Tools</span>
-        </div>
-        <div className="rc-stat">
-          <span className="rc-stat-icon"><BookOpen /></span>
-          <span className="rc-stat-value">{selectedRecipe.steps.length}</span>
-          <span className="rc-stat-label">Steps</span>
-        </div>
-      </div>
+          <h1 className="rc-dish-name">{selectedRecipe.name}</h1>
+
+          <div className="rc-stats-strip">
+            <div className="rc-stat">
+              <span className="rc-stat-icon"><ListChecks /></span>
+              <span className="rc-stat-value">{selectedRecipe.ingredients.length}</span>
+              <span className="rc-stat-label">Ingredients</span>
+            </div>
+            <div className="rc-stat">
+              <span className="rc-stat-icon"><UtensilsCrossed /></span>
+              <span className="rc-stat-value">{selectedRecipe.tools.length}</span>
+              <span className="rc-stat-label">Tools</span>
+            </div>
+            <div className="rc-stat">
+              <span className="rc-stat-icon"><BookOpen /></span>
+              <span className="rc-stat-value">{selectedRecipe.steps.length}</span>
+              <span className="rc-stat-label">Steps</span>
+            </div>
+          </div>
 
       {/* Main Recipe Content Body */}
-      <div className="rc-body" style={{ maxWidth: 640, margin: '24px auto 0' }}>
+      <div className="rc-body">
         {/* Ingredients Block */}
         <div className="rc-block">
           <div className="rc-block-header">
@@ -176,25 +171,47 @@ export default function RecipeCard({ setScreen, isPopup, onClose }: RecipeCardPr
           </div>
         </div>
 
-        {/* Cooking Steps Timeline */}
-        <div className="rc-block">
-          <div className="rc-block-header">
-            <BookOpen />
-            <span>Cooking Steps</span>
-          </div>
-          <div className="rc-steps">
-            {(selectedRecipe.narrativeSteps || selectedRecipe.steps).map((step, i) => (
-              <motion.div key={i} className="rc-step-row"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}>
-                <div className="rc-section-num">{i + 1}</div>
-                <div className="rc-step-text">{step}</div>
-              </motion.div>
-            ))}
+      </div>
+        </div>
+
+        {/* Third column: the steps are the only long list here, so they get
+            their own column and are the only thing that scrolls — the card
+            itself stays put. */}
+        <div className="rc-steps-col">
+          <div className="rc-block rc-block--steps">
+            <div className="rc-block-header">
+              <BookOpen />
+              <span>Cooking Steps</span>
+              <span className="rc-block-count">
+                {(selectedRecipe.narrativeSteps || selectedRecipe.steps).length} Steps
+              </span>
+            </div>
+            <div className="rc-steps">
+              {(selectedRecipe.narrativeSteps || selectedRecipe.steps).map((step, i) => (
+                <motion.div key={i} className="rc-step-row"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05 }}>
+                  <div className="rc-section-num">{i + 1}</div>
+                  <div className="rc-step-text">{step}</div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Popup Continue button — lets the player dismiss the card and carry on (comment 14) */}
+      {isPopup && (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 20px 20px' }}>
+          <motion.button className="g-btn g-btn--gold"
+            whileTap={{ scale: 0.97 }}
+            onClick={onClose}
+            style={{ maxWidth: 420, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, fontSize: 15, fontWeight: 700 }}>
+            <span>Continue</span> <ChevronRight size={20} strokeWidth={2.5} />
+          </motion.button>
+        </div>
+      )}
 
       {/* Bottom Sticky Action Bar */}
       {!isPopup && (

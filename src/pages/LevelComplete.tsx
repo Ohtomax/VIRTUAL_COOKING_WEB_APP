@@ -6,8 +6,7 @@ import { motion } from 'framer-motion'
 import { Trophy, ChevronRight, RotateCcw, Home, Star } from 'lucide-react'
 import useGameStore from '../store/gameStore'
 import { recipes, levels } from '../data/recipes'
-import type { SetScreenProps } from '../types'
-
+import type { SetScreenProps } from '../constant/interface'
 export default function LevelComplete({ setScreen }: SetScreenProps) {
   const { selectedRecipe, recipeMastery, levelProgress, unlockedLevels } = useGameStore()
   const levelId = selectedRecipe?.level ?? 1

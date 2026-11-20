@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
+import type { DoneFooterBtnProps } from '../../constant/interface'
 
-interface Props { onClick: () => void; label?: string }
 
-export default function DoneFooterBtn({ onClick, label = 'Done — Back to Kitchen' }: Props) {
+export default function DoneFooterBtn({ onClick, label = 'Done — Back to Kitchen' }: DoneFooterBtnProps) {
   return (
     <motion.button
       className="g-btn g-btn--gold g-btn--full"

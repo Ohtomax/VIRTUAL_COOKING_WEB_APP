@@ -3,25 +3,31 @@ import { AnimatePresence, motion } from 'framer-motion'
 import MainMenu from './pages/MainMenu'
 import KitchenTools from './pages/KitchenTools'
 import LevelSelection from './pages/LevelSelection'
-import RecipeCard from './pages/RecipeCard'
+import RecipeCard from './components/RecipeCard'
 import EducationalKitchen from './pages/EducationalKitchen'
-import ResultsScreen from './pages/ResultsScreen'
+import ResultsScreen from './components/ResultsScreen'
 import SplashScreen from './components/SplashScreen'
 import LevelComplete from './pages/LevelComplete'
 import KnowledgeTest from './pages/KnowledgeTest'
 import Tutorial from './pages/Tutorial'
-import Progress from './pages/Progress'
+import Progress from './components/Progress'
 import Settings from './pages/Settings'
 import MasterChefMode from './pages/MasterChefMode'
 import LoginScreen from './pages/LoginScreen'
+import GameStage from './components/ui/GameStage'
+import OrientationGate from './components/ui/OrientationGate'
 import { usePlayerContext } from './db/PlayerContext'
 import { useAudio } from './hooks/useAudio'
 import useGameStore from './store/gameStore'
-import type { ScreenName, AudioSettings } from './types'
-
+import type { ScreenName } from './constant/types'
+import type { AudioSettings } from './constant/interface'
 import '../src/styles/app.css'
 import '../src/styles/kitchen.css'
 import '../src/styles/educational.css'
+// Order matters: clay sets the surface language, character then gives it voice
+// (type, material, hierarchy) and pulls back clay's uniform glow.
+import '../src/styles/clay.css'
+import '../src/styles/character.css'
 
 export default function App() {
   const [screen, setScreen] = useState<ScreenName>('main-menu')
@@ -49,10 +55,14 @@ export default function App() {
   useAudio(audioSettings)
 
   return (
-    <div className="app-root">
+    <>
+      <GameStage>
+      <div className="app-root">
+      {/* Splash first, then the profile form — the game introduces itself
+          before asking the player for anything. */}
       <AnimatePresence>
-        {isReady && showLogin && <LoginScreen onDone={() => setShowLogin(false)} />}
-        {!showLogin && showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
+        {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
+        {!showSplash && isReady && showLogin && <LoginScreen onDone={() => setShowLogin(false)} />}
       </AnimatePresence>
       <AnimatePresence mode="wait">
         <motion.div key={screen} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }} style={{ width: '100%', height: '100%' }}>
@@ -73,6 +83,11 @@ export default function App() {
       {screen === 'master-chef-mode' && <MasterChefMode setScreen={setScreen} />}
         </motion.div>
       </AnimatePresence>
-    </div>
+      </div>
+      </GameStage>
+      {/* Outside the stage: the prompt must cover the real viewport at full
+          size, not be scaled down with the game. */}
+      <OrientationGate />
+    </>
   )
 }

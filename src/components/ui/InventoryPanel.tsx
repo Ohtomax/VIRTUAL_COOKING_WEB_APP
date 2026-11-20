@@ -5,15 +5,16 @@
  */
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Package2, Utensils, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react'
+import { Package2, Utensils, ChevronRight, CheckCircle2, Scissors, Droplet, Check, Circle } from 'lucide-react'
 import { toolCategories } from '../../data/tools'
 import useGameStore from '../../store/gameStore'
+import RecipeCardSlot from './RecipeCardSlot'
+import type { InventoryTab } from '../../constant/types'
 
-type Tab = 'ingredients' | 'tools'
 
 export default function InventoryPanel() {
   const [open, setOpen]     = useState(false)
-  const [tab, setTab]       = useState<Tab>('ingredients')
+  const [tab, setTab]       = useState<InventoryTab>('ingredients')
   const { collectedIngredients, inventoryToolIds, selectedKnifeId, washedIngredients, slicedIngredients } = useGameStore()
 
   const allTools = toolCategories.flatMap(c => c.types)
@@ -24,18 +25,22 @@ export default function InventoryPanel() {
 
   return (
     <>
-      {/* Toggle tab (always visible on right edge) */}
-      <button
-        className="inv-toggle-tab"
-        onClick={() => setOpen(o => !o)}
-        title="Toggle Inventory"
-      >
-        <Package2 size={18} strokeWidth={2} />
-        {(ingCount + toolCount) > 0 && (
-          <span className="inv-toggle-badge">{ingCount + toolCount}</span>
-        )}
-        <ChevronRight size={14} strokeWidth={2.5} />
-      </button>
+      {/* One dock on the right edge holding both the inventory toggle and the
+          recipe card, so they read as a single control instead of two tabs. */}
+      <div className="hud-dock">
+        <button
+          className="hud-dock-btn inv-toggle-tab"
+          onClick={() => setOpen(o => !o)}
+          title="Toggle Inventory"
+        >
+          <Package2 size={18} strokeWidth={2} />
+          <span className="hud-dock-label">Items</span>
+          {(ingCount + toolCount) > 0 && (
+            <span className="inv-toggle-badge">{ingCount + toolCount}</span>
+          )}
+        </button>
+        <RecipeCardSlot variant="dock" />
+      </div>
 
       {/* Sliding panel */}
       <AnimatePresence>
@@ -95,16 +100,16 @@ export default function InventoryPanel() {
                             <div className="inv-card-img-wrap">
                               <img src={ing.image} alt={ing.name} className="inv-card-img"
                                 onError={e => { (e.target as HTMLImageElement).src = '/assets/ingredients/onion.png' }} />
-                              {sliced && <div className="inv-card-badge inv-badge--sliced">✂</div>}
-                              {washed && !sliced && <div className="inv-card-badge inv-badge--washed">💧</div>}
+                              {sliced && <div className="inv-card-badge inv-badge--sliced"><Scissors size={10} strokeWidth={2.8} /></div>}
+                              {washed && !sliced && <div className="inv-card-badge inv-badge--washed"><Droplet size={10} strokeWidth={2.8} /></div>}
                             </div>
                             <span className="inv-card-name">{ing.name}</span>
                             <div className="inv-card-status">
                               <span className={washed ? 'inv-status--done' : 'inv-status--pending'}>
-                                {washed ? '✓ Washed' : '○ Unwashed'}
+                                {washed ? <><Check size={11} strokeWidth={3} /> Washed</> : <><Circle size={11} strokeWidth={2.4} /> Unwashed</>}
                               </span>
                               <span className={sliced ? 'inv-status--done' : 'inv-status--pending'}>
-                                {sliced ? '✓ Sliced' : '○ Raw'}
+                                {sliced ? <><Check size={11} strokeWidth={3} /> Sliced</> : <><Circle size={11} strokeWidth={2.4} /> Raw</>}
                               </span>
                             </div>
                           </div>
